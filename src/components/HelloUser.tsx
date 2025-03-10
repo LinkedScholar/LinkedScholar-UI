@@ -4,7 +4,7 @@ import { RootState, AppDispatch } from "../redux/store";
 import { logout } from "../redux/authSlice";
 
 const HelloUser: React.FC = () => {
-    const { authenticated, username, email, firstName, lastName, picture, locale, authorities } =
+    const { authenticated, username, email, firstName, lastName, picture } =
         useSelector((state: RootState) => state.auth);
     const dispatch: AppDispatch = useDispatch();
 
@@ -23,8 +23,6 @@ const HelloUser: React.FC = () => {
                     <h2>Hello, {firstName} {lastName}!</h2>
                     <p><strong>Username:</strong> {username}</p>
                     <p><strong>Email:</strong> {email}</p>
-                    <p><strong>Locale:</strong> {locale}</p>
-                    <p><strong>Authorities:</strong> {authorities?.join(", ")}</p>
                     {picture && <img src={picture} alt="Profile" width="80" style={{ borderRadius: "50%" }} />}
                     <br />
                     <button onClick={handleLogout}>Logout</button>

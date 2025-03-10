@@ -11,6 +11,7 @@ import Help from "./views/footer/Help";
 import Contribute from "./views/footer/Contribute";
 import Sponsor from "./views/footer/Sponsor";
 import Contact from "./views/footer/Contact";
+import LoginPage from "./views/LoginPage";
 
 
 function Api() {
@@ -22,7 +23,6 @@ const App: React.FC = () => {
         <Router>
             <div className="app-container">
                 <header>
-                    <h1>Redux with OAuth2 Authentication</h1>
                     <Navbar />
                 </header>
 
@@ -30,7 +30,7 @@ const App: React.FC = () => {
                     <HelloUser />
                     <Routes>
                         <Route path="/" element={<Searcher />} />
-                        <Route path="/login" element={<Login />} />
+                        <Route path="/login" element={<LoginPage />} />
                         <Route path="/profile" element={<HelloUser />} />
                         <Route path="/privacy" element={<PrivacyPolicy />} />
                         <Route path="/terms" element={<TermsOfService />} />

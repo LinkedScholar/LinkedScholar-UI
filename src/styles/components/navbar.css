@@ -1,86 +1,80 @@
-/* src/styles/components/navbar.scss */
 .research-navbar {
-    padding: 15px 20px;
-    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 18px;
-    background: transparent;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
+    background-color: #f8f9fa;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
 }
 
-.navbar-left {
-    display: flex;
-    align-items: center;
+.navbar-left .brand-link {
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
 }
 
 .navbar-right {
     display: flex;
     align-items: center;
-    gap: 16px;
 }
 
-.brand-link {
-    text-decoration: none;
-    color: inherit;
+.login-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
 }
 
-.brand-link:hover {
-    text-decoration: none;
+.login-btn:hover {
+    background-color: #0056b3;
 }
 
-.brand-title-container {
-    display: flex;
-    align-items: baseline;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-}
-
-.brand-title-linked {
-    font-size: 21px;
-    font-weight: 500;
-    color: #003366;
-    letter-spacing: -0.5px;
-    margin-right: 4px;
-    user-select: none;
-}
-
-.brand-title-scholar {
-    font-size: 21px;
-    font-weight: 700;
-    color: #0066cc;
-    letter-spacing: -0.5px;
-    user-select: none;
-}
-
-.brand-version {
-    font-size: 12px;
-    color: #888;
-    font-weight: 300;
-    margin-left: 6px;
+.user-profile-container {
     position: relative;
-    top: -2px;
-    user-select: none;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .research-navbar {
-        padding: 10px 15px;
-    }
+.user-profile-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
 
-    .brand-title-linked, .brand-title-scholar {
-        font-size: 20px;
-    }
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
 
-    .brand-version {
-        font-size: 10px;
-    }
+.user-dropdown {
+    position: absolute;
+    right: 0;
+    top: 50px;
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    width: 180px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.user-dropdown p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.logout-btn {
+    background-color: #dc3545;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.logout-btn:hover {
+    background-color: #b02a37;
 }

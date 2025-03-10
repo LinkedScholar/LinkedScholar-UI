@@ -3,27 +3,25 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 interface AuthState {
     authenticated: boolean;
     username?: string;
-    email?: string;
     firstName?: string;
     lastName?: string;
+    email?: string;
     picture?: string;
-    locale?: string;
-    authorities?: string[];
     status: "idle" | "loading" | "failed";
 }
-
 
 const initialState: AuthState = {
     authenticated: false,
     username: undefined,
-    authorities: undefined,
+    email: undefined,
+    picture: undefined,
     status: "idle",
 };
 
-// Async action to fetch session details
+// Fetch user session from backend
 export const fetchSession = createAsyncThunk("auth/fetchSession", async () => {
     const response = await fetch("http://localhost:8080/api/user/session", {
-        credentials: "include", // Ensures cookies are sent
+        credentials: "include",
     });
     if (!response.ok) {
         throw new Error("Failed to fetch user session");
@@ -38,7 +36,8 @@ const authSlice = createSlice({
         logout: (state) => {
             state.authenticated = false;
             state.username = undefined;
-            state.authorities = undefined;
+            state.email = undefined;
+            state.picture = undefined;
         },
     },
     extraReducers: (builder) => {
@@ -49,16 +48,12 @@ const authSlice = createSlice({
             .addCase(fetchSession.fulfilled, (state, action: PayloadAction<AuthState>) => {
                 state.authenticated = action.payload.authenticated;
                 state.username = action.payload.username;
-                state.firstName = action.payload.firstName;
-                state.lastName = action.payload.lastName;
                 state.email = action.payload.email;
-                state.authorities = action.payload.authorities;
+                state.picture = action.payload.picture;
                 state.status = "idle";
             })
             .addCase(fetchSession.rejected, (state) => {
                 state.authenticated = false;
-                state.username = undefined;
-                state.authorities = undefined;
                 state.status = "failed";
             });
     },
