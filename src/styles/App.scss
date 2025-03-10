@@ -1,10 +1,12 @@
 /* Define Primary & Secondary Colors */
 $primary-color: #003366;
 $secondary-color: #0066cc;
+$background-grey: #f1f3f4;  // Matching greyish background
+$shadow-light: rgba(0, 0, 0, 0.15);
 
 /* Global Styles */
 body {
-  background-color: #f8f9fa;
+  background-color: $background-grey;
   font-family: 'Inter', sans-serif;
 }
 
@@ -19,9 +21,18 @@ body {
     width: 200px;
     height: 50px;
     font-size: 1.2em;
+    background: lighten($background-grey, 5%);
+    border: 1px solid darken($background-grey, 10%);
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: darken($background-grey, 5%);
+      box-shadow: 0px 0px 8px $shadow-light;
+    }
   }
 }
 
+/* Consistent Typography */
 * {
   font-family: 'Inter', sans-serif;
 }

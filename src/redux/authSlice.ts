@@ -7,12 +7,14 @@ interface AuthState {
     lastName?: string;
     email?: string;
     picture?: string;
-    status: "idle" | "loading" | "failed";
+    status: "idle" | "loading" | "succeeded" | "failed";
 }
 
 const initialState: AuthState = {
     authenticated: false,
     username: undefined,
+    firstName: undefined,
+    lastName: undefined,
     email: undefined,
     picture: undefined,
     status: "idle",
@@ -23,10 +25,15 @@ export const fetchSession = createAsyncThunk("auth/fetchSession", async () => {
     const response = await fetch("http://localhost:8080/api/user/session", {
         credentials: "include",
     });
+
     if (!response.ok) {
         throw new Error("Failed to fetch user session");
     }
-    return response.json();
+
+    const data = await response.json();
+    console.log("✅ Session Response:", data); // Debugging
+
+    return data;
 });
 
 const authSlice = createSlice({
@@ -36,8 +43,11 @@ const authSlice = createSlice({
         logout: (state) => {
             state.authenticated = false;
             state.username = undefined;
+            state.firstName = undefined;
+            state.lastName = undefined;
             state.email = undefined;
             state.picture = undefined;
+            state.status = "idle";
         },
     },
     extraReducers: (builder) => {
@@ -47,14 +57,16 @@ const authSlice = createSlice({
             })
             .addCase(fetchSession.fulfilled, (state, action: PayloadAction<AuthState>) => {
                 state.authenticated = action.payload.authenticated;
-                state.username = action.payload.username;
-                state.email = action.payload.email;
-                state.picture = action.payload.picture;
-                state.status = "idle";
+                state.username = action.payload.username || undefined;
+                state.firstName = action.payload.firstName || undefined;
+                state.lastName = action.payload.lastName || undefined;
+                state.email = action.payload.email || undefined;
+                state.picture = action.payload.picture || undefined;
+                state.status = "succeeded"; // ✅ Prevents re-fetching
             })
             .addCase(fetchSession.rejected, (state) => {
                 state.authenticated = false;
-                state.status = "failed";
+                state.status = "failed"; // ✅ Ensures it doesn't stay "loading"
             });
     },
 });

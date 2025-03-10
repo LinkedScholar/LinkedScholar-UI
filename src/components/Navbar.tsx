@@ -3,8 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { RootState, AppDispatch } from "../redux/store";
 import { fetchSession, logout } from "../redux/authSlice";
-import { persistStore } from "redux-persist";
-import { store } from "../redux/store";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/components/navbar.scss";
 
@@ -16,13 +14,16 @@ const Navbar: React.FC = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
     useEffect(() => {
-        if (status === "idle" && !authenticated) {
-            dispatch(fetchSession()).catch(() => {
-                console.log("Error fetching session");
-            });
+        if (status === "idle") {
+            dispatch(fetchSession())
+                .unwrap()
+                .catch(() => console.error("❌ Error fetching session"));
         }
-    }, [dispatch, status, authenticated]);
+    }, [dispatch, status]);
 
+    useEffect(() => {
+        console.log("Redux Auth State:", { authenticated, firstName, lastName, email, status });
+    }, [authenticated, status]);
 
     const handleLogin = () => {
         window.location.href = "/login";
@@ -35,7 +36,6 @@ const Navbar: React.FC = () => {
         });
 
         dispatch(logout());
-        persistStore(store).purge(); // ✅ Clear Redux Persist data on logout
     };
 
     return (
@@ -63,8 +63,6 @@ const Navbar: React.FC = () => {
                 <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
                     {status === "loading" ? (
                         <p className="loading-text">Loading...</p>
-                    ) : status === "failed" ? (
-                        <p className="error-text text-danger">Network Error</p>
                     ) : authenticated ? (
                         <div className="dropdown">
                             <button
