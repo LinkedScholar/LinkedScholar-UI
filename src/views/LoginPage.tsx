@@ -3,19 +3,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import { fetchSession } from "../redux/authSlice";
 import { useNavigate } from "react-router-dom";
-import '../styles/views/login-page.css';
+import '../styles/views/login-page.scss';
 
 const LoginPage: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
     const { authenticated } = useSelector((state: RootState) => state.auth);
     const navigate = useNavigate();
 
-    // Fetch user session when this page loads
     useEffect(() => {
         dispatch(fetchSession());
     }, [dispatch]);
 
-    // If user is authenticated, redirect to home
     useEffect(() => {
         if (authenticated) {
             navigate("/");
@@ -28,22 +26,25 @@ const LoginPage: React.FC = () => {
 
     return (
         <div className="login-page">
-            <div className="login-card">
-                <h2>Welcome to Linked Scholar</h2>
-                <p>Sign in using one of the following providers:</p>
+            <h1 className="title">
+                <span className="title-linked">Linked</span>
+                <span className="title-scholar">Scholar</span>
+            </h1>
+            <p className="login-subtitle">Sign in to explore and analyze researcher networks.</p>
 
-                <button className="sso-btn google-btn" onClick={() => handleLogin("google")}>
-                    <img src="/icons/google.svg" alt="Google" /> Sign in with Google
-                </button>
-                <button className="sso-btn github-btn" onClick={() => handleLogin("github")}>
-                    <img src="/icons/github.svg" alt="GitHub" /> Sign in with GitHub
-                </button>
-                <button className="sso-btn microsoft-btn" onClick={() => handleLogin("microsoft")}>
-                    <img src="/icons/microsoft.svg" alt="Microsoft" /> Sign in with Microsoft
-                </button>
+            <button className="sso-btn google-btn" onClick={() => handleLogin("google")}>
+                <img src="/icons/google.svg" alt="Google" className="sso-icon" /> Sign in with Google
+            </button>
+            <button className="sso-btn google-btn" onClick={() => handleLogin("github")}>
+                <img src="/icons/github.svg" alt="GitHub" className="sso-icon" /> Sign in with GitHub
+            </button>
+            <button className="sso-btn  google-btn" onClick={() => handleLogin("microsoft")}>
+                <img src="/icons/microsoft.svg" alt="Microsoft" className="sso-icon" /> Sign in with Microsoft
+            </button>
 
-                <p className="disclaimer">By signing in, you agree to our <a href="/terms">Terms of Service</a>.</p>
-            </div>
+            <p className="disclaimer">
+                By signing in, you agree to our <a href="/terms">Terms of Service</a>.
+            </p>
         </div>
     );
 };

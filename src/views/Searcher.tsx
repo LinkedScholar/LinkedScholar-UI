@@ -55,19 +55,20 @@ const Searcher: React.FC = () => {
     };
 
     return (
-        <div className="menu-container">
-            <div className="menu-content">
-                <header className="menu-header">
-                    <div className="title-container">
-                        <h1 className="title-linked">Linked</h1>
-                        <h1 className="title-scholar">Scholar</h1>
-                    </div>
-                    <span className="menu-version">v1.0</span>
-                </header>
-
+        <div className="search-page">
+            <header className="search-header">
+                <div className="title-container">
+                    <h1 className="title">
+                        <span className="title-linked">Linked</span>
+                        <span className="title-scholar">Scholar</span>
+                    </h1>
+                    <span className="version-text">v0.5</span>
+                </div>
                 <p className="search-info">Find and analyze researcher networks with ease.</p>
+            </header>
 
-                <form onSubmit={handleSearch} className="search-container">
+            <form onSubmit={handleSearch} className="mb-3 search-container">
+                <div className="search-bar">
                     <input
                         type="text"
                         className="search-input"
@@ -75,19 +76,19 @@ const Searcher: React.FC = () => {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                </form>
-
-                <div className="search-buttons">
-                    <button type="submit" className="search-button" onClick={handleSearch}>
-                        Search
-                    </button>
-                    <button type="button" className="search-button" onClick={() => setSearchTerm("")}>
-                        Clear
-                    </button>
                 </div>
+            </form>
 
-                {error && <p className="error-message">{error}</p>}
+            <div className="search-buttons">
+                <button type="submit" className="search-button" onClick={handleSearch}>
+                    Search
+                </button>
+                <button type="button" className="search-button-secondary" onClick={() => setSearchTerm("")}>
+                    Clear
+                </button>
             </div>
+
+            {error && <p className="error-message">{error}</p>}
 
             <RegistrationModal isOpen={isRegistrationModalOpen} onClose={() => setIsRegistrationModalOpen(false)} />
             <PricingModal isOpen={isPricingModalOpen} onClose={() => setIsPricingModalOpen(false)} />

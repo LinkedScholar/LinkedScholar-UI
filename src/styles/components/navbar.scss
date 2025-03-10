@@ -1,27 +1,25 @@
-/* Frosted Glass Navbar */
+/* Minimalist Frosted Glass Navbar */
 .glass-navbar {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    padding: 12px 30px;
     position: fixed;
     width: 100%;
     top: 0;
     z-index: 1000;
     transition: background 0.3s ease-in-out;
+    border-bottom: none; /* Removed separator line */
 }
 
-.glass-navbar:hover {
-    background: rgba(255, 255, 255, 0.4);
-}
-
-/* Brand Styling */
+/* Brand Logo Styling */
 .brand-title {
-    font-size: 24px;
+    font-size: 32px;
     font-weight: bold;
     color: #003366;
     text-decoration: none;
-    transition: color 0.3s ease-in-out;
+    transition: color 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
 }
 
 .brand-title span {
@@ -43,18 +41,25 @@
     font-weight: 500;
 }
 
-/* Sign In Button */
+/* Minimalist Sign-In Button */
 .login-btn {
-    background: #0066cc;
-    color: white;
-    border-radius: 8px;
-    padding: 10px 15px;
-    transition: all 0.3s ease-in-out;
+    background: none;
+    color: #0066cc;
+    border: 1px solid #0066cc;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
 .login-btn:hover {
-    background: #003366;
+    background: #0066cc;
     color: white;
+}
+
+.login-btn:active {
+    background: #004c99;
 }
 
 /* User Profile Dropdown */
@@ -62,7 +67,7 @@
     background: transparent;
     color: #003366;
     border: 1px solid #0066cc;
-    padding: 8px 12px;
+    padding: 10px 16px;
     border-radius: 6px;
     display: flex;
     align-items: center;
@@ -78,11 +83,11 @@
 .dropdown-menu {
     background: white;
     border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     min-width: 180px;
     right: 0;
     top: 40px;
     position: absolute;
+    border: none; /* No border for a cleaner look */
 }
 
 .dropdown-menu .dropdown-item {
@@ -107,14 +112,15 @@
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
     .glass-navbar {
-        padding: 8px 15px;
+        padding: 10px 20px;
     }
 
     .brand-title {
-        font-size: 22px;
+        font-size: 28px;
     }
 
     .login-btn {
-        padding: 8px 12px;
+        padding: 8px 18px;
+        font-size: 14px;
     }
 }

@@ -5,106 +5,90 @@
 $primary-color: #003366;
 $secondary-color: #0066cc;
 $text-color: #202124;
-$background-grey: #f1f3f4;
-$border-grey: #d1d5db;
-$shadow-light: rgba(0, 0, 0, 0.1);
+$background-grey: #ffffff;
+$border-grey: #dfe1e5;
+$shadow-light: rgba(0, 0, 0, 0.15);
 
-/* Main Layout */
-.menu-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  color: $text-color;
-  font-family: 'Inter', sans-serif;
-}
-
-/* Content Layout */
-.menu-content {
+/* Full-width layout */
+.search-page {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  max-width: 800px;
-  min-height: 80vh;
-  padding: 80px 20px 20px;
-  margin: 0 auto;
+  width: 100vw;
+  min-height: 100vh;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  background-color: $background-grey;
 }
 
 /* Header */
-.menu-header {
-  text-align: center;
-  margin-bottom: 40px;
+.search-header {
+  margin-bottom: 15px; /* Reduced spacing for compact layout */
 }
 
-/* Title */
 .title-container {
   display: flex;
   align-items: baseline;
   justify-content: center;
-  margin-bottom: 5px;
+  gap: 6px;
+}
+
+.title {
+  font-size: 40px;
+  font-weight: 600;
+  margin-bottom: 5px; /* Reduced spacing */
 }
 
 .title-linked {
-  font-size: 48px;
-  font-weight: 500;
   color: $primary-color;
-  margin-right: 8px;
 }
 
 .title-scholar {
-  font-size: 48px;
-  font-weight: 700;
   color: $secondary-color;
 }
 
-.menu-version {
+.version-text {
   font-size: 14px;
+  font-weight: 300;
   color: #888;
-  font-weight: 300;
-  margin-left: 10px;
   position: relative;
-  top: 0px;
+  top: 4px;
 }
 
-/* Search Information */
 .search-info {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 300;
-  color: #555;
-  margin-bottom: 30px;
-  text-align: center;
-  line-height: 1.6;
+  color: #5f6368;
+  margin-bottom: 15px; /* Reduced spacing */
 }
 
-/* Search Box */
+/* Full-width search bar */
 .search-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   width: 100%;
-  max-width: 600px;
-  background: #ffffff;
-  padding: 15px;
-  border-radius: 12px;
-  box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.08);
+  max-width: 650px;
+  padding: 0 20px;
+  margin-top: 5px; /* Moves search bar closer */
+}
+
+.search-bar {
+  width: 100%;
 }
 
 .search-input {
-  padding: 14px 18px;
+  width: 100%;
+  padding: 14px 20px;
   font-size: 16px;
   font-family: 'Inter', sans-serif;
-  border: 2px solid $border-grey;
-  border-radius: 8px;
-  width: 100%;
-  max-width: 400px;
-  transition: all 0.3s ease;
+  border: 1px solid $border-grey;
+  border-radius: 50px;
   background: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 
   &:focus {
     border-color: $primary-color;
-    box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.2);
+    box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.15);
     outline: none;
   }
 }
@@ -112,37 +96,45 @@ $shadow-light: rgba(0, 0, 0, 0.1);
 /* Search Buttons */
 .search-buttons {
   display: flex;
-  gap: 10px;
-  margin-top: 15px;
+  gap: 8px;
+  margin-top: 15px; /* Brings buttons closer */
 }
 
 .search-button {
-  padding: 12px 24px;
-  font-size: 16px;
-  font-family: 'Inter', sans-serif;
+  padding: 10px 22px;
+  font-size: 14px;
   font-weight: 500;
   color: white;
   background-color: $primary-color;
   border: none;
-  border-radius: 8px;
+  border-radius: 24px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 
   &:hover {
     background-color: #014e9f;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
+}
 
-  &:active {
-    transform: translateY(0);
+.search-button-secondary {
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #f1f3f4;
+  border: 1px solid $border-grey;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #e8eaed;
   }
 }
 
 /* Error Message */
 .error-message {
-  color: #ff0000;
+  color: #d93025;
   font-size: 14px;
   margin-top: 10px;
   text-align: center;
@@ -151,20 +143,27 @@ $shadow-light: rgba(0, 0, 0, 0.1);
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-  .title-linked, .title-scholar {
-    font-size: 36px;
+  .title {
+    font-size: 34px;
+  }
+
+  .version-text {
+    font-size: 12px;
+    top: 3px;
   }
 
   .search-info {
-    font-size: 16px;
+    font-size: 14px;
+    margin-bottom: 12px;
   }
 
   .search-input {
+    font-size: 14px;
     padding: 12px 16px;
   }
 
   .search-button {
-    font-size: 16px;
-    padding: 10px 20px;
+    font-size: 14px;
+    padding: 10px 18px;
   }
 }

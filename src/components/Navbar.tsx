@@ -41,7 +41,7 @@ const Navbar: React.FC = () => {
     return (
         <nav className="navbar navbar-expand-lg glass-navbar">
             <div className="container">
-                {/* Brand Logo */}
+                {/* Brand Logo (Bigger & Minimalist) */}
                 <Link className="navbar-brand brand-title" to="/">
                     Linked <span>Scholar</span>
                 </Link>
@@ -85,7 +85,7 @@ const Navbar: React.FC = () => {
                         </div>
                     ) : (
                         <button className="btn login-btn" onClick={handleLogin}>
-                            Sign in
+                            Sign In
                         </button>
                     )}
                 </div>
