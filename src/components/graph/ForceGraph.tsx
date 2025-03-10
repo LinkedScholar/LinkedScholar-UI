@@ -26,7 +26,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links }) => {
         // Create zoomable <g> group
         const zoomGroup = svg.append("g");
 
-        // Enable zoom and pan
         svg.call(
             d3.zoom<SVGSVGElement, unknown>()
                 .scaleExtent([0.5, 3])
@@ -79,10 +78,11 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links }) => {
 
         // Add circle nodes
         nodeGroup.append("circle")
-            .attr("r", 16) // Fixed size
+            .attr("r", 16)
             .attr("fill", "#0066cc")
             .attr("stroke", "#003366")
-            .attr("stroke-width", 2);
+            .attr("stroke-width", 2)
+            .attr("class", "node");
 
         // Add labels inside nodes
         nodeGroup.append("text")
@@ -93,7 +93,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links }) => {
             .style("fill", "white")
             .style("pointer-events", "none")
             .style("font-weight", "bold")
-            .text((d) => d.name.split(" ")[0]); // Shorten label
+            .text((d) => d.name.split(" ")[0]);
 
         // Simulation tick updates
         simulation.on("tick", () => {
@@ -105,6 +105,42 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links }) => {
 
             nodeGroup.attr("transform", (d) => `translate(${d.x}, ${d.y})`);
         });
+
+        // ** HOVER INTERACTIVITY **
+        nodeGroup
+            .on("mouseover", function (_, d) {
+                const connectedNodes = new Set();
+                const connectedLinks = new Set();
+
+                links.forEach((link) => {
+                    if (link.source === d || link.target === d) {
+                        connectedNodes.add(link.source);
+                        connectedNodes.add(link.target);
+                        connectedLinks.add(link);
+                    }
+                });
+
+                // Reduce opacity for all nodes and links
+                nodeGroup.selectAll("circle").attr("fill", "#aaa");
+                linkSelection.attr("stroke-opacity", 0.1);
+
+                // Highlight connected nodes and links
+                nodeGroup
+                    .filter((n) => connectedNodes.has(n))
+                    .selectAll("circle")
+                    .attr("fill", "#ffcc00");
+
+                linkSelection
+                    .filter((l) => connectedLinks.has(l))
+                    .attr("stroke", "#ff9900")
+                    .attr("stroke-opacity", 1)
+                    .attr("stroke-width", 3);
+            })
+            .on("mouseout", function () {
+                // Restore original colors
+                nodeGroup.selectAll("circle").attr("fill", "#0066cc");
+                linkSelection.attr("stroke", "#ccc").attr("stroke-opacity", 0.7).attr("stroke-width", 1.5);
+            });
 
         // Resize handling
         const handleResize = () => {

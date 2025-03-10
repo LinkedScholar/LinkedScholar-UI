@@ -47,7 +47,6 @@ const Searcher: React.FC = () => {
         return null;
     };
 
-    // 🔎 Handle Search with Profile Detection
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
@@ -60,7 +59,7 @@ const Searcher: React.FC = () => {
             }
 
             try {
-                const response = await getNetwork(authenticated, profileData.author_id, profileData.source, 0);
+                const response = await getNetwork(authenticated, profileData.author_id, profileData.source, 1);
                 navigate("/network", { state: { networkData: response } });
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response) {

@@ -18,3 +18,14 @@
   stroke-opacity: 0.7;
   stroke-width: 1.5;
 }
+
+/* Hover styles */
+.node:hover {
+  cursor: pointer;
+}
+
+.link.highlighted {
+  stroke: #ff9900 !important;
+  stroke-opacity: 1 !important;
+  stroke-width: 3 !important;
+}
