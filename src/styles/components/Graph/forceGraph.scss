@@ -1,0 +1,21 @@
+.force-graph-container {
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  background: #f9f9f9;
+  overflow: hidden;
+}
+
+.node-label {
+  font-size: 12px;
+  font-weight: bold;
+  fill: white;
+  text-shadow: 1px 1px 3px #333;
+  pointer-events: none;
+}
+
+.link {
+  stroke: #ccc;
+  stroke-opacity: 0.7;
+  stroke-width: 1.5;
+}

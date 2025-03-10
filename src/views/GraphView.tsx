@@ -22,10 +22,6 @@ const GraphView: React.FC = () => {
 
     return (
         <div>
-            <header style={{ padding: "1rem", background: "#f0f0f0" }}>
-                <h2>Network Graph</h2>
-                {authenticated && username && <p>Logged in as: {username}</p>}
-            </header>
             <ForceGraph nodes={networkData.nodes} links={networkData.links} />
         </div>
     );
