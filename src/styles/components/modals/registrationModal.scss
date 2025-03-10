@@ -22,25 +22,15 @@ $shadow-color: rgba(0, 0, 0, 0.2);
 }
 
 .registration-modal {
-  background: $background-glass;
+  background: white;
   border-radius: 12px;
   max-width: 500px;
   width: 90%;
   padding: 20px;
   box-shadow: 0px 10px 30px $shadow-color;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(15px);
   color: $primary-color;
   text-align: center;
-
-  .btn-close {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    cursor: pointer;
-    background: none;
-    border: none;
-  }
+  position: relative;
 
   .icon-container {
     font-size: 2.5rem;
@@ -59,11 +49,6 @@ $shadow-color: rgba(0, 0, 0, 0.2);
     color: $primary-color;
   }
 
-  .benefits {
-    font-weight: bold;
-    margin-top: 10px;
-  }
-
   .benefits-list {
     padding: 0;
     list-style: none;
@@ -78,12 +63,13 @@ $shadow-color: rgba(0, 0, 0, 0.2);
     }
   }
 
+  /* Smaller Sign-Up Button */
   .signup-button {
     background: $secondary-color;
     color: white;
-    padding: 10px;
+    padding: 8px 16px;  /* Adjusted padding for smaller width */
     font-size: 1rem;
-    width: 100%;
+    width: 60%;  /* Less wide */
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -106,5 +92,22 @@ $shadow-color: rgba(0, 0, 0, 0.2);
         text-decoration: underline;
       }
     }
+  }
+}
+
+/* Close Button Styling */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s ease-in-out;
+
+  &:hover {
+    color: black;
   }
 }
