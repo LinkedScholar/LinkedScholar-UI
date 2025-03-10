@@ -1,23 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useLocation, Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import { RootState, AppDispatch } from "../redux/store";
 import { fetchSession, logout } from "../redux/authSlice";
-import '../styles/components/navbar.css';
+import { persistStore } from "redux-persist";
+import { store } from "../redux/store";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../styles/components/navbar.scss";
 
 const Navbar: React.FC = () => {
-    const location = useLocation();
-    const { authenticated, username, email, picture, status } = useSelector((state: RootState) => state.auth);
+    const { authenticated, firstName, lastName, email, status } = useSelector(
+        (state: RootState) => state.auth
+    );
     const dispatch: AppDispatch = useDispatch();
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
-    // Fetch session on mount and when user logs in
     useEffect(() => {
-        dispatch(fetchSession());
-    }, [dispatch, authenticated]);
+        if (status === "idle" && !authenticated) {
+            dispatch(fetchSession()).catch(() => {
+                console.log("Error fetching session");
+            });
+        }
+    }, [dispatch, status, authenticated]);
+
 
     const handleLogin = () => {
-        window.location.href = "/login"; // Redirect to Login Page
+        window.location.href = "/login";
     };
 
     const handleLogout = async () => {
@@ -25,42 +33,64 @@ const Navbar: React.FC = () => {
             method: "POST",
             credentials: "include",
         });
+
         dispatch(logout());
+        persistStore(store).purge(); // ✅ Clear Redux Persist data on logout
     };
 
     return (
-        <nav className="research-navbar">
-            {/* Left Side: Brand */}
-            <div className="navbar-left">
-                <Link to="/" className="brand-link">
-                    <div className="brand-title-container">
-                        <span className="brand-title-linked">Linked</span>
-                        <span className="brand-title-scholar">Scholar</span>
-                    </div>
+        <nav className="navbar navbar-expand-lg glass-navbar">
+            <div className="container">
+                {/* Brand Logo */}
+                <Link className="navbar-brand brand-title" to="/">
+                    Linked <span>Scholar</span>
                 </Link>
-            </div>
 
-            {/* Right Side: Login / Profile Dropdown */}
-            <div className="navbar-right">
-                {status === "loading" ? (
-                    <p>Loading...</p>
-                ) : authenticated ? (
-                    <div className="user-profile-container">
-                        <button className="user-profile-btn" onClick={() => setDropdownOpen(!dropdownOpen)}>
-                            <img src={picture || "https://via.placeholder.com/40"} alt="User" className="user-avatar" />
+                {/* Navbar Toggler for Mobile */}
+                <button
+                    className="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                    aria-controls="navbarNav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span className="navbar-toggler-icon"></span>
+                </button>
+
+                {/* Navbar Items */}
+                <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    {status === "loading" ? (
+                        <p className="loading-text">Loading...</p>
+                    ) : status === "failed" ? (
+                        <p className="error-text text-danger">Network Error</p>
+                    ) : authenticated ? (
+                        <div className="dropdown">
+                            <button
+                                className="btn profile-btn dropdown-toggle d-flex align-items-center"
+                                onClick={() => setDropdownOpen(!dropdownOpen)}
+                            >
+                                {firstName && lastName ? `${firstName} ${lastName}` : "Profile"}
+                            </button>
+
+                            {dropdownOpen && (
+                                <ul className="dropdown-menu show">
+                                    <li className="dropdown-item text-muted">{email}</li>
+                                    <li>
+                                        <button className="dropdown-item text-danger" onClick={handleLogout}>
+                                            Logout
+                                        </button>
+                                    </li>
+                                </ul>
+                            )}
+                        </div>
+                    ) : (
+                        <button className="btn login-btn" onClick={handleLogin}>
+                            Sign in
                         </button>
-
-                        {dropdownOpen && (
-                            <div className="user-dropdown">
-                                <p><strong>{username}</strong></p>
-                                <p>{email}</p>
-                                <button onClick={handleLogout} className="logout-btn">Logout</button>
-                            </div>
-                        )}
-                    </div>
-                ) : (
-                    <button onClick={handleLogin} className="login-btn">Sign in</button>
-                )}
+                    )}
+                </div>
             </div>
         </nav>
     );

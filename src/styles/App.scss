@@ -1,4 +1,8 @@
+/* Define Primary & Secondary Colors */
+$primary-color: #003366;
+$secondary-color: #0066cc;
 
+/* Global Styles */
 body {
   background-color: #f8f9fa;
   font-family: 'Inter', sans-serif;
@@ -22,10 +26,11 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+/* Use Variables for Text Colors */
 .text-primary-color {
-  color: #003366;
+  color: $primary-color;
 }
 
 .text-secondary-color {
-  color: #0066cc;
+  color: $secondary-color;
 }

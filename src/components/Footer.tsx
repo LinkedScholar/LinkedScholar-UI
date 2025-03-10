@@ -1,27 +1,35 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../styles/components/footer.scss";
 
 const Footer: React.FC = () => {
     return (
-        <footer className="research-footer py-3">
-            {/* Footer Branding */}
-            <b>
-                <p className="footer-text">Linked Scholar &copy; 2025</p>
-            </b>
+        <footer className="footer glass-footer py-3">
+            <div className="container d-flex flex-column flex-md-row justify-content-between align-items-center">
 
-            {/* Footer Navigation Links */}
-            <nav className="footer-links">
-                <Link to="/contact">Contact</Link>
-                <Link to="/help">Help & FAQs</Link>
-                <Link to="/privacy">Privacy</Link>
-                <Link to="/terms">Terms</Link>
-                <Link to="/api">API</Link>
-                <Link to="/contribute">Contribute</Link>
-            </nav>
+                {/* Footer Branding */}
+                <div className="footer-brand">
+                    <p className="mb-0 text-primary">Linked Scholar &copy; 2025</p>
+                </div>
 
-            {/* Sponsor Section */}
-            <div className="footer-sponsor">
-                <Link to="/sponsor" className="sponsor-link">Become a Sponsor</Link>
+                {/* Footer Navigation Links */}
+                <nav className="footer-links d-flex flex-wrap justify-content-center">
+                    <Link to="/contact" className="nav-link">Contact</Link>
+                    <Link to="/help" className="nav-link">Help & FAQs</Link>
+                    <Link to="/privacy" className="nav-link">Privacy</Link>
+                    <Link to="/terms" className="nav-link">Terms</Link>
+                    <Link to="/api" className="nav-link">API</Link>
+                    <Link to="/contribute" className="nav-link">Contribute</Link>
+                </nav>
+
+                {/* Sponsor Section */}
+                <div className="footer-sponsor">
+                    <Link to="/sponsor" className="btn btn-outline-primary sponsor-link">
+                        Become a Sponsor
+                    </Link>
+                </div>
+
             </div>
         </footer>
     );

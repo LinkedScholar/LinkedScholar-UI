@@ -1,0 +1,79 @@
+@import "../app.scss"; // Import global styles
+
+/* Frosted Glass Footer */
+.glass-footer {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(15px);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    transition: background 0.3s ease-in-out;
+    padding: 15px 0;
+}
+
+.glass-footer:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* Footer Branding */
+.footer-brand p {
+    font-size: 16px;
+    font-weight: bold;
+    color: $primary-color; // Uses SCSS variable
+}
+
+/* Footer Links */
+.footer-links {
+    display: flex;
+    gap: 15px;
+}
+
+.footer-links .nav-link {
+    font-size: 14px;
+    color: $primary-color; // Uses SCSS variable
+    text-decoration: none;
+    transition: color 0.3s ease-in-out;
+}
+
+.footer-links .nav-link:hover {
+    color: $primary-color; // Uses SCSS variable
+    text-decoration: underline;
+}
+
+/* Sponsor Section */
+.footer-sponsor {
+    display: flex;
+    align-items: center;
+}
+
+.sponsor-link {
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+.sponsor-link:hover {
+    background: $secondary-color; // Uses SCSS variable
+    color: white;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .glass-footer {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .footer-sponsor {
+        margin-top: 10px;
+    }
+}

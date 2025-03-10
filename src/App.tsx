@@ -12,7 +12,7 @@ import Contribute from "./views/footer/Contribute";
 import Sponsor from "./views/footer/Sponsor";
 import Contact from "./views/footer/Contact";
 import LoginPage from "./views/LoginPage";
-
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function Api() {
     return null;
@@ -21,13 +21,13 @@ function Api() {
 const App: React.FC = () => {
     return (
         <Router>
-            <div className="app-container">
+            <div className="app-container d-flex flex-column vh-100">
                 <header>
                     <Navbar />
                 </header>
 
-                <main className="main-content">
-                    <HelloUser />
+                {/* Main Content Area (Grows to Fill Space) */}
+                <main className="main-content flex-grow-1 d-flex justify-content-center align-items-center">
                     <Routes>
                         <Route path="/" element={<Searcher />} />
                         <Route path="/login" element={<LoginPage />} />
