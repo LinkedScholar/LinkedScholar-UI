@@ -18,18 +18,18 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-      <div className="pricing-modal-overlay d-flex align-items-center justify-content-center">
-        <div className="pricing-modal card shadow-lg p-4">
-          <div className="pricing-modal-header d-flex justify-content-between align-items-center">
-            <h2 className="text-primary">Upgrade to Premium</h2>
-            <button className="btn-close" onClick={onClose}></button>
-          </div>
+      <div className="pricing-modal-overlay" onClick={onClose}>
+        <div className="pricing-modal" onClick={(e) => e.stopPropagation()}>
 
-          <p className="text-muted">You have reached the monthly graph limit in the Free plan</p>
+          {/* Close Button */}
+          <button className="close-button" onClick={onClose}>×</button>
+
+          <h2 className="text-primary">Upgrade to Premium</h2>
+          <p className="text-muted">You have reached the monthly graph limit in the Free plan.</p>
 
           {/* Billing Toggle */}
-          <div className="billing-toggle d-flex align-items-center justify-content-center my-3">
-            <span className={`me-2 ${!isAnnual ? "fw-bold text-primary" : ""}`}>Monthly</span>
+          <div className="billing-toggle">
+            <span className={!isAnnual ? "active" : ""}>Monthly</span>
             <div className="form-check form-switch">
               <input
                   className="form-check-input"
@@ -38,47 +38,37 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
                   onChange={() => setIsAnnual(!isAnnual)}
               />
             </div>
-            <span className={`ms-2 ${isAnnual ? "fw-bold text-primary" : ""}`}>Annual</span>
+            <span className={isAnnual ? "active" : ""}>Annual</span>
           </div>
 
-          <div className="row g-3">
-            <div className="col-md-6">
-              <div className="card border-secondary">
-                <div className="card-header text-center fw-bold">Free Plan</div>
-                <div className="card-body text-center">
-                  <h3 className="text-success">€0</h3>
-                  <ul className="list-unstyled">
-                    <li>5 graphs per month</li>
-                    <li>All features included</li>
-                  </ul>
-                  <button className="btn btn-outline-secondary w-100" disabled>
-                    Current Plan
-                  </button>
-                </div>
-              </div>
+          <div className="pricing-plans">
+            {/* Free Plan */}
+            <div className="pricing-plan free">
+              <h3>Free Plan</h3>
+              <p className="price">€0</p>
+              <ul>
+                <li>5 graphs per month</li>
+                <li>All features included</li>
+              </ul>
+              <button className="plan-button disabled" disabled>Current Plan</button>
             </div>
 
-            <div className="col-md-6">
-              <div className="card border-primary">
-                <div className="card-header text-center fw-bold bg-primary text-white">
-                  Pro Plan
-                </div>
-                <div className="card-body text-center">
-                  <h3 className="text-primary">€{displayPrice}<span className="fs-6">/month</span></h3>
-                  <ul className="list-unstyled">
-                    <li>Unlimited graphs</li>
-                    <li>All features included</li>
-                  </ul>
-                  <button className="btn btn-primary w-100" onClick={() => window.open("/", "_blank")}>
-                    Upgrade Now
-                  </button>
-                  <p className="small text-muted mt-2">{isAnnual ? billedText : "\u00A0"}</p>
-                </div>
-              </div>
+            {/* Pro Plan */}
+            <div className="pricing-plan premium">
+              <h3>Pro Plan</h3>
+              <p className="price">€{displayPrice}<span className="fs-6">/month</span></p>
+              <ul>
+                <li>Unlimited graphs</li>
+                <li>All features included</li>
+              </ul>
+              <button className="plan-button" onClick={() => window.open("/", "_blank")}>
+                Upgrade Now
+              </button>
+              <p className="small text-muted">{isAnnual ? billedText : "\u00A0"}</p>
             </div>
           </div>
 
-          <div className="text-center mt-3">
+          <div className="pricing-footer">
             <p>
               Questions? <a href="/help">Check our FAQs</a> or{" "}
               <a href="/contact">Contact Support</a>

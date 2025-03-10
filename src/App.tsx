@@ -13,6 +13,7 @@ import Sponsor from "./views/footer/Sponsor";
 import Contact from "./views/footer/Contact";
 import LoginPage from "./views/LoginPage";
 import "bootstrap/dist/css/bootstrap.min.css";
+import GraphView from "./views/GraphView";
 
 function Api() {
     return null;
@@ -39,6 +40,7 @@ const App: React.FC = () => {
                         <Route path="/sponsor" element={<Sponsor />} />
                         <Route path="/api" element={<Api />} />
                         <Route path="/contact" element={<Contact />} />
+                        <Route path="/network" element={<GraphView />} />
                     </Routes>
                 </main>
 

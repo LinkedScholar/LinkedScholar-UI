@@ -62,11 +62,11 @@ const authSlice = createSlice({
                 state.lastName = action.payload.lastName || undefined;
                 state.email = action.payload.email || undefined;
                 state.picture = action.payload.picture || undefined;
-                state.status = "succeeded"; // ✅ Prevents re-fetching
+                state.status = "succeeded";
             })
             .addCase(fetchSession.rejected, (state) => {
                 state.authenticated = false;
-                state.status = "failed"; // ✅ Ensures it doesn't stay "loading"
+                state.status = "failed";
             });
     },
 });

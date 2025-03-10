@@ -28,14 +28,40 @@ const Searcher: React.FC = () => {
         }
     }, [dispatch, status]);
 
+    // 🔎 Detect profile provider and extract author_id
+    const extractProfileData = (url: string) => {
+        if (url.match(/scholar\.google\.[a-z.]+/)) {
+            const match = url.match(/[?&]user=([^&]+)/);
+            if (match && match[1]) {
+                return { author_id: match[1], source: "google" };
+            }
+        } else if (url.includes("researchgate.net/profile")) {
+            const match = url.match(/profile\/([^/]+)/);
+            if (match && match[1]) {
+                return { author_id: match[1], source: "research_gate" };
+            }
+        } else {
+            // Assume if not Google Scholar or ResearchGate, we pass it to DBLP logic
+            return { author_id: url, source: "dblp" };
+        }
+        return null;
+    };
+
+    // 🔎 Handle Search with Profile Detection
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
 
         if (searchTerm.trim()) {
+            const profileData = extractProfileData(searchTerm);
+            if (!profileData) {
+                setError("Invalid researcher profile URL.");
+                return;
+            }
+
             try {
-                const response = await getNetwork(authenticated, searchTerm, "google", 0);
-                navigate("/network", { state: { networkData: response, loading: false } });
+                const response = await getNetwork(authenticated, profileData.author_id, profileData.source, 0);
+                navigate("/network", { state: { networkData: response } });
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response) {
                     if (error.response.status === 429 && !authenticated) {
@@ -47,7 +73,7 @@ const Searcher: React.FC = () => {
                         return;
                     }
                 }
-                setError("Failed to fetch network data. Please try again.");
+                setError("The service is unavailable. Please try later");
             }
         } else {
             setError("Enter a valid researcher name or profile URL.");
