@@ -3,8 +3,8 @@
 .researcher-sidebar {
   position: fixed;
   top: 160px;
-  bottom: 80px; // Reserve space for a 60px tall footer
-  right: -400px; // Initially hidden off-screen
+  bottom: 80px;
+  right: -400px;
   width: 400px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
@@ -13,22 +13,32 @@
   border-radius: 16px 0 0 16px;
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  overflow-y: scroll;        // Always show scrollbar space
-  scrollbar-gutter: stable;   // Reserve scrollbar space (modern browsers)
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
   user-select: none;
-  transition: right 0.3s ease-in-out, width 0.3s ease, padding 0.3s ease;
+  transition: 
+    right 0.3s ease-in-out, 
+    width 0.3s ease, 
+    padding 0.3s ease,
+    backdrop-filter 0.3s ease;
 
   &.open {
     right: 0;
   }
 
   &.compressed {
-    width: 60px;   // Reduced width when compressed
-    padding: 12px; // Reduced padding
+    width: 60px;
+    padding: 12px;
     background: none;
     border: none;
     box-shadow: none;
-    overflow-y: hidden; // Hide scrollbar in compressed mode
+    overflow-y: hidden;
+    backdrop-filter: none; 
+    border-radius: 16px 0 0 16px;
+    right: 0;
+    z-index: 0;
+    // Ensure the researcher compressed sidebar stays at the top
+    top: 160px; 
   }
 
   .sidebar-header {
@@ -49,20 +59,31 @@
         background: none;
         border: none;
         padding: 0;
-        font-size: 1.5rem; // Adjust as needed for icon size
+        font-size: 1.5rem; 
         cursor: pointer;
-        color: $secondary-color; // Uses your app.scss variable
+        color: $secondary-color;
         transition: color 0.2s ease;
-        &:hover {
-          color: darken($secondary-color, 10%);
+        
+        // Ensure the compress button is behind the close button
+        .compress-button {
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1;
         }
-        .compress-button,
         .close-button {
           width: 40px;
           height: 40px;
           display: flex;
           align-items: center;
           justify-content: center;
+          z-index: 2;
+        }
+        
+        &:hover {
+          color: darken($secondary-color, 10%);
         }
       }
     }
