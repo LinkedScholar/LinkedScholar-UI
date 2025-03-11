@@ -51,8 +51,7 @@ const Filters: React.FC<FiltersProps> = ({
       {/* Main content */}
       <div className="filters-content p-3">
         <p className="text-muted">
-          Selected affiliations will be highlighted on the graph nodes. The entire graph remains
-          visible.
+          Select affiliations to highlight
         </p>
         <ul className="list-unstyled">
           {affiliations.map((affiliation) => (
