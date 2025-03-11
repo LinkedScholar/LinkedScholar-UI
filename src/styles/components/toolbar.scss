@@ -1,0 +1,46 @@
+.toolbar {
+  position: absolute;
+  top: 100px; /* Adjust positioning below navbar */
+  right: 20px;
+  z-index: 10;
+  display: flex;
+  gap: 16px; /* More space between buttons */
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.toolbar-button {
+  background: none;
+  border: none;
+  font-size: 28px; /* Increase icon size */
+  cursor: pointer;
+  padding: 12px; /* Increase button padding */
+  border-radius: 50%;
+  transition: background 0.2s ease, transform 0.1s ease;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px; /* Ensure bigger button */
+  height: 50px;
+
+  i {
+    font-size: 28px; /* Ensure icon is large */
+    color: #333;
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: scale(1.1); /* Slight enlarge effect */
+  }
+
+  &.active {
+    background: #0066cc;
+
+    i {
+      color: white;
+    }
+  }
+}

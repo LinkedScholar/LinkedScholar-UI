@@ -28,7 +28,6 @@ const Searcher: React.FC = () => {
         }
     }, [dispatch, status]);
 
-    // 🔎 Detect profile provider and extract author_id
     const extractProfileData = (url: string) => {
         if (url.match(/scholar\.google\.[a-z.]+/)) {
             const match = url.match(/[?&]user=([^&]+)/);
@@ -59,7 +58,7 @@ const Searcher: React.FC = () => {
             }
 
             try {
-                const response = await getNetwork(authenticated, profileData.author_id, profileData.source, 1);
+                const response = await getNetwork(authenticated, profileData.author_id, profileData.source, 0);
                 navigate("/network", { state: { networkData: response } });
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response) {
