@@ -1,0 +1,142 @@
+{
+  "affiliation": [],
+  "articles": [
+    {
+      "author": "None",
+      "booktitle": "None",
+      "cdrom": "None",
+      "cite": "None",
+      "crossref": "None",
+      "editor": "None",
+      "ee": [
+        "https://doi.org/10.1121/2.0000354"
+      ],
+      "journal": "Proc. Meet. Acoust.",
+      "month": "None",
+      "number": "1",
+      "pages": "None",
+      "publnr": "None",
+      "stream": "None",
+      "title": "Soprano singing, with and without resonances.",
+      "url": "db/journals/pma/pma28.html#WadeHSW16",
+      "volume": "28",
+      "year": "2016"
+    },
+    {
+      "author": "None",
+      "booktitle": "None",
+      "cdrom": "None",
+      "cite": "None",
+      "crossref": "None",
+      "editor": "None",
+      "ee": [
+        "oa::https://doi.org/10.3390/rs9111149"
+      ],
+      "journal": "Remote. Sens.",
+      "month": "None",
+      "number": "11",
+      "pages": "1149",
+      "publnr": "None",
+      "stream": "None",
+      "title": "Assessment of In-Season Cotton Nitrogen Status and Lint Yield Prediction from Unmanned Aerial System Imagery.",
+      "url": "db/journals/remotesensing/remotesensing9.html#BallesterHBSQ17",
+      "volume": "9",
+      "year": "2017"
+    },
+    {
+      "author": "None",
+      "booktitle": "None",
+      "cdrom": "None",
+      "cite": "None",
+      "crossref": "None",
+      "editor": "None",
+      "ee": [
+        "https://doi.org/10.1504/IJCBDD.2020.105095"
+      ],
+      "journal": "Int. J. Comput. Biol. Drug Des.",
+      "month": "None",
+      "number": "1",
+      "pages": "144-153",
+      "publnr": "None",
+      "stream": "None",
+      "title": "TopQA: a topological representation for single-model protein quality assessment with machine learning.",
+      "url": "db/journals/ijcbdd/ijcbdd13.html#SmithCSESSC20",
+      "volume": "13",
+      "year": "2020"
+    },
+    {
+      "author": "None",
+      "booktitle": "None",
+      "cdrom": "None",
+      "cite": "None",
+      "crossref": "None",
+      "editor": "None",
+      "ee": [
+        "https://doi.org/10.1016/j.ress.2021.107460"
+      ],
+      "journal": "Reliab. Eng. Syst. Saf.",
+      "month": "None",
+      "number": "None",
+      "pages": "107460",
+      "publnr": "None",
+      "stream": "None",
+      "title": "Risk analysis of bicycle accidents: A Bayesian approach.",
+      "url": "db/journals/ress/ress209.html#YangYSR21",
+      "volume": "209",
+      "year": "2021"
+    },
+    {
+      "author": "None",
+      "booktitle": "None",
+      "cdrom": "None",
+      "cite": "None",
+      "crossref": "None",
+      "editor": "None",
+      "ee": [
+        "https://doi.org/10.1016/j.neuroimage.2016.04.002",
+        "https://www.wikidata.org/entity/Q39853908"
+      ],
+      "journal": "NeuroImage",
+      "month": "None",
+      "number": "None",
+      "pages": "270-274",
+      "publnr": "None",
+      "stream": "None",
+      "title": "The Brain Analysis Library of Spatial maps and Atlases (BALSA) database.",
+      "url": "db/journals/neuroimage/neuroimage144.html#EssenSGEDDRCH17",
+      "volume": "144",
+      "year": "2017"
+    },
+    {
+      "author": "None",
+      "booktitle": "None",
+      "cdrom": "None",
+      "cite": "None",
+      "crossref": "None",
+      "editor": "None",
+      "ee": [
+        "https://doi.org/10.1142/S021919892450004X"
+      ],
+      "journal": "IGTR",
+      "month": "September",
+      "number": "3",
+      "pages": "2450004:1-2450004:34",
+      "publnr": "None",
+      "stream": "streams/journals/igtr",
+      "title": "Cognitive Load and Mixed Strategies: On Brains and Minimax.",
+      "url": "db/journals/igtr/igtr26.html#DuffyNOS24",
+      "volume": "26",
+      "year": "2024"
+    }
+  ],
+  "id": "4:f8d459c6-628f-486a-b6bc-54c1828e3150:1695790",
+  "journals": [
+    "Int. J. Comput. Biol. Drug Des.",
+    "NeuroImage",
+    "Remote. Sens.",
+    "Proc. Meet. Acoust.",
+    "Reliab. Eng. Syst. Saf.",
+    "IGTR"
+  ],
+  "name": "John Smith"
+}
