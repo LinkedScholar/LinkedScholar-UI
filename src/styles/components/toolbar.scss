@@ -1,14 +1,15 @@
-.toolbar {
+@import "../app.scss"; // Import global styles
 
+.toolbar {
   right: 20px;
   z-index: 10;
   display: flex;
-  align-items: center; /* Ensures buttons are vertically aligned */
+  align-items: center;
   gap: 16px;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba($background-grey, 0.95);
   border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 8px $shadow-light;
   height: 60px; /* Matches MiniSearcher */
 }
 
@@ -29,16 +30,16 @@
 
   i {
     font-size: 20px;
-    color: #333;
+    color: $primary-color; // Use primary color for icons
   }
 
   &:hover {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba($primary-color, 0.1);
     transform: scale(1.1);
   }
 
   &.active {
-    background: #0066cc;
+    background: $secondary-color;
 
     i {
       color: white;

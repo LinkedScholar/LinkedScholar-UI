@@ -1,30 +1,32 @@
-.mini-searcher-container {
+@import "../app.scss"; // Import global styles
 
+.mini-searcher-container {
   left: 40px;
   z-index: 10;
 }
 
 .new-search-button {
-  padding: 10px 16px;
-  font-size: 14px;
+  background: $background-grey;
+  color: $secondary-color;
+  border: 1px solid $secondary-color;
+  border-radius: 25px;
+  padding: 10px 20px;
+  font-size: 16px;
   font-weight: 500;
-  background-color: #0066cc;
-  color: white;
-  border: none;
-  border-radius: 24px;
+  transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
-  transition: all 0.3s ease;
+  gap: 8px;
+}
 
-  i {
-    font-size: 18px;
-  }
+.new-search-button:hover {
+  background: $secondary-color;
+  color: $background-grey;
+}
 
-  &:hover {
-    background-color: #014e9f;
-  }
+.new-search-button:active {
+  background: darken($secondary-color, 10%);
 }
 
 .mini-searcher {
@@ -32,11 +34,11 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 6px;
-  background: rgba(255, 255, 255, 0.95); /* More transparent */
+  background: rgba($background-grey, 0.95); // Slight transparency
   padding: 10px;
-  height:60px;
+  height: 60px;
   border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 8px $shadow-light;
   transition: all 0.3s ease;
 }
 
@@ -50,17 +52,26 @@
   width: 200px;
   padding: 8px;
   font-size: 14px;
-  border: 1px solid #dfe1e5;
+  border: 1px solid darken($background-grey, 10%);
   border-radius: 6px;
 }
 
 .mini-search-button {
-  background: #0066cc;
+  background: $secondary-color;
   border: none;
-  color: white;
+  color: $background-grey;
   padding: 8px;
   border-radius: 6px;
   cursor: pointer;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: lighten($secondary-color, 10%);
+  }
+
+  &:active {
+    background: darken($secondary-color, 10%);
+  }
 }
 
 .mini-search-button i {
@@ -75,14 +86,14 @@
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(217, 48, 37, 0.1);
+  }
 }
 
 .mini-search-close i {
   font-size: 18px;
-}
-
-.mini-search-close:hover {
-  background: rgba(217, 48, 37, 0.1);
 }
 
 .mini-search-error {

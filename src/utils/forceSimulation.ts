@@ -11,9 +11,9 @@ export const createForceSimulation = (
         .forceSimulation<NodeDatum>(nodes)
         .force("link", d3.forceLink<NodeDatum, LinkDatum>(links)
             .id((d) => d.id)
-            .distance(120)
+            .distance(100)
         )
         .force("charge", d3.forceManyBody().strength(-200))
         .force("center", d3.forceCenter(width / 2, height / 2))
-        .force("collision", d3.forceCollide().radius(15));
+        .force("collision", d3.forceCollide().radius(25));
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import "../../styles/components/Graph/forceGraph.scss";
 import { NodeDatum, LinkDatum } from "../../types/graphTypes";
@@ -11,6 +11,7 @@ interface ForceGraphProps {
 
 const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links }) => {
     const svgRef = useRef<SVGSVGElement>(null);
+    const [selectedNode, setSelectedNode] = useState<NodeDatum | null>(null);
 
     useEffect(() => {
         if (!svgRef.current) return;
@@ -29,6 +30,10 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links }) => {
         svg.call(
             d3.zoom<SVGSVGElement, unknown>()
                 .scaleExtent([0.5, 3])
+                .filter((event) => {
+                    // Ignore click events inside nodes
+                    return event.type !== "dblclick" && event.target.tagName !== "circle";
+                })
                 .on("zoom", (event) => {
                     zoomGroup.attr("transform", event.transform);
                     zoomGroup.selectAll(".node-label")
@@ -71,9 +76,14 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links }) => {
                     })
                     .on("end", (event, d) => {
                         if (!event.active) simulation.alphaTarget(0);
-                        d.fx = null;
-                        d.fy = null;
+                        if (!selectedNode || selectedNode !== d) {
+                            if (!selectedNode) {
+                                d.fx = null;
+                                d.fy = null;
+                            }
+                        }
                     })
+
             );
 
         // Add circle nodes
@@ -95,35 +105,25 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links }) => {
             .style("font-weight", "bold")
             .text((d) => d.name.split(" ")[0]);
 
-        // Simulation tick updates
-        simulation.on("tick", () => {
-            linkSelection
-                .attr("x1", (d) => (d.source as NodeDatum).x!)
-                .attr("y1", (d) => (d.source as NodeDatum).y!)
-                .attr("x2", (d) => (d.target as NodeDatum).x!)
-                .attr("y2", (d) => (d.target as NodeDatum).y!);
+        const updateHighlight = (selectedNode: NodeDatum | null) => {
+            const connectedNodes = new Set();
+            const connectedLinks = new Set();
 
-            nodeGroup.attr("transform", (d) => `translate(${d.x}, ${d.y})`);
-        });
-
-        // ** HOVER INTERACTIVITY **
-        nodeGroup
-            .on("mouseover", function (_, d) {
-                const connectedNodes = new Set();
-                const connectedLinks = new Set();
-
+            if (selectedNode) {
                 links.forEach((link) => {
-                    if (link.source === d || link.target === d) {
+                    if (link.source === selectedNode || link.target === selectedNode) {
                         connectedNodes.add(link.source);
                         connectedNodes.add(link.target);
                         connectedLinks.add(link);
                     }
                 });
+            }
 
-                // Reduce opacity for all nodes and links
-                nodeGroup.selectAll("circle").attr("fill", "#aaa");
-                linkSelection.attr("stroke-opacity", 0.1);
+            // Reduce opacity for all nodes and links
+            nodeGroup.selectAll("circle").attr("fill", selectedNode ? "#aaa" : "#0066cc");
+            linkSelection.attr("stroke-opacity", selectedNode ? 0.1 : 0.7);
 
+            if (selectedNode) {
                 // Highlight connected nodes and links
                 nodeGroup
                     .filter((n) => connectedNodes.has(n))
@@ -135,12 +135,47 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links }) => {
                     .attr("stroke", "#ff9900")
                     .attr("stroke-opacity", 1)
                     .attr("stroke-width", 3);
-            })
-            .on("mouseout", function () {
-                // Restore original colors
-                nodeGroup.selectAll("circle").attr("fill", "#0066cc");
-                linkSelection.attr("stroke", "#ccc").attr("stroke-opacity", 0.7).attr("stroke-width", 1.5);
+            }
+        };
+
+        nodeGroup.on("click", function (_, d) {
+            setSelectedNode((prev) => {
+                if (prev === d) {
+                    d.fx = d.x;
+                    d.fy = d.y;
+                    return null;
+                } else {
+                    d.fx = d.x;
+                    d.fy = d.y;
+                    return d;
+                }
             });
+        });
+
+
+        // Mouse over event
+        nodeGroup.on("mouseover", function (_, d) {
+            if (!selectedNode) updateHighlight(d);
+        });
+
+        // Mouse out event (only if no node is selected)
+        nodeGroup.on("mouseout", function () {
+            if (!selectedNode) updateHighlight(null);
+        });
+
+        // Update highlights when selectedNode changes
+        updateHighlight(selectedNode);
+
+        // Simulation tick updates
+        simulation.on("tick", () => {
+            linkSelection
+                .attr("x1", (d) => (d.source as NodeDatum).x!)
+                .attr("y1", (d) => (d.source as NodeDatum).y!)
+                .attr("x2", (d) => (d.target as NodeDatum).x!)
+                .attr("y2", (d) => (d.target as NodeDatum).y!);
+
+            nodeGroup.attr("transform", (d) => `translate(${d.x}, ${d.y})`);
+        });
 
         // Resize handling
         const handleResize = () => {
@@ -156,7 +191,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links }) => {
             simulation.stop();
             window.removeEventListener("resize", handleResize);
         };
-    }, [nodes, links]);
+    }, [nodes, links, selectedNode]); // Depend on selectedNode
 
     return (
         <svg ref={svgRef} className="force-graph-container" />
