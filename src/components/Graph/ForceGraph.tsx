@@ -7,33 +7,57 @@ import { createForceSimulation } from "../../utils/forceSimulation";
 interface ForceGraphProps {
     nodes: NodeDatum[];
     links: LinkDatum[];
-    onNodeClick: (node: NodeDatum) => void; // New prop for node clicks
+    onNodeClick: (node: NodeDatum | null) => void; // Allow null for unselection
+    gridActive: boolean;
 }
 
-const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links, onNodeClick }) => {
+const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links, onNodeClick, gridActive }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const [selectedNode, setSelectedNode] = useState<NodeDatum | null>(null);
 
     useEffect(() => {
         if (!svgRef.current) return;
-
         const svg = d3.select(svgRef.current);
         svg.selectAll("*").remove();
 
         const width = window.innerWidth;
         const height = window.innerHeight;
-
         svg.attr("width", width).attr("height", height);
 
         // Create zoomable <g> group
         const zoomGroup = svg.append("g");
 
+        // Append grid lines if gridActive is true
+        if (gridActive) {
+            const gridGroup = zoomGroup.append("g").attr("class", "grid-lines");
+            const gridSpacing = 50; // Adjust grid spacing as needed
+            // Vertical grid lines
+            for (let x = 0; x <= width; x += gridSpacing) {
+                gridGroup.append("line")
+                    .attr("x1", x)
+                    .attr("y1", 0)
+                    .attr("x2", x)
+                    .attr("y2", height)
+                    .attr("stroke", "#ccc")
+                    .attr("stroke-width", 1);
+            }
+            // Horizontal grid lines
+            for (let y = 0; y <= height; y += gridSpacing) {
+                gridGroup.append("line")
+                    .attr("x1", 0)
+                    .attr("y1", y)
+                    .attr("x2", width)
+                    .attr("y2", y)
+                    .attr("stroke", "#ccc")
+                    .attr("stroke-width", 1);
+            }
+        }
+
+        // Zoom behavior
         svg.call(
             d3.zoom<SVGSVGElement, unknown>()
                 .scaleExtent([0.5, 3])
-                .filter((event) => {
-                    return event.type !== "dblclick" && event.target.tagName !== "circle";
-                })
+                .filter((event) => event.type !== "dblclick" && event.target.tagName !== "circle")
                 .on("zoom", (event) => {
                     zoomGroup.attr("transform", event.transform);
                     zoomGroup.selectAll(".node-label")
@@ -76,12 +100,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links, onNodeClick }) =>
                     })
                     .on("end", (event, d) => {
                         if (!event.active) simulation.alphaTarget(0);
-                        if (!selectedNode || selectedNode !== d) {
-                            if (!selectedNode) {
-                                d.fx = null;
-                                d.fy = null;
-                            }
-                        }
                     })
             );
 
@@ -104,10 +122,25 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links, onNodeClick }) =>
             .style("font-weight", "bold")
             .text((d) => d.name.split(" ")[0]);
 
+        // Node click event: toggle selection
+        nodeGroup.on("click", function (_, d) {
+            if (selectedNode === d) {
+                d.fx = d.x;
+                d.fy = d.y;
+                setSelectedNode(null);
+                onNodeClick(null);
+            } else {
+                d.fx = d.x;
+                d.fy = d.y;
+                setSelectedNode(d);
+                onNodeClick(d);
+            }
+        });
+
+        // Mouseover/out for highlighting
         const updateHighlight = (selectedNode: NodeDatum | null) => {
             const connectedNodes = new Set();
             const connectedLinks = new Set();
-
             if (selectedNode) {
                 links.forEach((link) => {
                     if (link.source === selectedNode || link.target === selectedNode) {
@@ -117,18 +150,13 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links, onNodeClick }) =>
                     }
                 });
             }
-
-            // Reduce opacity for all nodes and links
             nodeGroup.selectAll("circle").attr("fill", selectedNode ? "#aaa" : "#0066cc");
             linkSelection.attr("stroke-opacity", selectedNode ? 0.1 : 0.7);
-
             if (selectedNode) {
-                // Highlight connected nodes and links
                 nodeGroup
                     .filter((n) => connectedNodes.has(n))
                     .selectAll("circle")
                     .attr("fill", "#ffcc00");
-
                 linkSelection
                     .filter((l) => connectedLinks.has(l))
                     .attr("stroke", "#ff9900")
@@ -137,47 +165,23 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links, onNodeClick }) =>
             }
         };
 
-        nodeGroup.on("click", function (_, d) {
-            setSelectedNode((prev) => {
-                if (prev === d) {
-                    d.fx = d.x;
-                    d.fy = d.y;
-                    return null;
-                } else {
-                    d.fx = d.x;
-                    d.fy = d.y;
-                    return d;
-                }
-            });
-
-            onNodeClick(d); // Notify parent component about the selected node
-        });
-
-        // Mouse over event
         nodeGroup.on("mouseover", function (_, d) {
             if (!selectedNode) updateHighlight(d);
         });
-
-        // Mouse out event (only if no node is selected)
         nodeGroup.on("mouseout", function () {
             if (!selectedNode) updateHighlight(null);
         });
-
-        // Update highlights when selectedNode changes
         updateHighlight(selectedNode);
 
-        // Simulation tick updates
         simulation.on("tick", () => {
             linkSelection
                 .attr("x1", (d) => (d.source as NodeDatum).x!)
                 .attr("y1", (d) => (d.source as NodeDatum).y!)
                 .attr("x2", (d) => (d.target as NodeDatum).x!)
                 .attr("y2", (d) => (d.target as NodeDatum).y!);
-
             nodeGroup.attr("transform", (d) => `translate(${d.x}, ${d.y})`);
         });
 
-        // Resize handling
         const handleResize = () => {
             const newWidth = window.innerWidth;
             const newHeight = window.innerHeight;
@@ -191,11 +195,10 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links, onNodeClick }) =>
             simulation.stop();
             window.removeEventListener("resize", handleResize);
         };
-    }, [nodes, links, selectedNode]);
 
-    return (
-        <svg ref={svgRef} className="force-graph-container" />
-    );
+    }, [nodes, links, gridActive, onNodeClick, selectedNode]);
+
+    return <svg ref={svgRef} className="force-graph-container" />;
 };
 
 export default ForceGraph;

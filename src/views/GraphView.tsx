@@ -26,7 +26,7 @@ const GraphView: React.FC = () => {
         return <h2>No network data available</h2>;
     }
 
-    const handleNodeClick = (node: NodeDatum) => {
+    const handleNodeClick = (node: NodeDatum | null) => {
         setSelectedNode(node);
     };
 
@@ -58,6 +58,7 @@ const GraphView: React.FC = () => {
                     nodes={networkData.nodes}
                     links={networkData.links}
                     onNodeClick={handleNodeClick}
+                    gridActive={gridActive}
                 />
             </div>
 
