@@ -88,7 +88,8 @@
     right: 0;
     top: 40px;
     position: absolute;
-    border: none; /* No border for a cleaner look */
+    border: 0.5px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
 }
 
 .dropdown-menu .dropdown-item {
