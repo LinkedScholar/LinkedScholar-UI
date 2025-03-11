@@ -19,24 +19,15 @@ const Toolbar: React.FC<ToolbarProps> = ({
                                          }) => {
     return (
         <div className="toolbar">
-            {/* ✅ Home Button to Reset Simulation */}
             <button className="toolbar-button" onClick={resetSimulation} title="Reset Simulation">
                 <i className="mdi mdi-home"></i>
             </button>
 
-            <button
-                className={`toolbar-button ${gridActive ? "active" : ""}`}
-                onClick={toggleGrid}
-                title="Toggle Grid"
-            >
+            <button className={`toolbar-button ${gridActive ? "active" : ""}`} onClick={toggleGrid} title="Toggle Grid">
                 <i className="mdi mdi-view-grid"></i>
             </button>
 
-            <button
-                className={`toolbar-button ${filtersActive ? "active" : ""}`}
-                onClick={toggleFilters}
-                title="Toggle Filters"
-            >
+            <button className={`toolbar-button ${filtersActive ? "active" : ""}`} onClick={toggleFilters} title="Toggle Filters">
                 <i className="mdi mdi-filter-outline"></i>
             </button>
         </div>

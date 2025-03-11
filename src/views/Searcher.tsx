@@ -18,6 +18,7 @@ const Searcher: React.FC = () => {
 
     const [searchTerm, setSearchTerm] = useState("");
     const [error, setError] = useState("");
+    const [showDelayMessage, setShowDelayMessage] = useState(false);
 
     const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
     const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
@@ -49,6 +50,7 @@ const Searcher: React.FC = () => {
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
+        setShowDelayMessage(false); // Reset the delay message on new search
 
         if (searchTerm.trim()) {
             const profileData = extractProfileData(searchTerm);
@@ -57,10 +59,19 @@ const Searcher: React.FC = () => {
                 return;
             }
 
+            // Start a timer that will display the delay message after 1 second
+            const delayTimer = setTimeout(() => {
+                setShowDelayMessage(true);
+            }, 1000);
+
             try {
                 const response = await getNetwork(authenticated, profileData.author_id, profileData.source, 0);
+                clearTimeout(delayTimer);
+                setShowDelayMessage(false);
                 navigate("/network", { state: { networkData: response } });
             } catch (error) {
+                clearTimeout(delayTimer);
+                setShowDelayMessage(false);
                 if (axios.isAxiosError(error) && error.response) {
                     if (error.response.status === 429 && !authenticated) {
                         setIsRegistrationModalOpen(true);
@@ -113,6 +124,12 @@ const Searcher: React.FC = () => {
             </div>
 
             {error && <p className="error-message">{error}</p>}
+            {showDelayMessage && (
+                <div className="delay-message">
+                    <p>We haven't found the researcher in our database.</p>
+                    <p>We are building its network, please wait...</p>
+                </div>
+            )}
 
             <RegistrationModal isOpen={isRegistrationModalOpen} onClose={() => setIsRegistrationModalOpen(false)} />
             <PricingModal isOpen={isPricingModalOpen} onClose={() => setIsPricingModalOpen(false)} />
