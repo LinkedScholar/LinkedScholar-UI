@@ -7,9 +7,10 @@ import { createForceSimulation } from "../../utils/forceSimulation";
 interface ForceGraphProps {
     nodes: NodeDatum[];
     links: LinkDatum[];
+    onNodeClick: (node: NodeDatum) => void; // New prop for node clicks
 }
 
-const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links }) => {
+const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links, onNodeClick }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const [selectedNode, setSelectedNode] = useState<NodeDatum | null>(null);
 
@@ -31,7 +32,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links }) => {
             d3.zoom<SVGSVGElement, unknown>()
                 .scaleExtent([0.5, 3])
                 .filter((event) => {
-                    // Ignore click events inside nodes
                     return event.type !== "dblclick" && event.target.tagName !== "circle";
                 })
                 .on("zoom", (event) => {
@@ -83,7 +83,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links }) => {
                             }
                         }
                     })
-
             );
 
         // Add circle nodes
@@ -150,8 +149,9 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links }) => {
                     return d;
                 }
             });
-        });
 
+            onNodeClick(d); // Notify parent component about the selected node
+        });
 
         // Mouse over event
         nodeGroup.on("mouseover", function (_, d) {
@@ -191,7 +191,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links }) => {
             simulation.stop();
             window.removeEventListener("resize", handleResize);
         };
-    }, [nodes, links, selectedNode]); // Depend on selectedNode
+    }, [nodes, links, selectedNode]);
 
     return (
         <svg ref={svgRef} className="force-graph-container" />

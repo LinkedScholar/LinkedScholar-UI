@@ -1,0 +1,221 @@
+@import "../app.scss"; // Import global styles
+
+.researcher-sidebar {
+  position: fixed;
+  top: 80px;
+  bottom: 80px; // Reserve space for a 60px tall footer
+  right: -400px; // Initially hidden off-screen
+  width: 400px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 24px;
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px 0 0 16px;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  overflow-y: scroll;        // Always show scrollbar space
+  scrollbar-gutter: stable;   // Reserve scrollbar space (modern browsers)
+  user-select: none;
+  transition: right 0.3s ease-in-out, width 0.3s ease, padding 0.3s ease;
+
+  &.open {
+    right: 0;
+  }
+
+  &.compressed {
+    width: 60px;   // Reduced width when compressed
+    padding: 12px; // Reduced padding
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    overflow-y: hidden; // Hide scrollbar in compressed mode
+  }
+
+  .sidebar-header {
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+
+      .bold-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: $primary-color;
+        margin: 0;
+      }
+
+      .header-buttons {
+        background: none;
+        border: none;
+        padding: 0;
+        font-size: 1.5rem; // Adjust as needed for icon size
+        cursor: pointer;
+        color: $secondary-color; // Uses your app.scss variable
+        transition: color 0.2s ease;
+        &:hover {
+          color: darken($secondary-color, 10%);
+        }
+        .compress-button,
+        .close-button {
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 8px;
+
+      .tab-button {
+        background: transparent;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: $primary-color;
+        transition: color 0.3s ease;
+
+        &.active {
+          color: $secondary-color;
+        }
+      }
+    }
+  }
+
+  .sidebar-content {
+    .metadata-item {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      transition: background 0.3s ease;
+
+      &:hover {
+        background: rgba($primary-color, 0.1);
+        border-radius: 6px;
+      }
+
+      .metadata-key {
+        color: $primary-color;
+        font-size: 15px;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .metadata-value {
+        color: #333;
+        font-size: 15px;
+        margin-top: 4px;
+      }
+
+      .metadata-value-link {
+        color: $secondary-color;
+        text-decoration: none;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: darken($secondary-color, 10%);
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  .connection-path-section {
+    margin-top: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding-top: 16px;
+
+    .toggle-connection-btn {
+      background: transparent;
+      border: none;
+      color: $primary-color;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      transition: background 0.3s ease;
+      border-radius: 6px;
+
+      &:hover {
+        background: rgba($primary-color, 0.1);
+      }
+
+      i {
+        font-size: 20px;
+      }
+    }
+
+    .connection-form {
+      margin-top: 16px;
+
+      .connection-type-toggle {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 12px;
+
+        .connection-type-btn {
+          background: transparent;
+          border: 1px solid $primary-color;
+          color: $primary-color;
+          padding: 8px 12px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 600;
+          transition: background 0.3s ease;
+
+          &:hover,
+          &.active {
+            background: $primary-color;
+            color: #fff;
+          }
+        }
+      }
+
+      .form-row {
+        margin-bottom: 12px;
+      }
+
+      .button-container {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+
+        .search-btn,
+        .clear-search-btn {
+          background: $primary-color;
+          color: #fff;
+          border: none;
+          padding: 8px 12px;
+          border-radius: 6px;
+          font-size: 13px;
+          cursor: pointer;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+          &:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba($primary-color, 0.4);
+          }
+
+          &.clear-search-btn {
+            background: #d9534f;
+
+            &:hover {
+              background: darken(#d9534f, 10%);
+            }
+          }
+        }
+      }
+    }
+  }
+}
