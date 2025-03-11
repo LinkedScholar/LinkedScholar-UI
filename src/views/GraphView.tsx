@@ -6,6 +6,7 @@ import MiniSearcher from "../components/MiniSearcher";
 import ResearcherSidebar from "../components/Researcher-Sidebar/ResearcherSidebar";
 import PathWindow from "../components/PathWindow";
 import { LinkDatum, NodeDatum } from "../types/graphTypes";
+import { bfs } from "../utils/bfs";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/views/graphView.scss";
 
@@ -53,67 +54,36 @@ const GraphView: React.FC = () => {
             alert("Please select both start and end nodes.");
             return;
         }
-        const startId = startNode.value;
-        const endId = targetNode.value;
 
-        // Build an adjacency list from the network data
-        const adjList: { [key: string]: string[] } = {};
-        networkData.nodes.forEach((node) => {
-            const nodeId = node.id.toString();
-            adjList[nodeId] = [];
-        });
-        networkData.links.forEach((link) => {
-            const sourceId =
-                typeof link.source === "object"
-                    ? link.source.id.toString()
-                    : link.source.toString();
-            const targetId =
-                typeof link.target === "object"
-                    ? link.target.id.toString()
-                    : link.target.toString();
-            if (adjList[sourceId]) {
-                adjList[sourceId].push(targetId);
-            }
-            if (adjList[targetId]) {
-                adjList[targetId].push(sourceId);
-            }
-        });
+        const startId =
+            networkData.nodes.find(
+                (n) => n.name === startNode.value || n.id === startNode.value
+            )?.id || startNode.value;
 
-        // Perform a breadth-first search (BFS)
-        const queue: string[] = [startId];
-        const visited = new Set<string>();
-        const parent: { [key: string]: string | null } = {};
-        visited.add(startId);
-        parent[startId] = null;
-        let found = false;
-        while (queue.length > 0) {
-            const current = queue.shift()!;
-            if (current === endId) {
-                found = true;
-                break;
+        let targetValue: string;
+        if (targetType === "researcher") {
+            // Look up the researcher node and ensure it exists.
+            const foundTarget = networkData.nodes.find(
+                (n) => n.name === targetNode.value || n.id === targetNode.value
+            );
+            if (!foundTarget) {
+                alert("Researcher target not found in the network.");
+                return;
             }
-            for (const neighbor of adjList[current] || []) {
-                if (!visited.has(neighbor)) {
-                    visited.add(neighbor);
-                    parent[neighbor] = current;
-                    queue.push(neighbor);
-                }
-            }
+            targetValue = foundTarget.id;
+        } else {
+            // For affiliation, use the selected value as the affiliation string.
+            targetValue = targetNode.value;
         }
-        if (!found) {
+
+        const path = bfs(startId, targetValue, networkData.nodes, networkData.links, targetType);
+
+        if (path) {
+            setBfsPath(path);
+        } else {
             alert("No path found between the selected nodes.");
             setBfsPath(null);
-            return;
         }
-        // Reconstruct the path from end to start
-        const path: string[] = [];
-        let curr: string | null = endId;
-        while (curr !== null) {
-            path.push(curr);
-            curr = parent[curr];
-        }
-        path.reverse();
-        setBfsPath(path);
     };
 
     const handleClearBfsSearch = () => {
@@ -173,6 +143,7 @@ const GraphView: React.FC = () => {
                     links={networkData.links}
                     onNodeClick={handleNodeClick}
                     gridActive={gridActive}
+                    bfsPath={bfsPath}
                 />
             </div>
 

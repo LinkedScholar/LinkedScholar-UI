@@ -32,17 +32,14 @@ const PathWindow: React.FC<PathWindowProps> = ({
                                                    handleSearch,
                                                    handleClearSearch,
                                                }) => {
-    // Create separate state for each menu's open/close status
     const [startMenuIsOpen, setStartMenuIsOpen] = useState<boolean>(false);
     const [targetMenuIsOpen, setTargetMenuIsOpen] = useState<boolean>(false);
 
-    // Options for start node (always a researcher)
     const researcherOptions = nodes.map((nd) => ({
         value: nd.name || nd.id.toString(),
         label: nd.name || String(nd.id),
     }));
 
-    // Options for target node if type is affiliation
     const affiliationOptions = Array.from(new Set(nodes.map((nd) => nd.affiliation))).map(
         (aff) => ({
             value: aff,
@@ -52,9 +49,8 @@ const PathWindow: React.FC<PathWindowProps> = ({
 
     return (
         <div className="path-window p-3 bg-light border rounded">
-            {/* Fixed header */}
             <div className="path-window-header d-flex justify-content-between align-items-center">
-                <h2 className="mb-0 text-secondary-color">Find Path</h2>
+                <h3 className="mb-0 text-secondary-color">Find Path</h3>
                 <button className="btn btn-link p-0" onClick={() => setExpanded(false)}>
                     <i className="mdi mdi-close"></i>
                 </button>
@@ -174,7 +170,6 @@ const PathWindow: React.FC<PathWindowProps> = ({
                         />
                     </div>
 
-                    {/* Action buttons */}
                     <div className="d-flex justify-content-end">
                         <button className="btn btn-primary me-2" onClick={handleSearch}>
                             <i className="mdi mdi-magnify"></i> Search
@@ -184,7 +179,6 @@ const PathWindow: React.FC<PathWindowProps> = ({
                         </button>
                     </div>
 
-                    {/* Display the resulting path */}
                     {bfsPath && (
                         <div className="bfs-path mt-3">
                             <h3>Path:</h3>

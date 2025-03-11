@@ -9,9 +9,10 @@ interface ForceGraphProps {
     links: LinkDatum[];
     onNodeClick: (node: NodeDatum | null) => void; // Allow null for unselection
     gridActive: boolean;
+    bfsPath: string[] | null;
 }
 
-const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links, onNodeClick, gridActive }) => {
+const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links, onNodeClick, gridActive, bfsPath }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const [selectedNode, setSelectedNode] = useState<NodeDatum | null>(null);
 
@@ -68,10 +69,10 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links, onNodeClick, grid
         // Create force simulation
         const simulation = createForceSimulation(nodes, links, width, height);
 
-        // Add links
+        // Add links with proper type annotation
         const linkSelection = zoomGroup.append("g")
             .attr("class", "links")
-            .selectAll("line")
+            .selectAll<SVGLineElement, LinkDatum>("line")
             .data(links)
             .enter()
             .append("line")
@@ -80,10 +81,10 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links, onNodeClick, grid
             .attr("stroke-opacity", 0.7)
             .attr("stroke-width", 1.5);
 
-        // Create node groups
+        // Create node groups with proper type annotation
         const nodeGroup = zoomGroup.append("g")
             .attr("class", "nodes")
-            .selectAll("g")
+            .selectAll<SVGGElement, NodeDatum>("g")
             .data(nodes)
             .enter()
             .append("g")
@@ -137,32 +138,86 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links, onNodeClick, grid
             }
         });
 
-        // Mouseover/out for highlighting
-        const updateHighlight = (selectedNode: NodeDatum | null) => {
-            const connectedNodes = new Set();
-            const connectedLinks = new Set();
-            if (selectedNode) {
+        // Combined highlighting for selected node and BFS path
+        const updateHighlight = (selNode: NodeDatum | null) => {
+            // Build BFS sets if a BFS path exists
+            const bfsSet = bfsPath ? new Set(bfsPath.map(id => id.toString())) : new Set<string>();
+            const bfsLinkSet = new Set<string>();
+            if (bfsPath && bfsPath.length > 1) {
+                for (let i = 0; i < bfsPath.length - 1; i++) {
+                    const a = bfsPath[i].toString();
+                    const b = bfsPath[i + 1].toString();
+                    const key = a < b ? `${a}-${b}` : `${b}-${a}`;
+                    bfsLinkSet.add(key);
+                }
+            }
+
+            // Compute connected nodes for selected node (for neighbor highlighting)
+            const connectedNodes = new Set<NodeDatum>();
+            const connectedLinks = new Set<LinkDatum>();
+            if (selNode) {
                 links.forEach((link) => {
-                    if (link.source === selectedNode || link.target === selectedNode) {
-                        connectedNodes.add(link.source);
-                        connectedNodes.add(link.target);
+                    if (link.source === selNode || link.target === selNode) {
+                        connectedNodes.add(link.source as NodeDatum);
+                        connectedNodes.add(link.target as NodeDatum);
                         connectedLinks.add(link);
                     }
                 });
             }
-            nodeGroup.selectAll("circle").attr("fill", selectedNode ? "#aaa" : "#0066cc");
-            linkSelection.attr("stroke-opacity", selectedNode ? 0.1 : 0.7);
-            if (selectedNode) {
-                nodeGroup
-                    .filter((n) => connectedNodes.has(n))
-                    .selectAll("circle")
-                    .attr("fill", "#ffcc00");
-                linkSelection
-                    .filter((l) => connectedLinks.has(l))
-                    .attr("stroke", "#ff9900")
-                    .attr("stroke-opacity", 1)
-                    .attr("stroke-width", 3);
-            }
+
+            // Update node fill colors using generic selection so d is typed as NodeDatum
+            nodeGroup.selectAll<SVGCircleElement, NodeDatum>("circle")
+                .attr("fill", (d) => {
+                    const nodeId = d.id.toString();
+                    if (bfsSet.has(nodeId)) {
+                        return "#32CD32"; // BFS highlight color (green)
+                    } else if (selNode) {
+                        if (d === selNode) return "#ffcc00"; // Selected node color
+                        if (connectedNodes.has(d)) return "#aaaaaa"; // Connected neighbor highlight
+                        return "#0066cc"; // Default color
+                    } else {
+                        return "#0066cc"; // Default color
+                    }
+                });
+
+            // Update link styling
+            linkSelection
+                .attr("stroke", (d) => {
+                    const sourceId = (d.source as NodeDatum).id.toString();
+                    const targetId = (d.target as NodeDatum).id.toString();
+                    const key = sourceId < targetId ? `${sourceId}-${targetId}` : `${targetId}-${sourceId}`;
+                    if (bfsLinkSet.has(key)) {
+                        return "#32CD32"; // BFS link highlight color
+                    } else if (selNode && connectedLinks.has(d)) {
+                        return "#ff9900"; // Neighbor link highlight for selected node
+                    } else {
+                        return "#ccc"; // Default link color
+                    }
+                })
+                .attr("stroke-opacity", (d) => {
+                    const sourceId = (d.source as NodeDatum).id.toString();
+                    const targetId = (d.target as NodeDatum).id.toString();
+                    const key = sourceId < targetId ? `${sourceId}-${targetId}` : `${targetId}-${sourceId}`;
+                    if (bfsLinkSet.has(key)) {
+                        return 1;
+                    } else if (selNode) {
+                        return 0.1;
+                    } else {
+                        return 0.7;
+                    }
+                })
+                .attr("stroke-width", (d) => {
+                    const sourceId = (d.source as NodeDatum).id.toString();
+                    const targetId = (d.target as NodeDatum).id.toString();
+                    const key = sourceId < targetId ? `${sourceId}-${targetId}` : `${targetId}-${sourceId}`;
+                    if (bfsLinkSet.has(key)) {
+                        return 3;
+                    } else if (selNode && connectedLinks.has(d)) {
+                        return 3;
+                    } else {
+                        return 1.5;
+                    }
+                });
         };
 
         nodeGroup.on("mouseover", function (_, d) {
@@ -195,8 +250,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links, onNodeClick, grid
             simulation.stop();
             window.removeEventListener("resize", handleResize);
         };
-
-    }, [nodes, links, gridActive, onNodeClick, selectedNode]);
+    }, [nodes, links, gridActive, onNodeClick, selectedNode, bfsPath]);
 
     return <svg ref={svgRef} className="force-graph-container" />;
 };
