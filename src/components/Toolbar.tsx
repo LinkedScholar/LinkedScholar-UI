@@ -28,7 +28,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
             </button>
 
             <button className={`toolbar-button ${filtersActive ? "active" : ""}`} onClick={toggleFilters} title="Toggle Filters">
-                <i className="mdi mdi-filter-outline"></i>
+                <i className="mdi mdi-filter"></i>
             </button>
         </div>
     );

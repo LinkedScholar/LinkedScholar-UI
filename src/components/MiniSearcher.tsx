@@ -11,7 +11,7 @@ const MiniSearcher: React.FC = () => {
         setError("");
 
         if (searchTerm.trim()) {
-            alert("Perform search logic here!"); // Replace with real logic
+            alert("Perform search logic here!");
         } else {
             setError("Enter a valid researcher name or profile URL.");
         }
