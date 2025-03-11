@@ -1,0 +1,164 @@
+@import "../../app.scss"; 
+
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-top: 80px;
+  padding-bottom: 80px; 
+}
+
+.content {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 30px;
+  background: $background-grey;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px $shadow-light;
+  
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.footer-page-title {
+  font-size: 26px;
+  font-weight: 600;
+  color: $primary-color;
+  margin-bottom: 20px;
+  text-align: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba($primary-color, 0.1);
+}
+
+// Section styling
+section {
+  margin-bottom: 30px;
+  
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: $secondary-color;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba($primary-color, 0.1);
+  }
+  
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: $secondary-color;
+    margin-bottom: 10px;
+  }
+  
+  p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  ul, ol {
+    margin-bottom: 20px;
+    padding-left: 20px;
+    
+    li {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 8px;
+      color: #333;
+    }
+  }
+  
+  a {
+    color: $secondary-color;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    
+    &:hover {
+      color: darken($secondary-color, 15%);
+      text-decoration: underline;
+    }
+  }
+}
+
+// FAQ-specific styling 
+.faq-item {
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba($primary-color, 0.1);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.github-repo {
+  background: rgba($primary-color, 0.05);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px $shadow-light;
+  }
+}
+
+.github-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 500;
+  color: $primary-color;
+  
+  &:hover {
+    text-decoration: none;
+    color: $secondary-color;
+    
+    .github-logo {
+      transform: rotate(10deg);
+    }
+  }
+  
+  span {
+    margin-left: 12px;
+  }
+}
+
+.github-logo {
+  width: 40px;
+  height: 40px;
+  transition: transform 0.3s ease;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .content {
+    padding: 30px 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .footer-page-title {
+    font-size: 28px;
+  }
+  
+  section {
+    h2 {
+      font-size: 20px;
+    }
+    
+    h3 {
+      font-size: 16px;
+    }
+    
+    p, ul li, ol li {
+      font-size: 15px;
+    }
+  }
+}

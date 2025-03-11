@@ -6,6 +6,7 @@
     position: fixed;
     width: 100%;
     top: 0;
+    right: 0;
     z-index: 1000;
     transition: background 0.3s ease-in-out;
     border-bottom: none; /* Removed separator line */
@@ -13,7 +14,7 @@
 
 /* Brand Logo Styling */
 .brand-title {
-    font-size: 32px;
+    font-size: 24px;
     font-weight: bold;
     color: #003366;
     text-decoration: none;

@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../styles/views/footer/footer-pages.scss'
 
 
 const Help: React.FC = () => {
@@ -6,10 +7,9 @@ const Help: React.FC = () => {
         <div className="page-container">
 
             <main className="content">
-                <h1 className="footer-page-title">Help & Support</h1>
+                <h1 className="footer-page-title">Help & FAQs</h1>
 
                 <section>
-                    <h2>Frequently Asked Questions (FAQs)</h2>
 
                     <div className="faq-item">
                         <h3>What is Linked Scholar?</h3>

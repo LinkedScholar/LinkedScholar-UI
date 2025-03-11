@@ -1,0 +1,217 @@
+@import "../../app.scss"; 
+
+.contact-content {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 30px;
+  background: $background-grey;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px $shadow-light;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.contact-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: $primary-color;
+  margin-bottom: 20px;
+  text-align: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba($primary-color, 0.1);
+}
+
+.contact-description {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #555;
+  font-size: 16px;
+}
+
+.contact-form {
+  .form-group {
+    margin-bottom: 20px;
+    
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: $primary-color;
+    }
+    
+    input, 
+    textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid rgba($primary-color, 0.2);
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      
+      &:focus {
+        outline: none;
+        border-color: $secondary-color;
+        box-shadow: 0 0 0 3px rgba($secondary-color, 0.1);
+      }
+    }
+    
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+  }
+  
+  .submit-button {
+    background-color: $secondary-color;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    margin: 0 auto;
+    
+    &:hover {
+      background-color: darken($secondary-color, 10%);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba($secondary-color, 0.3);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}
+
+.error-message {
+  color: #d93025;
+  background-color: rgba(#d93025, 0.1);
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.success-message {
+  color: #0f9d58;
+  background-color: rgba(#0f9d58, 0.1);
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.contact-info {
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid rgba($primary-color, 0.1);
+  
+  h2 {
+    font-size: 22px;
+    color: $primary-color;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  .contact-methods {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-top: 20px;
+    
+    .contact-method {
+      flex: 1;
+      min-width: 200px;
+      max-width: 300px;
+      background: rgba(white, 0.5);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      text-align: center;
+      
+      i {
+        font-size: 30px;
+        color: $secondary-color;
+        margin-bottom: 10px;
+      }
+      
+      h3 {
+        font-size: 18px;
+        color: $primary-color;
+        margin-bottom: 10px;
+      }
+      
+      p {
+        color: #555;
+        margin-bottom: 5px;
+      }
+      
+      a {
+        color: $secondary-color;
+        text-decoration: none;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .contact-content {
+    padding: 30px 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .contact-title {
+    font-size: 28px;
+  }
+  
+  .contact-form {
+    .form-group {
+      margin-bottom: 15px;
+      
+      input, 
+      textarea {
+        padding: 10px 12px;
+        font-size: 14px;
+      }
+    }
+    
+    .submit-button {
+      width: 100%;
+      padding: 10px 20px;
+      font-size: 14px;
+    }
+  }
+  
+  .contact-info {
+    margin-top: 30px;
+    
+    .contact-methods {
+      flex-direction: column;
+      align-items: center;
+      
+      .contact-method {
+        width: 100%;
+      }
+    }
+  }
+}

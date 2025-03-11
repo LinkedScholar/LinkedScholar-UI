@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../styles/views/footer/sponsor.scss';
 
 const Sponsor: React.FC = () => {
     return (

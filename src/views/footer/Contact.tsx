@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '../../styles/views/footer/contact.scss'
 
 
 const Contact: React.FC = () => {

@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../styles/views/footer/footer-pages.scss'
 
 const PrivacyPolicy: React.FC = () => {
     return (
@@ -6,7 +7,7 @@ const PrivacyPolicy: React.FC = () => {
 
             <main className="content">
                 <h1 className="footer-page-title">Privacy Policy</h1>
-                <p><strong>Last Updated:</strong> [DATE] </p>
+                <p><strong>Last Updated:</strong> March 11, 2025 </p>
 
                 <section>
                     <h2>Introduction</h2>
@@ -82,7 +83,7 @@ const PrivacyPolicy: React.FC = () => {
                         <li><strong>Data Portability:</strong> You can request a copy of your data in a structured, machine-readable format.</li>
                     </ul>
                     <p>
-                        To exercise these rights, please contact us at [Contact Information].
+                        To exercise these rights, please contact us at contact@linkedscholar.io.
                     </p>
                 </section>
 
@@ -109,7 +110,6 @@ const PrivacyPolicy: React.FC = () => {
                     </p>
                     <p>
                         <strong>Email:</strong>  contact@linkedscholar.io<br />
-                        <strong>Address:</strong> [Physical Address]
                     </p>
                 </section>
             </main>

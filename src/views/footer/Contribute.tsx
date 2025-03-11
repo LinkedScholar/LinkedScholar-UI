@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../styles/views/footer/footer-pages.scss'
 
 
 const Contribute: React.FC = () => {
@@ -12,8 +13,8 @@ const Contribute: React.FC = () => {
                 <section>
                     <h2>How to Contribute</h2>
                     <p>
-                        Linked Scholar is an open-source project, and we welcome contributions from developers, researchers, and enthusiasts.
-                        Here’s how you can get involved:
+                        LinkedScholar is an open-source project, and we welcome contributions from developers, researchers, and enthusiasts.
+                        Here's how you can get involved:
                     </p>
                     <ul>
                         <li>
@@ -34,7 +35,7 @@ const Contribute: React.FC = () => {
                 <section>
                     <h2>GitHub Repository</h2>
                     <p>
-                        The source code for Linked Scholar is hosted on GitHub. You can find the repository, report issues, and contribute here:
+                        The source code for LinkedScholar is hosted on GitHub. You can find the repository, report issues, and contribute here:
                     </p>
                     <div className="github-repo">
                         <a
@@ -48,7 +49,7 @@ const Contribute: React.FC = () => {
                                 alt="GitHub Logo"
                                 className="github-logo"
                             />
-                            <span>Linked Scholar Repository</span>
+                            <span>LinkedScholar Repository</span>
                         </a>
                     </div>
                 </section>
@@ -60,7 +61,6 @@ const Contribute: React.FC = () => {
                     </p>
                     <p>
                         <strong>Email:</strong> contact@linkedscholar.io<br />
-                        <strong>Address:</strong> [Insert Physical Address]
                     </p>
                 </section>
             </main>

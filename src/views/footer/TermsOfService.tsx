@@ -1,12 +1,12 @@
 import React from 'react';
-
+import '../../styles/views/footer/footer-pages.scss';
 
 const TermsOfService: React.FC = () => {
     return (
         <div className="page-container">
             <main className="content">
                 <h1 className="footer-page-title">Terms of Service</h1>
-                <p><strong>Last Updated:</strong> [Insert Date]</p>
+                <p><strong>Last Updated:</strong> March 11, 2025</p>
 
                 <section>
                     <h2>Introduction</h2>
@@ -50,7 +50,7 @@ const TermsOfService: React.FC = () => {
                         The creators retain all rights to the content, and any use, distribution, or modification of the content requires explicit permission.
                     </p>
                     <p>
-                        If you wish to use or distribute any content from Linked Scholar, you must contact the creators at [Insert Contact Information] to obtain written consent.
+                        If you wish to use or distribute any content from Linked Scholar, you must contact the creators at contact@linkedscholar.io to obtain written consent.
                     </p>
                 </section>
 
@@ -88,8 +88,7 @@ const TermsOfService: React.FC = () => {
                         If you have any questions or concerns about these Terms of Service, please contact us at:
                     </p>
                     <p>
-                        <strong>Email:</strong>  contact@linkedscholar.io<br />
-                        <strong>Address:</strong> [Insert Physical Address]
+                        <strong>Email:</strong> contact@linkedscholar.io<br />
                     </p>
                 </section>
             </main>
