@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {fetchSession, logout} from "../redux/authSlice";
 import {AppDispatch, RootState} from "../redux/store";
+import {useNavigate} from "react-router-dom";
 
 
 const Login: React.FC = () => {
@@ -16,13 +17,17 @@ const Login: React.FC = () => {
         window.location.href = "http://localhost:8080/oauth2/authorization/google";
     };
 
+    const navigate = useNavigate();
+
     const handleLogout = async () => {
         await fetch("http://localhost:8080/api/user/logout", {
             method: "POST",
             credentials: "include",
         });
         dispatch(logout());
+        navigate('/');
     };
+
 
     return (
         <div>

@@ -27,30 +27,30 @@ const ForceGraph: React.FC<ForceGraphProps> = ({ nodes, links, onNodeClick, grid
         // Create zoomable <g> group
         const zoomGroup = svg.append("g");
 
-        // Append grid lines if gridActive is true
+        // Append infinite grid if gridActive is true
         if (gridActive) {
-            const gridGroup = zoomGroup.append("g").attr("class", "grid-lines");
             const gridSpacing = 50; // Adjust grid spacing as needed
-            // Vertical grid lines
-            for (let x = 0; x <= width; x += gridSpacing) {
-                gridGroup.append("line")
-                    .attr("x1", x)
-                    .attr("y1", 0)
-                    .attr("x2", x)
-                    .attr("y2", height)
-                    .attr("stroke", "#ccc")
-                    .attr("stroke-width", 1);
-            }
-            // Horizontal grid lines
-            for (let y = 0; y <= height; y += gridSpacing) {
-                gridGroup.append("line")
-                    .attr("x1", 0)
-                    .attr("y1", y)
-                    .attr("x2", width)
-                    .attr("y2", y)
-                    .attr("stroke", "#ccc")
-                    .attr("stroke-width", 1);
-            }
+
+            // Define grid pattern
+            const defs = svg.append("defs");
+            const gridPattern = defs.append("pattern")
+                .attr("id", "grid")
+                .attr("width", gridSpacing)
+                .attr("height", gridSpacing)
+                .attr("patternUnits", "userSpaceOnUse");
+            gridPattern.append("path")
+                .attr("d", `M ${gridSpacing} 0 L 0 0 L 0 ${gridSpacing}`)
+                .attr("fill", "none")
+                .attr("stroke", "#ccc")
+                .attr("stroke-width", 1);
+
+            // Insert a rectangle with the grid pattern as fill that covers a large area
+            zoomGroup.insert("rect", ":first-child")
+                .attr("x", -width)
+                .attr("y", -height)
+                .attr("width", width * 3)
+                .attr("height", height * 3)
+                .attr("fill", "url(#grid)");
         }
 
         // Zoom behavior

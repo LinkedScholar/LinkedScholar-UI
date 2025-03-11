@@ -2,11 +2,14 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../redux/store";
 import { logout } from "../redux/authSlice";
+import {useNavigate} from "react-router-dom";
 
 const HelloUser: React.FC = () => {
     const { authenticated, username, email, firstName, lastName, picture } =
         useSelector((state: RootState) => state.auth);
     const dispatch: AppDispatch = useDispatch();
+
+    const navigate = useNavigate();
 
     const handleLogout = async () => {
         await fetch("http://localhost:8080/api/user/logout", {
@@ -14,6 +17,7 @@ const HelloUser: React.FC = () => {
             credentials: "include",
         });
         dispatch(logout());
+        navigate('/');
     };
 
     return (

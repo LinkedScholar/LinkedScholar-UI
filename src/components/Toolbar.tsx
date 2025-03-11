@@ -5,21 +5,29 @@ import "../styles/components/toolbar.scss";
 interface ToolbarProps {
     gridActive: boolean;
     filtersActive: boolean;
+    pathWindowActive: boolean;
     toggleGrid: () => void;
     toggleFilters: () => void;
+    togglePathWindow: () => void;
     resetSimulation: () => void;
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({
                                              gridActive,
                                              filtersActive,
+                                             pathWindowActive,
                                              toggleGrid,
                                              toggleFilters,
+                                             togglePathWindow,
                                              resetSimulation,
                                          }) => {
     return (
         <div className="toolbar">
-            <button className="toolbar-button" onClick={resetSimulation} title="Reset Simulation">
+            <button
+                className="toolbar-button"
+                onClick={resetSimulation}
+                title="Reset Simulation"
+            >
                 <i className="mdi mdi-home"></i>
             </button>
             <button
@@ -35,6 +43,13 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 title="Toggle Filters"
             >
                 <i className="mdi mdi-filter"></i>
+            </button>
+            <button
+                className={`toolbar-button ${pathWindowActive ? "active" : ""}`}
+                onClick={togglePathWindow}
+                title="Find Path"
+            >
+                <i className="mdi mdi-source-branch"></i>
             </button>
         </div>
     );

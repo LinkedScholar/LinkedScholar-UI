@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import SidebarHeader from "./SidebarHeader";
 import SidebarTabs from "./SidebarTabs";
 import SidebarContent from "./SidebarContent";
-import ConnectionSection from "./ConnectionSection";
 import { NodeDatum, LinkDatum } from "../../types/graphTypes";
 import "../../styles/components/researcherSidebar.scss";
 
@@ -94,20 +93,6 @@ const ResearcherSidebar: React.FC<ResearcherSidebarProps> = ({
                     {selectedNode && (
                         <SidebarContent activeTab={activeTab} selectedNode={selectedNode} onAddInterest={onAddInterest} />
                     )}
-                    <ConnectionSection
-                        bfsPath={bfsPath}
-                        nodes={nodes}
-                        connectionExpanded={connectionExpanded}
-                        setConnectionExpanded={setConnectionExpanded}
-                        connectionType={connectionType}
-                        setConnectionType={setConnectionType}
-                        selectedConnection={selectedConnection}
-                        setSelectedConnection={setSelectedConnection}
-                        handleSearch={handleSearch}
-                        handleClearSearch={handleClearSearch}
-                        menuIsOpen={menuIsOpen}
-                        setMenuIsOpen={setMenuIsOpen}
-                    />
                 </>
             )}
         </div>

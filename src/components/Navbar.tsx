@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import { RootState, AppDispatch } from "../redux/store";
 import { fetchSession, logout } from "../redux/authSlice";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -29,14 +29,17 @@ const Navbar: React.FC = () => {
         window.location.href = "/login";
     };
 
+    const navigate = useNavigate();
+
     const handleLogout = async () => {
         await fetch("http://localhost:8080/api/user/logout", {
             method: "POST",
             credentials: "include",
         });
-
         dispatch(logout());
+        navigate('/');
     };
+
 
     return (
         <nav className="navbar navbar-expand-lg glass-navbar">
