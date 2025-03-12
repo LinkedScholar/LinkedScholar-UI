@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./components/Login";
 import HelloUser from "./components/HelloUser";
 import Searcher from "./views/Searcher";
 import Navbar from "./components/Navbar";
@@ -14,6 +13,7 @@ import Contact from "./views/footer/Contact";
 import LoginPage from "./views/LoginPage";
 import "bootstrap/dist/css/bootstrap.min.css";
 import GraphView from "./views/GraphView";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function Api() {
     return null;
@@ -40,7 +40,14 @@ const App: React.FC = () => {
                         <Route path="/sponsor" element={<Sponsor />} />
                         <Route path="/api" element={<Api />} />
                         <Route path="/contact" element={<Contact />} />
-                        <Route path="/network" element={<GraphView />} />
+                        <Route 
+                            path="/network" 
+                            element={
+                                <ProtectedRoute>
+                                    <GraphView />
+                                </ProtectedRoute>
+                            } 
+                        />
                     </Routes>
                 </main>
 
