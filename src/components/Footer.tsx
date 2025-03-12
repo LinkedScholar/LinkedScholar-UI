@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
 
                 {/* Footer Branding */}
                 <div className="footer-brand">
-                    <p className="mb-0">Linked Scholar &copy; 2025</p>
+                    <p className="mb-0">LinkedScholar &copy; 2025</p>
                 </div>
 
                 {/* Footer Navigation Links */}

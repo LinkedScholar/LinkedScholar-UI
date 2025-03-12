@@ -8,7 +8,7 @@ const Contribute: React.FC = () => {
 
             <main className="content">
                 <h1 className="footer-page-title">Become a Collaborator</h1>
-                <p>Join Linked Scholar and help researchers collaborate more effectively.</p>
+                <p>Join LinkedScholar and help researchers collaborate more effectively.</p>
 
                 <section>
                     <h2>How to Contribute</h2>
@@ -27,7 +27,7 @@ const Contribute: React.FC = () => {
                             <strong>Improve Documentation:</strong> Help us improve the documentation to make the project more accessible.
                         </li>
                         <li>
-                            <strong>Spread the Word:</strong> Share Linked Scholar with your network to help us grow.
+                            <strong>Spread the Word:</strong> Share LinkedScholar with your network to help us grow.
                         </li>
                     </ul>
                 </section>

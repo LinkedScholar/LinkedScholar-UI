@@ -12,9 +12,9 @@ const Help: React.FC = () => {
                 <section>
 
                     <div className="faq-item">
-                        <h3>What is Linked Scholar?</h3>
+                        <h3>What is LinkedScholar?</h3>
                         <p>
-                            Linked Scholar is a web application designed to help users explore and analyze academic research networks.
+                            LinkedScholar is a web application designed to help users explore and analyze academic research networks.
                             It provides insights into researchers, their collaborations, and their fields of interest using publicly available data.
                         </p>
                     </div>
@@ -28,25 +28,25 @@ const Help: React.FC = () => {
                     </div>
 
                     <div className="faq-item">
-                        <h3>Is Linked Scholar free to use?</h3>
+                        <h3>Is LinkedScholar free to use?</h3>
                         <p>
-                            Yes, Linked Scholar is completely free to use. We are committed to providing open access to academic research insights.
+                            Yes, LinkedScholar is completely free to use. We are committed to providing open access to academic research insights.
                         </p>
                     </div>
 
                     <div className="faq-item">
                         <h3>Can I distribute or modify the software?</h3>
                         <p>
-                            Linked Scholar is protected by copyright and intellectual property laws.
+                            LinkedScholar is protected by copyright and intellectual property laws.
                             You may not distribute, modify, or use the software for commercial purposes without explicit permission from the creators.
                             If you are interested in collaboration or distribution, please contact us at [Insert Contact Information].
                         </p>
                     </div>
 
                     <div className="faq-item">
-                        <h3>What are the future updates for Linked Scholar?</h3>
+                        <h3>What are the future updates for LinkedScholar?</h3>
                         <p>
-                            We are continuously working to improve Linked Scholar. Future updates may include:
+                            We are continuously working to improve LinkedScholar. Future updates may include:
                         </p>
                         <ul>
                             <li>Enhanced search and filtering capabilities.</li>
@@ -62,7 +62,6 @@ const Help: React.FC = () => {
                         </p>
                         <p>
                             <strong>Email:</strong>  contact@linkedscholar.io<br />
-                            <strong>Address:</strong> [Insert Physical Address]
                         </p>
                     </div>
                 </section>

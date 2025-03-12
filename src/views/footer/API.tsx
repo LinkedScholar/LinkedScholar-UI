@@ -6,9 +6,9 @@ const API: React.FC = () => {
         <div className="page-container">
 
             <main className="content api-content">
-                <h1 className="footer-page-title">Linked Scholar API</h1>
+                <h1 className="footer-page-title">LinkedScholar API</h1>
                 <p className="api-description">
-                    Our API allows you to interact with Linked Scholar’s data and services programmatically.
+                    Our API allows you to interact with LinkedScholar’s data and services programmatically.
                     <strong> This API is private and requires an API key.</strong> Access is granted based on usage and quota limitations.
                 </p>
 

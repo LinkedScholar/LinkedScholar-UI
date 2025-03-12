@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import ReactDOM from 'react-dom'; 
+
 import '../../styles/components/modals/registrationModal.scss';
 
 interface RegistrationModalProps {
@@ -7,14 +9,28 @@ interface RegistrationModalProps {
 }
 
 const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, onClose }) => {
-    if (!isOpen) return null;
+    useEffect(() => {
+        if (isOpen) {
+            document.body.classList.add('modal-open');
+        } else {
+            document.body.classList.remove('modal-open');
+        }
+        
+        return () => {
+            document.body.classList.remove('modal-open');
+        };
+    }, [isOpen]);
+
+    if (!isOpen) {
+        return null;
+    }
 
     const handleSignUp = () => {
         window.location.href = "/login";
         onClose();
     };
 
-    return (
+    return ReactDOM.createPortal(
         <div className="registration-modal-overlay" onClick={onClose}>
             <div className="registration-modal" onClick={(e) => e.stopPropagation()}>
 
@@ -45,7 +61,8 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, onClose }
                     </p>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 
