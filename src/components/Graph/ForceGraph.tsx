@@ -22,9 +22,15 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                                                    selectedAffiliations,
                                                }) => {
     const svgRef = useRef<SVGSVGElement>(null);
+    const zoomGroupRef = useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
+    const gridRectRef = useRef<d3.Selection<SVGRectElement, unknown, null, undefined> | null>(null);
     const [selectedNode, setSelectedNode] = useState<NodeDatum | null>(null);
-    const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
+    const selectedNodeRef = useRef<NodeDatum | null>(null);
     const updateHighlightRef = useRef<(selNode: NodeDatum | null) => void>(() => {});
+
+    useEffect(() => {
+        selectedNodeRef.current = selectedNode;
+    }, [selectedNode]);
 
     useEffect(() => {
         if (!svgRef.current) return;
@@ -35,26 +41,24 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
         const height = window.innerHeight;
         svg.attr("width", width).attr("height", height);
 
-        // Create zoomable <g> group
         const zoomGroup = svg.append("g");
+        zoomGroupRef.current = zoomGroup;
 
-        // Append infinite grid if gridActive is true
         if (gridActive) {
-            const gridSpacing = 50; // Adjust grid spacing as needed
-            const defs = svg.append("defs");
-            const gridPattern = defs
+            const gridSpacing = 50;
+            const defs = svg.append<SVGDefsElement>("defs");
+            defs
                 .append("pattern")
                 .attr("id", "grid")
                 .attr("width", gridSpacing)
                 .attr("height", gridSpacing)
-                .attr("patternUnits", "userSpaceOnUse");
-            gridPattern
+                .attr("patternUnits", "userSpaceOnUse")
                 .append("path")
                 .attr("d", `M ${gridSpacing} 0 L 0 0 L 0 ${gridSpacing}`)
                 .attr("fill", "none")
                 .attr("stroke", "#ccc")
                 .attr("stroke-width", 1);
-            zoomGroup
+            gridRectRef.current = zoomGroup
                 .insert("rect", ":first-child")
                 .attr("x", -width)
                 .attr("y", -height)
@@ -63,22 +67,18 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                 .attr("fill", "url(#grid)");
         }
 
-        // Zoom behavior
         const zoom = d3
             .zoom<SVGSVGElement, unknown>()
             .scaleExtent([0.5, 3])
-            .filter((event) => event.type !== "dblclick" && event.target.tagName !== "circle")
+            .filter((event) => event.type !== "dblclick")
             .on("zoom", (event) => {
                 zoomGroup.attr("transform", event.transform);
                 zoomGroup.selectAll(".node-label").style("opacity", event.transform.k > 1 ? 1 : 0);
             });
-        zoomRef.current = zoom;
         svg.call(zoom);
 
-        // Create force simulation
         const simulation = createForceSimulation(nodes, links, width, height);
 
-        // Add links
         const linkSelection = zoomGroup
             .append("g")
             .attr("class", "links")
@@ -91,7 +91,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             .attr("stroke-opacity", 0.7)
             .attr("stroke-width", 1.5);
 
-        // Create node groups
         const nodeGroup = zoomGroup
             .append("g")
             .attr("class", "nodes")
@@ -116,7 +115,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                     })
             );
 
-        // Add circle nodes
         nodeGroup
             .append("circle")
             .attr("r", (d) => (d.type === "article" ? 10 : 16))
@@ -126,7 +124,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                 d.type === "article" ? "node article-node" : "node researcher-node"
             );
 
-        // Append text labels
         nodeGroup
             .append("text")
             .attr("class", "node-label")
@@ -139,7 +136,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             .text((d) => (d.type === "researcher" ? (d.name ? d.name.split(" ")[0] : "") : ""))
             .style("opacity", (d) => (d.type === "researcher" ? 1 : 0));
 
-        // For article nodes, append a tooltip group (initially hidden)
         nodeGroup
             .filter((d) => d.type === "article")
             .each(function (d) {
@@ -164,30 +160,28 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                     .text(d.title || "");
             });
 
-        // Handle node clicks
         nodeGroup.on("click", function (event, d) {
             event.stopPropagation();
             if (d.type === "article") return;
-
-            if (selectedNode === d) {
-                // Release the node if already selected
+            if (selectedNodeRef.current === d) {
                 d.fx = null;
                 d.fy = null;
                 setSelectedNode(null);
+                selectedNodeRef.current = null;
                 onNodeClick(null);
             } else {
-                // Fix the node and mark it as selected
+                // Select: fix node at its current position
                 d.fx = d.x;
                 d.fy = d.y;
                 setSelectedNode(d);
+                selectedNodeRef.current = d;
                 onNodeClick(d);
             }
             if (updateHighlightRef.current) {
-                updateHighlightRef.current(d);
+                updateHighlightRef.current(selectedNodeRef.current);
             }
         });
 
-        // Define updateHighlight and store it in the ref.
         const updateHighlight = (selNode: NodeDatum | null) => {
             const bfsSet = bfsPath ? new Set(bfsPath.map((id) => id.toString())) : new Set<string>();
             const bfsLinkSet = new Set<string>();
@@ -199,7 +193,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                     bfsLinkSet.add(key);
                 }
             }
-            // Determine neighbors and connected links
             const connectedNodes = new Set<NodeDatum>();
             const connectedLinks = new Set<LinkDatum>();
             if (selNode) {
@@ -232,7 +225,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                 });
                 extraResearcherNodes.forEach((r) => connectedNodes.add(r));
             }
-
             nodeGroup
                 .selectAll<SVGCircleElement, NodeDatum>("circle")
                 .attr("fill", (d) => {
@@ -246,7 +238,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                     if (d.type === "article") return "#888888";
                     return "#0066cc";
                 });
-
             linkSelection
                 .attr("stroke", (d) => {
                     const sourceId = (d.source as NodeDatum).id.toString();
@@ -275,8 +266,8 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
         };
 
         updateHighlightRef.current = updateHighlight;
+        updateHighlight(null);
 
-        // Additional handlers for article node tooltips.
         nodeGroup
             .filter((d) => d.type === "article")
             .on("mouseover", function (event, d) {
@@ -318,12 +309,53 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
         };
 
         window.addEventListener("resize", handleResize);
-
         return () => {
             simulation.stop();
             window.removeEventListener("resize", handleResize);
         };
-    }, [nodes, links, gridActive, bfsPath, selectedAffiliations]);
+    }, [nodes, links, bfsPath, selectedAffiliations]);
+
+    useEffect(() => {
+        if (!svgRef.current) return;
+        const svg = d3.select(svgRef.current);
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        if (zoomGroupRef.current) {
+            if (gridActive) {
+                if (!gridRectRef.current) {
+                    const gridSpacing = 50;
+                    let defs = svg.select<SVGDefsElement>("defs");
+                    if (defs.empty()) {
+                        defs = svg.append<SVGDefsElement>("defs");
+                    }
+                    defs
+                        .append("pattern")
+                        .attr("id", "grid")
+                        .attr("width", gridSpacing)
+                        .attr("height", gridSpacing)
+                        .attr("patternUnits", "userSpaceOnUse")
+                        .append("path")
+                        .attr("d", `M ${gridSpacing} 0 L 0 0 L 0 ${gridSpacing}`)
+                        .attr("fill", "none")
+                        .attr("stroke", "#ccc")
+                        .attr("stroke-width", 1);
+                    gridRectRef.current = zoomGroupRef.current
+                        .insert("rect", ":first-child")
+                        .attr("x", -width)
+                        .attr("y", -height)
+                        .attr("width", width * 3)
+                        .attr("height", height * 3)
+                        .attr("fill", "url(#grid)");
+                } else {
+                    gridRectRef.current.style("display", "block");
+                }
+            } else {
+                if (gridRectRef.current) {
+                    gridRectRef.current.style("display", "none");
+                }
+            }
+        }
+    }, [gridActive]);
 
     useEffect(() => {
         if (updateHighlightRef.current) {

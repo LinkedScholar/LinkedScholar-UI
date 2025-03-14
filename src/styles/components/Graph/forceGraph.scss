@@ -13,7 +13,6 @@
   fill: white;
   text-shadow: 1px 1px 3px #333;
   pointer-events: none;
-  /* For the tooltip effect, we add padding and border-radius */
   padding: 2px 4px;
   border-radius: 4px;
 }
@@ -24,7 +23,6 @@
   stroke-width: 1.5;
 }
 
-/* Hover styles for nodes */
 .node:hover {
   cursor: pointer;
 }
@@ -35,28 +33,15 @@
   stroke-width: 3 !important;
 }
 
-/* Styles for article nodes */
 .article-node {
   fill: #888888;
 }
 
-/* Tooltip group for article nodes */
 .article-tooltip {
   pointer-events: none;
 }
 
-/* Tooltip aesthetics for article nodes:
-   - A secondary background color for the box,
-   - White text for readability,
-   - A slight drop shadow for visual depth.
-   Note: Using an SVG rect as background for the tooltip. */
 .tooltip-rect {
-  fill: $secondary-color;  /* from your global variables */
+  fill: $secondary-color;
   opacity: 0.9;
-}
-
-.tooltip-text {
-  font-size: 14px;
-  fill: white;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
