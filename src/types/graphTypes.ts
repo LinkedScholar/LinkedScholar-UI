@@ -1,9 +1,13 @@
 import { SimulationNodeDatum, SimulationLinkDatum } from "d3-force";
 
+export type NodeType = "researcher" | "article";
+
 export interface NodeDatum extends SimulationNodeDatum {
     id: string;
-    name: string;
-    affiliation: string;
+    type: NodeType;
+    name?: string;
+    affiliation?: string | undefined;
+    title?: string;
     fx?: number | null;
     fy?: number | null;
     fixed?: boolean;

@@ -18,9 +18,31 @@ interface NetworkData {
 
 const GraphView: React.FC = () => {
   const location = useLocation();
-  const networkData: NetworkData | undefined = location.state?.networkData;
+  const rawNetworkData: any = location.state?.networkData;
 
-  // All hooks must be called regardless of networkData.
+  const networkData: NetworkData | undefined = useMemo(() => {
+    if (!rawNetworkData) return undefined;
+    if (rawNetworkData.authors && rawNetworkData.articles) {
+      const authors: NodeDatum[] = rawNetworkData.authors.map((author: any) => ({
+        ...author,
+        type: "researcher",
+      }));
+      const articles: NodeDatum[] = rawNetworkData.articles.map((article: any) => ({
+        id: article.id,
+        type: "article",
+        title: article.title,
+        name: article.title, // Use title as name for uniform labeling
+      }));
+      return {
+        nodes: [...authors, ...articles],
+        links: rawNetworkData.links,
+      };
+    }
+    // Fallback if the data is already merged
+    return rawNetworkData;
+  }, [rawNetworkData]);
+
+  // Collect affiliations from researcher nodes
   const affiliations = useMemo(() => {
     if (!networkData) return [];
     const affSet = new Set<string>();
@@ -41,7 +63,6 @@ const GraphView: React.FC = () => {
   const [targetType, setTargetType] = useState<"Affiliation" | "researcher">("Affiliation");
   const [selectedAffiliations, setSelectedAffiliations] = useState<string[]>([]);
 
-  // Early return if no networkData is available AFTER all hooks are called.
   if (!networkData) {
     return <h2>No network data available</h2>;
   }
@@ -68,14 +89,14 @@ const GraphView: React.FC = () => {
     }
 
     const startId =
-      networkData.nodes.find(
-        (n) => n.name === startNode.value || n.id === startNode.value
-      )?.id || startNode.value;
+        networkData.nodes.find(
+            (n) => n.name === startNode.value || n.id === startNode.value
+        )?.id || startNode.value;
 
     let targetValue: string;
     if (targetType === "researcher") {
       const foundTarget = networkData.nodes.find(
-        (n) => n.name === targetNode.value || n.id === targetNode.value
+          (n) => n.name === targetNode.value || n.id === targetNode.value
       );
       if (!foundTarget) {
         alert("Researcher target not found in the network.");
@@ -103,71 +124,71 @@ const GraphView: React.FC = () => {
   };
 
   return (
-    <div className="graph-view-container">
-      <div className="container position-absolute start-50 translate-middle-x mt-5 pt-5">
-        <div className="row justify-content-between align-items-center">
-          <div className="col-auto">
-            <MiniSearcher />
+      <div className="graph-view-container">
+        <div className="container position-absolute start-50 translate-middle-x mt-5 pt-5">
+          <div className="row justify-content-between align-items-center">
+            <div className="col-auto">
+              <MiniSearcher />
+            </div>
+            <div className="col-auto">
+              <Toolbar
+                  gridActive={gridActive}
+                  filtersActive={filtersActive}
+                  pathWindowActive={pathWindowOpen}
+                  toggleGrid={() => setGridActive((prev) => !prev)}
+                  toggleFilters={() => setFiltersActive((prev) => !prev)}
+                  togglePathWindow={togglePathWindow}
+                  resetSimulation={() => forceGraphRef.current?.resetSimulation()}
+              />
+            </div>
           </div>
-          <div className="col-auto">
-            <Toolbar
+        </div>
+
+        {filtersActive && (
+            <div className="position-absolute" style={{ top: "160px", left: "80px", zIndex: 1000 }}>
+              <Filters
+                  affiliations={affiliations}
+                  selectedAffiliations={selectedAffiliations}
+                  onFilterChange={setSelectedAffiliations}
+                  onClose={() => setFiltersActive(false)}
+              />
+            </div>
+        )}
+
+        {pathWindowOpen && (
+            <div className="position-absolute" style={{ top: "160px", left: "80px", zIndex: 1000 }}>
+              <PathWindow
+                  bfsPath={bfsPath}
+                  nodes={networkData.nodes}
+                  expanded={true}
+                  setExpanded={(expanded) => {
+                    if (!expanded) setPathWindowOpen(false);
+                  }}
+                  startNode={startNode}
+                  setStartNode={setStartNode}
+                  targetType={targetType}
+                  setTargetType={setTargetType}
+                  targetNode={targetNode}
+                  setTargetNode={setTargetNode}
+                  handleSearch={handleBfsSearch}
+                  handleClearSearch={handleClearBfsSearch}
+              />
+            </div>
+        )}
+
+        <div className="graph-container">
+          <ForceGraph
+              nodes={networkData.nodes}
+              links={networkData.links}
+              onNodeClick={handleNodeClick}
               gridActive={gridActive}
-              filtersActive={filtersActive}
-              pathWindowActive={pathWindowOpen}
-              toggleGrid={() => setGridActive((prev) => !prev)}
-              toggleFilters={() => setFiltersActive((prev) => !prev)}
-              togglePathWindow={togglePathWindow}
-              resetSimulation={() => forceGraphRef.current?.resetSimulation()}
-            />
-          </div>
-        </div>
-      </div>
-
-      {filtersActive && (
-        <div className="position-absolute" style={{ top: "160px", left: "80px", zIndex: 1000 }}>
-          <Filters
-            affiliations={affiliations}
-            selectedAffiliations={selectedAffiliations}
-            onFilterChange={setSelectedAffiliations}
-            onClose={() => setFiltersActive(false)}
+              bfsPath={bfsPath}
+              selectedAffiliations={selectedAffiliations}
           />
         </div>
-      )}
 
-      {pathWindowOpen && (
-        <div className="position-absolute" style={{ top: "160px", left: "80px", zIndex: 1000 }}>
-          <PathWindow
-            bfsPath={bfsPath}
-            nodes={networkData.nodes}
-            expanded={true}
-            setExpanded={(expanded) => {
-              if (!expanded) setPathWindowOpen(false);
-            }}
-            startNode={startNode}
-            setStartNode={setStartNode}
-            targetType={targetType}
-            setTargetType={setTargetType}
-            targetNode={targetNode}
-            setTargetNode={setTargetNode}
-            handleSearch={handleBfsSearch}
-            handleClearSearch={handleClearBfsSearch}
-          />
-        </div>
-      )}
-
-      <div className="graph-container">
-        <ForceGraph
-          nodes={networkData.nodes}
-          links={networkData.links}
-          onNodeClick={handleNodeClick}
-          gridActive={gridActive}
-          bfsPath={bfsPath}
-          selectedAffiliations={selectedAffiliations}
-        />
+        <ResearcherSidebar selectedNode={selectedNode} onClose={handleCloseSidebar} />
       </div>
-
-      <ResearcherSidebar selectedNode={selectedNode} onClose={handleCloseSidebar} />
-    </div>
   );
 };
 

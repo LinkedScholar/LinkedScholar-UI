@@ -35,17 +35,24 @@ const PathWindow: React.FC<PathWindowProps> = ({
     const [startMenuIsOpen, setStartMenuIsOpen] = useState<boolean>(false);
     const [targetMenuIsOpen, setTargetMenuIsOpen] = useState<boolean>(false);
 
-    const researcherOptions = nodes.map((nd) => ({
-        value: nd.name || nd.id.toString(),
-        label: nd.name || String(nd.id),
-    }));
+    const researcherOptions = nodes.map((nd) => {
+        const display = nd.name ? nd.name : nd.id.toString();
+        return {
+            value: display,
+            label: display,
+        };
+    });
 
-    const affiliationOptions = Array.from(new Set(nodes.map((nd) => nd.affiliation))).map(
-        (aff) => ({
-            value: aff,
-            label: aff,
-        })
-    );
+    const affiliationOptions = Array.from(
+        new Set(
+            nodes
+                .map((nd) => nd.affiliation)
+                .filter((aff): aff is string => typeof aff === "string" && aff.trim() !== "")
+        )
+    ).map((aff) => ({
+        value: aff,
+        label: aff,
+    }));
 
     return (
         <div className="path-window p-3 bg-light border rounded">
@@ -73,7 +80,6 @@ const PathWindow: React.FC<PathWindowProps> = ({
                             placeholder="Select or type a start node..."
                             className="node-select"
                             isSearchable
-                            // Removed isDisabled so the user can always edit the start node
                             formatCreateLabel={(inputValue) => `Search "${inputValue}"`}
                             noOptionsMessage={({ inputValue }) =>
                                 `No matches found for "${inputValue}"`

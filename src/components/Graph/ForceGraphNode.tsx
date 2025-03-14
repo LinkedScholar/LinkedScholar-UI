@@ -3,17 +3,18 @@ import { NodeDatum } from "../../types/graphTypes";
 
 interface ForceGraphNodeProps {
     node: NodeDatum;
-    onNodeClick: (node: NodeDatum) => void; // Prop to handle clicks
+    onNodeClick: (node: NodeDatum) => void;
 }
 
-const getShortLabel = (text: string): string[] => {
+const getShortLabel = (node: NodeDatum): string[] => {
+    const text = node.type === "article" ? node.title || "" : node.name || "";
     if (!text) return [];
     const tokens = text.trim().split(" ");
     return tokens.length >= 2 ? [tokens[0], tokens[1].charAt(0) + "."] : [tokens[0]];
 };
 
 const ForceGraphNode: React.FC<ForceGraphNodeProps> = ({ node, onNodeClick }) => {
-    const label = getShortLabel(node.name).join(" ");
+    const label = getShortLabel(node).join(" ");
     const radius = label.length * 3.5 + 12;
 
     return (

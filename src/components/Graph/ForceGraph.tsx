@@ -14,13 +14,13 @@ interface ForceGraphProps {
 }
 
 const ForceGraph: React.FC<ForceGraphProps> = ({
-  nodes,
-  links,
-  onNodeClick,
-  gridActive,
-  bfsPath,
-  selectedAffiliations,
-}) => {
+                                                 nodes,
+                                                 links,
+                                                 onNodeClick,
+                                                 gridActive,
+                                                 bfsPath,
+                                                 selectedAffiliations,
+                                               }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [selectedNode, setSelectedNode] = useState<NodeDatum | null>(null);
 
@@ -41,38 +41,38 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
       const gridSpacing = 50; // Adjust grid spacing as needed
       const defs = svg.append("defs");
       const gridPattern = defs
-        .append("pattern")
-        .attr("id", "grid")
-        .attr("width", gridSpacing)
-        .attr("height", gridSpacing)
-        .attr("patternUnits", "userSpaceOnUse");
+          .append("pattern")
+          .attr("id", "grid")
+          .attr("width", gridSpacing)
+          .attr("height", gridSpacing)
+          .attr("patternUnits", "userSpaceOnUse");
       gridPattern
-        .append("path")
-        .attr("d", `M ${gridSpacing} 0 L 0 0 L 0 ${gridSpacing}`)
-        .attr("fill", "none")
-        .attr("stroke", "#ccc")
-        .attr("stroke-width", 1);
+          .append("path")
+          .attr("d", `M ${gridSpacing} 0 L 0 0 L 0 ${gridSpacing}`)
+          .attr("fill", "none")
+          .attr("stroke", "#ccc")
+          .attr("stroke-width", 1);
       zoomGroup
-        .insert("rect", ":first-child")
-        .attr("x", -width)
-        .attr("y", -height)
-        .attr("width", width * 3)
-        .attr("height", height * 3)
-        .attr("fill", "url(#grid)");
+          .insert("rect", ":first-child")
+          .attr("x", -width)
+          .attr("y", -height)
+          .attr("width", width * 3)
+          .attr("height", height * 3)
+          .attr("fill", "url(#grid)");
     }
 
     // Zoom behavior
     svg.call(
-      d3
-        .zoom<SVGSVGElement, unknown>()
-        .scaleExtent([0.5, 3])
-        .filter((event) => event.type !== "dblclick" && event.target.tagName !== "circle")
-        .on("zoom", (event) => {
-          zoomGroup.attr("transform", event.transform);
-          zoomGroup
-            .selectAll(".node-label")
-            .style("opacity", event.transform.k > 1 ? 1 : 0);
-        })
+        d3
+            .zoom<SVGSVGElement, unknown>()
+            .scaleExtent([0.5, 3])
+            .filter((event) => event.type !== "dblclick" && event.target.tagName !== "circle")
+            .on("zoom", (event) => {
+              zoomGroup.attr("transform", event.transform);
+              zoomGroup
+                  .selectAll(".node-label")
+                  .style("opacity", event.transform.k > 1 ? 1 : 0);
+            })
     );
 
     // Create force simulation
@@ -80,61 +80,65 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
 
     // Add links
     const linkSelection = zoomGroup
-      .append("g")
-      .attr("class", "links")
-      .selectAll<SVGLineElement, LinkDatum>("line")
-      .data(links)
-      .enter()
-      .append("line")
-      .attr("class", "link")
-      .attr("stroke", "#ccc")
-      .attr("stroke-opacity", 0.7)
-      .attr("stroke-width", 1.5);
+        .append("g")
+        .attr("class", "links")
+        .selectAll<SVGLineElement, LinkDatum>("line")
+        .data(links)
+        .enter()
+        .append("line")
+        .attr("class", "link")
+        .attr("stroke", "#ccc")
+        .attr("stroke-opacity", 0.7)
+        .attr("stroke-width", 1.5);
 
     // Create node groups
     const nodeGroup = zoomGroup
-      .append("g")
-      .attr("class", "nodes")
-      .selectAll<SVGGElement, NodeDatum>("g")
-      .data(nodes)
-      .enter()
-      .append("g")
-      .call(
-        d3
-          .drag<SVGGElement, NodeDatum>()
-          .on("start", (event, d) => {
-            if (!event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
-          })
-          .on("drag", (event, d) => {
-            d.fx = event.x;
-            d.fy = event.y;
-          })
-          .on("end", (event, d) => {
-            if (!event.active) simulation.alphaTarget(0);
-          })
-      );
+        .append("g")
+        .attr("class", "nodes")
+        .selectAll<SVGGElement, NodeDatum>("g")
+        .data(nodes)
+        .enter()
+        .append("g")
+        .call(
+            d3
+                .drag<SVGGElement, NodeDatum>()
+                .on("start", (event, d) => {
+                  if (!event.active) simulation.alphaTarget(0.3).restart();
+                  d.fx = d.x;
+                  d.fy = d.y;
+                })
+                .on("drag", (event, d) => {
+                  d.fx = event.x;
+                  d.fy = event.y;
+                })
+                .on("end", (event, d) => {
+                  if (!event.active) simulation.alphaTarget(0);
+                })
+        );
 
     // Add circle nodes
     nodeGroup
-      .append("circle")
-      .attr("r", 16)
-      .attr("stroke", "#003366")
-      .attr("stroke-width", 2)
-      .attr("class", "node");
+        .append("circle")
+        .attr("r", 16)
+        .attr("stroke", "#003366")
+        .attr("stroke-width", 2)
+        .attr("class", "node");
 
-    // Add labels inside nodes
     nodeGroup
-      .append("text")
-      .attr("class", "node-label")
-      .attr("dy", 5)
-      .attr("text-anchor", "middle")
-      .style("font-size", "12px")
-      .style("fill", "white")
-      .style("pointer-events", "none")
-      .style("font-weight", "bold")
-      .text((d) => d.name.split(" ")[0]);
+        .append("text")
+        .attr("class", "node-label")
+        .attr("dy", 5)
+        .attr("text-anchor", "middle")
+        .style("font-size", "12px")
+        .style("fill", "white")
+        .style("pointer-events", "none")
+        .style("font-weight", "bold")
+        .text((d) => {
+          if (d.type === "article") {
+            return d.title ? d.title.split(" ")[0] : "";
+          }
+          return d.name ? d.name.split(" ")[0] : "";
+        });
 
     // Node click event: toggle selection
     nodeGroup.on("click", function (_, d) {
@@ -178,44 +182,44 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
       }
 
       nodeGroup
-        .selectAll<SVGCircleElement, NodeDatum>("circle")
-        .attr("fill", (d) => {
-          const nodeId = d.id.toString();
-          if (bfsSet.has(nodeId)) return "#32CD32"; // BFS highlight
-          if (selNode) {
-            if (d === selNode) return "#ffcc00"; // Selected node
-            if (connectedNodes.has(d)) return "#aaaaaa"; // Neighbor highlight
-          }
-          // If the node's affiliation is selected, highlight it
-          if (selectedAffiliations.includes(d.affiliation)) return "#FF6347"; // Affiliation highlight color
-          return "#0066cc"; // Default color
-        });
+          .selectAll<SVGCircleElement, NodeDatum>("circle")
+          .attr("fill", (d) => {
+            const nodeId = d.id.toString();
+            if (bfsSet.has(nodeId)) return "#32CD32"; // BFS highlight
+            if (selNode) {
+              if (d === selNode) return "#ffcc00"; // Selected node
+              if (connectedNodes.has(d)) return "#aaaaaa"; // Neighbor highlight
+            }
+            // If the node's affiliation is selected, highlight it
+            if (selectedAffiliations.includes(d.affiliation as string)) return "#FF6347"; // Affiliation highlight color
+            return "#0066cc"; // Default color
+          });
 
       linkSelection
-        .attr("stroke", (d) => {
-          const sourceId = (d.source as NodeDatum).id.toString();
-          const targetId = (d.target as NodeDatum).id.toString();
-          const key = sourceId < targetId ? `${sourceId}-${targetId}` : `${targetId}-${sourceId}`;
-          if (bfsLinkSet.has(key)) return "#32CD32";
-          if (selNode && connectedLinks.has(d)) return "#ff9900";
-          return "#ccc";
-        })
-        .attr("stroke-opacity", (d) => {
-          const sourceId = (d.source as NodeDatum).id.toString();
-          const targetId = (d.target as NodeDatum).id.toString();
-          const key = sourceId < targetId ? `${sourceId}-${targetId}` : `${targetId}-${sourceId}`;
-          if (bfsLinkSet.has(key)) return 1;
-          if (selNode) return 0.1;
-          return 0.7;
-        })
-        .attr("stroke-width", (d) => {
-          const sourceId = (d.source as NodeDatum).id.toString();
-          const targetId = (d.target as NodeDatum).id.toString();
-          const key = sourceId < targetId ? `${sourceId}-${targetId}` : `${targetId}-${sourceId}`;
-          if (bfsLinkSet.has(key)) return 3;
-          if (selNode && connectedLinks.has(d)) return 3;
-          return 1.5;
-        });
+          .attr("stroke", (d) => {
+            const sourceId = (d.source as NodeDatum).id.toString();
+            const targetId = (d.target as NodeDatum).id.toString();
+            const key = sourceId < targetId ? `${sourceId}-${targetId}` : `${targetId}-${sourceId}`;
+            if (bfsLinkSet.has(key)) return "#32CD32";
+            if (selNode && connectedLinks.has(d)) return "#ff9900";
+            return "#ccc";
+          })
+          .attr("stroke-opacity", (d) => {
+            const sourceId = (d.source as NodeDatum).id.toString();
+            const targetId = (d.target as NodeDatum).id.toString();
+            const key = sourceId < targetId ? `${sourceId}-${targetId}` : `${targetId}-${sourceId}`;
+            if (bfsLinkSet.has(key)) return 1;
+            if (selNode) return 0.1;
+            return 0.7;
+          })
+          .attr("stroke-width", (d) => {
+            const sourceId = (d.source as NodeDatum).id.toString();
+            const targetId = (d.target as NodeDatum).id.toString();
+            const key = sourceId < targetId ? `${sourceId}-${targetId}` : `${targetId}-${sourceId}`;
+            if (bfsLinkSet.has(key)) return 3;
+            if (selNode && connectedLinks.has(d)) return 3;
+            return 1.5;
+          });
     };
 
     nodeGroup.on("mouseover", function (_, d) {
@@ -228,10 +232,10 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
 
     simulation.on("tick", () => {
       linkSelection
-        .attr("x1", (d) => (d.source as NodeDatum).x!)
-        .attr("y1", (d) => (d.source as NodeDatum).y!)
-        .attr("x2", (d) => (d.target as NodeDatum).x!)
-        .attr("y2", (d) => (d.target as NodeDatum).y!);
+          .attr("x1", (d) => (d.source as NodeDatum).x!)
+          .attr("y1", (d) => (d.source as NodeDatum).y!)
+          .attr("x2", (d) => (d.target as NodeDatum).x!)
+          .attr("y2", (d) => (d.target as NodeDatum).y!);
       nodeGroup.attr("transform", (d) => `translate(${d.x}, ${d.y})`);
     });
 
@@ -240,9 +244,9 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
       const newHeight = window.innerHeight;
       svg.attr("width", newWidth).attr("height", newHeight);
       simulation
-        .force("center", d3.forceCenter(newWidth / 2, newHeight / 2))
-        .alpha(1)
-        .restart();
+          .force("center", d3.forceCenter(newWidth / 2, newHeight / 2))
+          .alpha(1)
+          .restart();
     };
 
     window.addEventListener("resize", handleResize);

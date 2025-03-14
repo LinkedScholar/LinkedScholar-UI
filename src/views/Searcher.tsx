@@ -65,7 +65,7 @@ const Searcher: React.FC = () => {
             }, 1000);
 
             try {
-                const response = await getNetwork(authenticated, profileData.author_id, profileData.source, 0);
+                const response = await getNetwork(authenticated, profileData.author_id, profileData.source, 1);
                 clearTimeout(delayTimer);
                 setShowDelayMessage(false);
                 navigate("/network", { state: { networkData: response } });
