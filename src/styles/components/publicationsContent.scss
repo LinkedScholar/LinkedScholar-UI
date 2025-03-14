@@ -1,0 +1,48 @@
+@import "../app.scss"; // Import global styles
+
+.publications {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .publication-card {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 16px;
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease;
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .pub-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: $primary-color;
+    }
+    .pub-author,
+    .pub-journal,
+    .pub-year,
+    .pub-volume,
+    .pub-number,
+    .pub-pages {
+      font-size: 14px;
+      margin-bottom: 4px;
+      color: #333;
+      strong {
+        color: $secondary-color;
+      }
+    }
+    .pub-link {
+      color: $secondary-color;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+      &:hover {
+        color: darken($secondary-color, 10%);
+        text-decoration: underline;
+      }
+    }
+  }
+}

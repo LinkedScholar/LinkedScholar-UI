@@ -16,11 +16,11 @@
   overflow-y: scroll;
   scrollbar-gutter: stable;
   user-select: none;
-  transition: 
-    right 0.3s ease-in-out, 
-    width 0.3s ease, 
-    padding 0.3s ease,
-    backdrop-filter 0.3s ease;
+  transition:
+          right 0.3s ease-in-out,
+          width 0.3s ease,
+          padding 0.3s ease,
+          backdrop-filter 0.3s ease;
 
   &.open {
     right: 0;
@@ -33,12 +33,12 @@
     border: none;
     box-shadow: none;
     overflow-y: hidden;
-    backdrop-filter: none; 
+    backdrop-filter: none;
     border-radius: 16px 0 0 16px;
     right: 0;
     z-index: 0;
     // Ensure the researcher compressed sidebar stays at the top
-    top: 160px; 
+    top: 160px;
   }
 
   .sidebar-header {
@@ -59,11 +59,11 @@
         background: none;
         border: none;
         padding: 0;
-        font-size: 1.5rem; 
+        font-size: 1.5rem;
         cursor: pointer;
         color: $secondary-color;
         transition: color 0.2s ease;
-        
+
         // Ensure the compress button is behind the close button
         .compress-button {
           width: 40px;
@@ -81,7 +81,7 @@
           justify-content: center;
           z-index: 2;
         }
-        
+
         &:hover {
           color: darken($secondary-color, 10%);
         }

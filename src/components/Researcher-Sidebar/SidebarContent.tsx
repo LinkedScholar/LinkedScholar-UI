@@ -1,11 +1,6 @@
 import React from "react";
 import { NodeDatum } from "../../types/graphTypes";
-
-interface SidebarContentProps {
-    activeTab: "researcher" | "group" | "publications";
-    selectedNode: NodeDatum;
-    onAddInterest?: (interest: string) => void;
-}
+import PublicationsContent from "./PublicationsContent";
 
 const isURL = (str: string): boolean => {
     try {
@@ -29,28 +24,32 @@ const formatKeyName = (key: string): string =>
 const capitalizeFirstLetter = (text: string): string =>
     text.replace(/\b\w/g, (char) => char.toUpperCase());
 
+interface SidebarContentProps {
+    activeTab: "researcher" | "group" | "publications";
+    selectedNode: NodeDatum;
+    onAddInterest?: (interest: string) => void;
+}
+
 const SidebarContent: React.FC<SidebarContentProps> = ({
                                                            activeTab,
                                                            selectedNode,
                                                            onAddInterest,
                                                        }) => {
-    // Filter out keys that are not relevant for display
-    const ignoreKeys = ["id", "x", "y", "fx", "fy", "vx", "vy", "fixed"];
-    const sortedEntries = Object.entries(selectedNode)
-        .filter(([key]) => !ignoreKeys.includes(key))
-        .sort(([keyA], [keyB]) => {
-            if (keyA.toLowerCase() === "name") return -1;
-            if (keyB.toLowerCase() === "name") return 1;
-            if (keyA.toLowerCase().includes("interest")) return 1;
-            if (keyB.toLowerCase().includes("interest")) return -1;
-            return 0;
-        });
-
     if (activeTab === "researcher") {
+        const ignoreKeys = ["id", "x", "y", "fx", "fy", "vx", "vy", "fixed"];
+        const sortedEntries = Object.entries(selectedNode)
+            .filter(([key]) => !ignoreKeys.includes(key))
+            .sort(([keyA], [keyB]) => {
+                if (keyA.toLowerCase() === "name") return -1;
+                if (keyB.toLowerCase() === "name") return 1;
+                if (keyA.toLowerCase().includes("interest")) return 1;
+                if (keyB.toLowerCase().includes("interest")) return -1;
+                return 0;
+            });
+
         return (
             <div className="sidebar-content">
                 {sortedEntries.map(([key, value]) => {
-                    // Render interests specially
                     if (key.toLowerCase().includes("interest")) {
                         const interests = String(value)
                             .split(",")
@@ -82,7 +81,11 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                             <p className="metadata-key">{formatKeyName(key)}:&nbsp;</p>
                             {isURL(String(value)) ? (
                                 <a
-                                    href={String(value).startsWith("http") ? String(value) : `https://${String(value)}`}
+                                    href={
+                                        String(value).startsWith("http")
+                                            ? String(value)
+                                            : `https://${String(value)}`
+                                    }
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="metadata-value-link"
@@ -90,7 +93,9 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                                     {String(value)}
                                 </a>
                             ) : (
-                                <p className="metadata-value">{capitalizeFirstLetter(String(value))}</p>
+                                <p className="metadata-value">
+                                    {capitalizeFirstLetter(String(value))}
+                                </p>
                             )}
                         </div>
                     );
@@ -108,13 +113,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
             </div>
         );
     } else if (activeTab === "publications") {
-        return (
-            <div className="sidebar-content">
-                <div className="metadata-item">
-                    <p className="metadata-value">Publications content goes here.</p>
-                </div>
-            </div>
-        );
+        return <PublicationsContent selectedNode={selectedNode} />;
     }
     return null;
 };

@@ -5,7 +5,7 @@ export type NodeType = "researcher" | "article";
 export interface NodeDatum extends SimulationNodeDatum {
     id: string;
     type: NodeType;
-    name?: string;
+    name: string;
     affiliation?: string | undefined;
     title?: string;
     fx?: number | null;
