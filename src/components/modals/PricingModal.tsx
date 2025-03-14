@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ReactDOM from 'react-dom';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../styles/components/modals/pricingModal.scss";
 
@@ -9,7 +10,7 @@ interface PricingModalProps {
 
 const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
   const [isAnnual, setIsAnnual] = useState(true);
-
+  
   const monthlyPrice = 5;
   const annualPrice = 48;
   const displayPrice = isAnnual ? 4 : monthlyPrice;
@@ -17,7 +18,7 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  return (
+  return ReactDOM.createPortal(
       <div className="pricing-modal-overlay" onClick={onClose}>
         <div className="pricing-modal" onClick={(e) => e.stopPropagation()}>
 
@@ -75,7 +76,8 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
             </p>
           </div>
         </div>
-      </div>
+      </div>,
+      document.body 
   );
 };
 
