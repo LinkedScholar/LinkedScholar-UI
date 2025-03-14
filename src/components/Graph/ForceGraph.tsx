@@ -23,6 +23,9 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                                                }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const [selectedNode, setSelectedNode] = useState<NodeDatum | null>(null);
+    const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
+    // Store updateHighlight in a ref so that it can be called when selectedNode changes.
+    const updateHighlightRef = useRef<(selNode: NodeDatum | null) => void>(() => {});
 
     useEffect(() => {
         if (!svgRef.current) return;
@@ -62,18 +65,16 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
         }
 
         // Zoom behavior
-        svg.call(
-            d3
-                .zoom<SVGSVGElement, unknown>()
-                .scaleExtent([0.5, 3])
-                .filter((event) => event.type !== "dblclick" && event.target.tagName !== "circle")
-                .on("zoom", (event) => {
-                    zoomGroup.attr("transform", event.transform);
-                    zoomGroup
-                        .selectAll(".node-label")
-                        .style("opacity", event.transform.k > 1 ? 1 : 0);
-                })
-        );
+        const zoom = d3
+            .zoom<SVGSVGElement, unknown>()
+            .scaleExtent([0.5, 3])
+            .filter((event) => event.type !== "dblclick" && event.target.tagName !== "circle")
+            .on("zoom", (event) => {
+                zoomGroup.attr("transform", event.transform);
+                zoomGroup.selectAll(".node-label").style("opacity", event.transform.k > 1 ? 1 : 0);
+            });
+        zoomRef.current = zoom;
+        svg.call(zoom);
 
         // Create force simulation
         const simulation = createForceSimulation(nodes, links, width, height);
@@ -116,21 +117,17 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                     })
             );
 
-        // Add circle nodes with conditional styling:
-        // - Researcher nodes: radius 16, class "researcher-node"
-        // - Article nodes: radius 10, class "article-node"
+        // Add circle nodes
         nodeGroup
             .append("circle")
-            .attr("r", d => (d.type === "article" ? 10 : 16))
+            .attr("r", (d) => (d.type === "article" ? 10 : 16))
             .attr("stroke", "#003366")
             .attr("stroke-width", 2)
-            .attr("class", d =>
+            .attr("class", (d) =>
                 d.type === "article" ? "node article-node" : "node researcher-node"
             );
 
-        // Append text labels:
-        // - Researcher nodes show a short label (first word) permanently.
-        // - Article nodes: leave the regular label empty.
+        // Append text labels
         nodeGroup
             .append("text")
             .attr("class", "node-label")
@@ -140,13 +137,13 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             .style("fill", "white")
             .style("pointer-events", "none")
             .style("font-weight", "bold")
-            .text(d => (d.type === "researcher" ? (d.name ? d.name.split(" ")[0] : "") : ""))
-            .style("opacity", d => (d.type === "researcher" ? 1 : 0));
+            .text((d) => (d.type === "researcher" ? (d.name ? d.name.split(" ")[0] : "") : ""))
+            .style("opacity", (d) => (d.type === "researcher" ? 1 : 0));
 
-        // For article nodes, append a tooltip group (initially hidden) that contains a rect and text.
+        // For article nodes, append a tooltip group (initially hidden)
         nodeGroup
-            .filter(d => d.type === "article")
-            .each(function(d) {
+            .filter((d) => d.type === "article")
+            .each(function (d) {
                 const g = d3.select(this);
                 const tooltip = g
                     .append("g")
@@ -157,7 +154,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                     .attr("class", "tooltip-rect")
                     .attr("rx", 4)
                     .attr("ry", 4)
-                    .attr("fill", "#0066cc"); // Secondary color
+                    .attr("fill", "#0066cc");
                 tooltip
                     .append("text")
                     .attr("class", "tooltip-text")
@@ -168,28 +165,32 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                     .text(d.title || "");
             });
 
+        // Handle node clicks
+        nodeGroup.on("click", function (event, d) {
+            event.stopPropagation();
+            if (d.type === "article") return;
 
-        nodeGroup.on("click", function (_, d) {
-            if (d.type === "article") {
-                // Do nothing for article nodes.
-                return;
-            }
             if (selectedNode === d) {
-                d.fx = d.x;
-                d.fy = d.y;
+                // Release the node if already selected
+                d.fx = null;
+                d.fy = null;
                 setSelectedNode(null);
                 onNodeClick(null);
             } else {
+                // Fix the node and mark it as selected
                 d.fx = d.x;
                 d.fy = d.y;
                 setSelectedNode(d);
                 onNodeClick(d);
             }
+            if (updateHighlightRef.current) {
+                updateHighlightRef.current(d);
+            }
         });
 
-
+        // Define updateHighlight and store it in the ref.
         const updateHighlight = (selNode: NodeDatum | null) => {
-            const bfsSet = bfsPath ? new Set(bfsPath.map(id => id.toString())) : new Set<string>();
+            const bfsSet = bfsPath ? new Set(bfsPath.map((id) => id.toString())) : new Set<string>();
             const bfsLinkSet = new Set<string>();
             if (bfsPath && bfsPath.length > 1) {
                 for (let i = 0; i < bfsPath.length - 1; i++) {
@@ -199,50 +200,56 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                     bfsLinkSet.add(key);
                 }
             }
-
-            // Compute immediate neighbors of the selected node.
+            // Determine neighbors and connected links
             const connectedNodes = new Set<NodeDatum>();
             const connectedLinks = new Set<LinkDatum>();
             if (selNode) {
-                links.forEach(link => {
+                links.forEach((link) => {
                     if (link.source === selNode || link.target === selNode) {
                         connectedNodes.add(link.source as NodeDatum);
                         connectedNodes.add(link.target as NodeDatum);
                         connectedLinks.add(link);
                     }
                 });
-                // For each article neighbor, add researcher nodes connected to that article.
                 const extraResearcherNodes = new Set<NodeDatum>();
-                connectedNodes.forEach(node => {
+                connectedNodes.forEach((node) => {
                     if (node.type === "article") {
-                        links.forEach(link => {
-                            if (link.source === node && (link.target as NodeDatum).type === "researcher" && (link.target as NodeDatum).id !== selNode.id) {
+                        links.forEach((link) => {
+                            if (
+                                link.source === node &&
+                                (link.target as NodeDatum).type === "researcher" &&
+                                (link.target as NodeDatum).id !== selNode.id
+                            ) {
                                 extraResearcherNodes.add(link.target as NodeDatum);
-                            } else if (link.target === node && (link.source as NodeDatum).type === "researcher" && (link.source as NodeDatum).id !== selNode.id) {
+                            } else if (
+                                link.target === node &&
+                                (link.source as NodeDatum).type === "researcher" &&
+                                (link.source as NodeDatum).id !== selNode.id
+                            ) {
                                 extraResearcherNodes.add(link.source as NodeDatum);
                             }
                         });
                     }
                 });
-                extraResearcherNodes.forEach(r => connectedNodes.add(r));
+                extraResearcherNodes.forEach((r) => connectedNodes.add(r));
             }
 
             nodeGroup
                 .selectAll<SVGCircleElement, NodeDatum>("circle")
-                .attr("fill", d => {
+                .attr("fill", (d) => {
                     const nodeId = d.id.toString();
-                    if (bfsSet.has(nodeId)) return "#32CD32"; // BFS highlight
+                    if (bfsSet.has(nodeId)) return "#32CD32";
                     if (selNode) {
-                        if (d === selNode) return "#ffcc00"; // Selected node
-                        if (connectedNodes.has(d)) return "#ffcc00"; // Neighbor highlight
+                        if (d === selNode) return "#ffcc00";
+                        if (connectedNodes.has(d)) return "#ffcc00";
                     }
-                    if (selectedAffiliations.includes(d.affiliation as string)) return "#FF6347"; // Affiliation highlight
-                    if (d.type === "article") return "#888888"; // Muted color for articles
-                    return "#0066cc"; // Default color for researchers
+                    if (selectedAffiliations.includes(d.affiliation as string)) return "#FF6347";
+                    if (d.type === "article") return "#888888";
+                    return "#0066cc";
                 });
 
             linkSelection
-                .attr("stroke", d => {
+                .attr("stroke", (d) => {
                     const sourceId = (d.source as NodeDatum).id.toString();
                     const targetId = (d.target as NodeDatum).id.toString();
                     const key = sourceId < targetId ? `${sourceId}-${targetId}` : `${targetId}-${sourceId}`;
@@ -250,15 +257,15 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                     if (selNode && connectedLinks.has(d)) return "#ff9900";
                     return "#ccc";
                 })
-                .attr("stroke-opacity", d => {
+                .attr("stroke-opacity", (d) => {
                     const sourceId = (d.source as NodeDatum).id.toString();
                     const targetId = (d.target as NodeDatum).id.toString();
                     const key = sourceId < targetId ? `${sourceId}-${targetId}` : `${targetId}-${sourceId}`;
                     if (bfsLinkSet.has(key)) return 1;
-                    if (selNode) return 0.1;
+                    if (selNode) return 0.5;
                     return 0.7;
                 })
-                .attr("stroke-width", d => {
+                .attr("stroke-width", (d) => {
                     const sourceId = (d.source as NodeDatum).id.toString();
                     const targetId = (d.target as NodeDatum).id.toString();
                     const key = sourceId < targetId ? `${sourceId}-${targetId}` : `${targetId}-${sourceId}`;
@@ -268,22 +275,14 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                 });
         };
 
-        nodeGroup.on("mouseover", function (_, d) {
-            if (!selectedNode) updateHighlight(d);
-        });
-        nodeGroup.on("mouseout", function () {
-            if (!selectedNode) updateHighlight(null);
-        });
-        updateHighlight(selectedNode);
+        updateHighlightRef.current = updateHighlight;
 
-        // Additional handlers for article nodes: show tooltip group on hover.
+        // Additional handlers for article node tooltips.
         nodeGroup
-            .filter(d => d.type === "article")
+            .filter((d) => d.type === "article")
             .on("mouseover", function (event, d) {
                 const tooltip = d3.select(this).select("g.article-tooltip");
-                // Position the tooltip above the node
                 tooltip.attr("transform", "translate(0, -20)");
-                // Get the bounding box of the tooltip text to size the rect accordingly.
                 const textEl = tooltip.select("text.tooltip-text").node() as SVGTextElement;
                 if (textEl) {
                     const bbox = textEl.getBBox();
@@ -302,11 +301,11 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
 
         simulation.on("tick", () => {
             linkSelection
-                .attr("x1", d => (d.source as NodeDatum).x!)
-                .attr("y1", d => (d.source as NodeDatum).y!)
-                .attr("x2", d => (d.target as NodeDatum).x!)
-                .attr("y2", d => (d.target as NodeDatum).y!);
-            nodeGroup.attr("transform", d => `translate(${d.x}, ${d.y})`);
+                .attr("x1", (d) => (d.source as NodeDatum).x!)
+                .attr("y1", (d) => (d.source as NodeDatum).y!)
+                .attr("x2", (d) => (d.target as NodeDatum).x!)
+                .attr("y2", (d) => (d.target as NodeDatum).y!);
+            nodeGroup.attr("transform", (d) => `translate(${d.x}, ${d.y})`);
         });
 
         const handleResize = () => {
@@ -325,7 +324,13 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             simulation.stop();
             window.removeEventListener("resize", handleResize);
         };
-    }, [nodes, links, gridActive, onNodeClick, selectedNode, bfsPath, selectedAffiliations]);
+    }, [nodes, links, gridActive, bfsPath, selectedAffiliations]);
+
+    useEffect(() => {
+        if (updateHighlightRef.current) {
+            updateHighlightRef.current(selectedNode);
+        }
+    }, [selectedNode]);
 
     return <svg ref={svgRef} className="force-graph-container" />;
 };
