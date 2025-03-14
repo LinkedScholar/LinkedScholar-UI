@@ -26,7 +26,6 @@ interface Publication {
     year: string;
 }
 
-// A publication card component.
 const PublicationCard: React.FC<{ publication: Publication }> = ({ publication }) => {
 
     return (
