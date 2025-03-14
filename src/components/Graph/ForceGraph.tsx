@@ -24,7 +24,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
     const svgRef = useRef<SVGSVGElement>(null);
     const [selectedNode, setSelectedNode] = useState<NodeDatum | null>(null);
     const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
-    // Store updateHighlight in a ref so that it can be called when selectedNode changes.
     const updateHighlightRef = useRef<(selNode: NodeDatum | null) => void>(() => {});
 
     useEffect(() => {
