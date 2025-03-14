@@ -43,10 +43,8 @@ const App: React.FC = () => {
                         <Route 
                             path="/network" 
                             element={
-                                <ProtectedRoute>
                                     <GraphView />
-                                </ProtectedRoute>
-                            } 
+                            }
                         />
                     </Routes>
                 </main>
