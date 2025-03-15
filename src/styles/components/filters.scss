@@ -44,8 +44,8 @@
 
 // Scrollable container for the filters list
 .filters-list-container {
-  height: 300px; 
-  overflow-y: auto; 
+  height: 300px;
+  overflow-y: auto;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   padding: 10px;
@@ -62,7 +62,7 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #a4a4a4; 
+    background: #a4a4a4;
     border-radius: 4px;
   }
 
@@ -118,4 +118,27 @@
       line-height: 1.4;
     }
   }
+}
+
+/* Redesigned Clear All Filters Button matching the navbar buttons */
+/* Smaller button placed below the box */
+.clear-filters-button {
+  background: none;
+  color: #0066cc;
+  border: 1px solid #0066cc;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.clear-filters-button:hover {
+  background: #0066cc;
+  color: white;
+}
+
+.clear-filters-button:active {
+  background: #004c99;
 }
