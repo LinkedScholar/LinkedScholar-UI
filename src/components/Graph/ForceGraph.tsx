@@ -11,6 +11,7 @@ interface ForceGraphProps {
     gridActive: boolean;
     bfsPath: string[] | null;
     selectedAffiliations: string[];
+    affiliationColorMap?: { [key: string]: string };
 }
 
 const ForceGraph: React.FC<ForceGraphProps> = ({
@@ -20,6 +21,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                                                    gridActive,
                                                    bfsPath,
                                                    selectedAffiliations,
+                                                   affiliationColorMap,
                                                }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const zoomGroupRef = useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
@@ -229,16 +231,20 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                 extraResearcherNodes.forEach((r) => connectedNodes.add(r));
             }
 
-            // Update nodes: use fill based on type/affiliation and add a green stroke for BFS nodes.
+            // Update nodes: use affiliation color if available.
             nodeGroup
                 .selectAll<SVGCircleElement, NodeDatum>("circle")
                 .attr("fill", (d) => {
-                    // Remove BFS fill override; keep original fill logic
+                    // Priority for highlighting selected/connected nodes.
                     if (selNode) {
                         if (d === selNode) return "#ffcc00";
                         if (connectedNodes.has(d)) return "#ffcc00";
                     }
-                    if (selectedAffiliations.includes(d.affiliation as string)) return "#FF6347";
+                    // Use affiliation color from mapping if available.
+                    if (d.affiliation && affiliationColorMap && affiliationColorMap[d.affiliation]) {
+                        return affiliationColorMap[d.affiliation];
+                    }
+                    // Fallback colors.
                     if (d.type === "article") return "#888888";
                     return "#0066cc";
                 })
@@ -246,9 +252,9 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                     const nodeId = d.id.toString();
                     // For BFS nodes, use green stroke
                     if (bfsSet.has(nodeId)) return "#32CD32";
-                    // For selected or connected nodes, you might want a different stroke
+                    // For selected or connected nodes, use a different stroke
                     if (selNode && (d === selNode || connectedNodes.has(d))) return "#ff9900";
-                    // Otherwise, default stroke (or use affiliation-based stroke if desired)
+                    // Otherwise, default stroke
                     return "#003366";
                 })
                 .attr("stroke-width", (d) => {
@@ -335,7 +341,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             simulation.stop();
             window.removeEventListener("resize", handleResize);
         };
-    }, [nodes, links, bfsPath, selectedAffiliations]);
+    }, [nodes, links, bfsPath, selectedAffiliations, affiliationColorMap]);
 
     useEffect(() => {
         if (!svgRef.current) return;
