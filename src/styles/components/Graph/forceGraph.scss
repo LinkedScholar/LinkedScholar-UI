@@ -11,12 +11,14 @@
   font-size: 12px;
   font-weight: bold;
   fill: white;
-  text-shadow: 1px 1px 3px #333;
   pointer-events: none;
+  text-shadow: 1px 1px 3px #333;
   padding: 2px 4px;
   border-radius: 4px;
+  stroke: black;           // Outline color for the text
+  stroke-width: 1px;       // Adjust stroke width as needed
+  paint-order: stroke fill; // Ensures the stroke appears behind the text fill
 }
-
 .link {
   stroke: #ccc;
   stroke-opacity: 0.7;
@@ -44,4 +46,8 @@
 .tooltip-rect {
   fill: $secondary-color;
   opacity: 0.9;
+}
+
+.researcher-node {
+  filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.4));
 }

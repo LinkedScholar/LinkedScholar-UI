@@ -73,7 +73,11 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             .filter((event) => event.type !== "dblclick")
             .on("zoom", (event) => {
                 zoomGroup.attr("transform", event.transform);
-                zoomGroup.selectAll(".node-label").style("opacity", event.transform.k > 1 ? 1 : 0);
+                zoomGroup
+                    .selectAll(".node-label")
+                    .transition()
+                    .duration(100)
+                    .style("opacity", event.transform.k > 0.6 ? 1 : 0);
             });
         svg.call(zoom);
 
@@ -117,7 +121,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
 
         nodeGroup
             .append("circle")
-            .attr("r", (d) => (d.type === "article" ? 10 : 16))
+            .attr("r", (d) => (d.type === "article" ? 10 : 25))
             .attr("stroke", "#003366")
             .attr("stroke-width", 2)
             .attr("class", (d) =>
@@ -129,7 +133,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             .attr("class", "node-label")
             .attr("dy", 5)
             .attr("text-anchor", "middle")
-            .style("font-size", "12px")
+            .style("font-size", (d) => (d.type === "researcher" ? "14px" : "12px"))
             .style("fill", "white")
             .style("pointer-events", "none")
             .style("font-weight", "bold")

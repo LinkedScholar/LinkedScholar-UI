@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import ForceGraph from "../components/Graph/ForceGraph";
 import Toolbar from "../components/Toolbar";
-import MiniSearcher from "../components/MiniSearcher";
 import ResearcherSidebar from "../components/Researcher-Sidebar/ResearcherSidebar";
 import PathWindow from "../components/PathWindow";
 import Filters from "../components/Filter-Sidebar/filters";
