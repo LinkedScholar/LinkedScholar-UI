@@ -185,7 +185,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                 updateHighlightRef.current(selectedNodeRef.current);
             }
         });
-
         const updateHighlight = (selNode: NodeDatum | null) => {
             const bfsSet = bfsPath ? new Set(bfsPath.map((id) => id.toString())) : new Set<string>();
             const bfsLinkSet = new Set<string>();
@@ -229,11 +228,12 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                 });
                 extraResearcherNodes.forEach((r) => connectedNodes.add(r));
             }
+
+            // Update nodes: use fill based on type/affiliation and add a green stroke for BFS nodes.
             nodeGroup
                 .selectAll<SVGCircleElement, NodeDatum>("circle")
                 .attr("fill", (d) => {
-                    const nodeId = d.id.toString();
-                    if (bfsSet.has(nodeId)) return "#32CD32";
+                    // Remove BFS fill override; keep original fill logic
                     if (selNode) {
                         if (d === selNode) return "#ffcc00";
                         if (connectedNodes.has(d)) return "#ffcc00";
@@ -241,7 +241,25 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                     if (selectedAffiliations.includes(d.affiliation as string)) return "#FF6347";
                     if (d.type === "article") return "#888888";
                     return "#0066cc";
+                })
+                .attr("stroke", (d) => {
+                    const nodeId = d.id.toString();
+                    // For BFS nodes, use green stroke
+                    if (bfsSet.has(nodeId)) return "#32CD32";
+                    // For selected or connected nodes, you might want a different stroke
+                    if (selNode && (d === selNode || connectedNodes.has(d))) return "#ff9900";
+                    // Otherwise, default stroke (or use affiliation-based stroke if desired)
+                    return "#003366";
+                })
+                .attr("stroke-width", (d) => {
+                    const nodeId = d.id.toString();
+                    // Thicker stroke for BFS nodes
+                    if (bfsSet.has(nodeId)) return 3;
+                    if (selNode && (d === selNode || connectedNodes.has(d))) return 3;
+                    return 2;
                 });
+
+            // Update links: color BFS links in green.
             linkSelection
                 .attr("stroke", (d) => {
                     const sourceId = (d.source as NodeDatum).id.toString();

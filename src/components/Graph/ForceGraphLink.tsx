@@ -3,9 +3,10 @@ import { LinkDatum, NodeDatum } from "../../types/graphTypes";
 
 interface ForceGraphLinkProps {
     link: LinkDatum;
+    strokeColor?: string;
 }
 
-const ForceGraphLink: React.FC<ForceGraphLinkProps> = ({ link }) => {
+const ForceGraphLink: React.FC<ForceGraphLinkProps> = ({ link, strokeColor = "#aaa" }) => {
     const source = link.source as NodeDatum;
     const target = link.target as NodeDatum;
     return (
@@ -14,7 +15,7 @@ const ForceGraphLink: React.FC<ForceGraphLinkProps> = ({ link }) => {
             y1={source.y!}
             x2={target.x!}
             y2={target.y!}
-            stroke="#aaa"
+            stroke={strokeColor}
         />
     );
 };
