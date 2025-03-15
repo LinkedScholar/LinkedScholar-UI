@@ -32,6 +32,11 @@ const Filters: React.FC<FiltersProps> = ({
     onFilterChange(updatedSelected);
   };
 
+  const handleClearFilters = () => {
+    setLocalSelected([]);
+    onFilterChange([]);
+  };
+
   return (
       <div className="path-window p-3 bg-light border rounded">
         <div className="path-window-header d-flex justify-content-between align-items-center">
@@ -65,6 +70,12 @@ const Filters: React.FC<FiltersProps> = ({
           {activeTab === "affiliations" ? (
               <>
                 <p className="text-muted">Select affiliations to highlight</p>
+                <button
+                    className="btn btn-sm btn-secondary mb-3"
+                    onClick={handleClearFilters}
+                >
+                  Clear All Filters
+                </button>
                 {/* Fixed height container with scrollbar */}
                 <div className="filters-list-container">
                   <ul className="list-unstyled">

@@ -30,6 +30,12 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
     const selectedNodeRef = useRef<NodeDatum | null>(null);
     const updateHighlightRef = useRef<(selNode: NodeDatum | null) => void>(() => {});
 
+    // Create a ref to always hold the latest selected affiliations.
+    const selectedAffiliationsRef = useRef<string[]>(selectedAffiliations);
+    useEffect(() => {
+        selectedAffiliationsRef.current = selectedAffiliations;
+    }, [selectedAffiliations]);
+
     useEffect(() => {
         selectedNodeRef.current = selectedNode;
     }, [selectedNode]);
@@ -176,7 +182,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                 selectedNodeRef.current = null;
                 onNodeClick(null);
             } else {
-                // Select: fix node at its current position
                 d.fx = d.x;
                 d.fy = d.y;
                 setSelectedNode(d);
@@ -187,6 +192,21 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                 updateHighlightRef.current(selectedNodeRef.current);
             }
         });
+
+        // Add hover events for researcher nodes to highlight their connections.
+        nodeGroup
+            .filter((d) => d.type !== "article")
+            .on("mouseover", function (event, d) {
+                if (updateHighlightRef.current) {
+                    updateHighlightRef.current(d);
+                }
+            })
+            .on("mouseout", function (event, d) {
+                if (updateHighlightRef.current) {
+                    updateHighlightRef.current(selectedNodeRef.current);
+                }
+            });
+
         const updateHighlight = (selNode: NodeDatum | null) => {
             const bfsSet = bfsPath ? new Set(bfsPath.map((id) => id.toString())) : new Set<string>();
             const bfsLinkSet = new Set<string>();
@@ -231,41 +251,52 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                 extraResearcherNodes.forEach((r) => connectedNodes.add(r));
             }
 
-            // Update nodes: use affiliation color if available.
             nodeGroup
                 .selectAll<SVGCircleElement, NodeDatum>("circle")
                 .attr("fill", (d) => {
-                    // Priority for highlighting selected/connected nodes.
+                    // Highlight selected/connected nodes first.
                     if (selNode) {
                         if (d === selNode) return "#ffcc00";
                         if (connectedNodes.has(d)) return "#ffcc00";
                     }
-                    // Use affiliation color from mapping if available.
-                    if (d.affiliation && affiliationColorMap && affiliationColorMap[d.affiliation]) {
-                        return affiliationColorMap[d.affiliation];
+                    // For researcher nodes: if filters are active and the node's affiliation does not match any selected affiliation, color it grey.
+                    if (d.type === "researcher" && selectedAffiliationsRef.current.length > 0) {
+                        let match = false;
+                        if (Array.isArray(d.affiliation)) {
+                            match = d.affiliation.some(a => selectedAffiliationsRef.current.includes(a));
+                        } else {
+                            if (d.affiliation != null) {
+                                match = selectedAffiliationsRef.current.includes(d.affiliation);
+                            }
+                        }
+                        if (!match) return "#d3d3d3";
                     }
-                    // Fallback colors.
+                    // Otherwise, if an affiliation color exists, use it.
+                    if (d.affiliation && affiliationColorMap) {
+                        if (Array.isArray(d.affiliation)) {
+                            const foundAff = d.affiliation.find(a => affiliationColorMap[a]);
+                            if (foundAff) return affiliationColorMap[foundAff];
+                        } else if (affiliationColorMap[d.affiliation]) {
+                            return affiliationColorMap[d.affiliation];
+                        }
+                    }
+                    // Fallbacks.
                     if (d.type === "article") return "#888888";
                     return "#0066cc";
                 })
                 .attr("stroke", (d) => {
                     const nodeId = d.id.toString();
-                    // For BFS nodes, use green stroke
                     if (bfsSet.has(nodeId)) return "#32CD32";
-                    // For selected or connected nodes, use a different stroke
                     if (selNode && (d === selNode || connectedNodes.has(d))) return "#ff9900";
-                    // Otherwise, default stroke
                     return "#003366";
                 })
                 .attr("stroke-width", (d) => {
                     const nodeId = d.id.toString();
-                    // Thicker stroke for BFS nodes
                     if (bfsSet.has(nodeId)) return 3;
                     if (selNode && (d === selNode || connectedNodes.has(d))) return 3;
                     return 2;
                 });
 
-            // Update links: color BFS links in green.
             linkSelection
                 .attr("stroke", (d) => {
                     const sourceId = (d.source as NodeDatum).id.toString();
@@ -341,55 +372,13 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             simulation.stop();
             window.removeEventListener("resize", handleResize);
         };
-    }, [nodes, links, bfsPath, selectedAffiliations, affiliationColorMap]);
-
-    useEffect(() => {
-        if (!svgRef.current) return;
-        const svg = d3.select(svgRef.current);
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        if (zoomGroupRef.current) {
-            if (gridActive) {
-                if (!gridRectRef.current) {
-                    const gridSpacing = 50;
-                    let defs = svg.select<SVGDefsElement>("defs");
-                    if (defs.empty()) {
-                        defs = svg.append<SVGDefsElement>("defs");
-                    }
-                    defs
-                        .append("pattern")
-                        .attr("id", "grid")
-                        .attr("width", gridSpacing)
-                        .attr("height", gridSpacing)
-                        .attr("patternUnits", "userSpaceOnUse")
-                        .append("path")
-                        .attr("d", `M ${gridSpacing} 0 L 0 0 L 0 ${gridSpacing}`)
-                        .attr("fill", "none")
-                        .attr("stroke", "#ccc")
-                        .attr("stroke-width", 1);
-                    gridRectRef.current = zoomGroupRef.current
-                        .insert("rect", ":first-child")
-                        .attr("x", -width)
-                        .attr("y", -height)
-                        .attr("width", width * 3)
-                        .attr("height", height * 3)
-                        .attr("fill", "url(#grid)");
-                } else {
-                    gridRectRef.current.style("display", "block");
-                }
-            } else {
-                if (gridRectRef.current) {
-                    gridRectRef.current.style("display", "none");
-                }
-            }
-        }
-    }, [gridActive]);
+    }, [nodes, links, bfsPath, affiliationColorMap]);
 
     useEffect(() => {
         if (updateHighlightRef.current) {
             updateHighlightRef.current(selectedNode);
         }
-    }, [selectedNode]);
+    }, [selectedAffiliations, selectedNode]);
 
     return <svg ref={svgRef} className="force-graph-container" />;
 };

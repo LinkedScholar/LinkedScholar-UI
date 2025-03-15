@@ -55,7 +55,6 @@ const GraphView: React.FC = () => {
         setGraphData(computedNetworkData);
     }, [computedNetworkData]);
 
-    // Collect affiliations from researcher nodes
     const affiliations = useMemo(() => {
         const affSet = new Set<string>();
         graphData.nodes.forEach((node) => {
@@ -74,6 +73,7 @@ const GraphView: React.FC = () => {
         return Array.from(affSet);
     }, [graphData]);
 
+    // Ensure unique, non-empty affiliations.
     const uniqueAffiliations = useMemo(() => {
         return Array.from(
             new Set(
@@ -87,15 +87,14 @@ const GraphView: React.FC = () => {
 
     const colors = d3.schemeCategory10;
     const affiliationColorMap = useMemo(() => {
-      const map: { [key: string]: string } = {};
-      uniqueAffiliations.forEach((aff, i) => {
-        map[aff] = colors[i % colors.length];
-      });
-      return map;
+        const map: { [key: string]: string } = {};
+        uniqueAffiliations.forEach((aff, i) => {
+            map[aff] = colors[i % colors.length];
+        });
+        return map;
     }, [uniqueAffiliations]);
 
-
-    // Hooks and state for path/bfs logic
+    // Hooks and state for path/BFS logic
     const forceGraphRef = useRef<{ resetSimulation: () => void } | null>(null);
     const [selectedNode, setSelectedNode] = useState<NodeDatum | null>(null);
     const [gridActive, setGridActive] = useState(false);
@@ -160,7 +159,6 @@ const GraphView: React.FC = () => {
                 const newPathData = await getPath(authenticated, startNode.label, targetNode.value, source);
                 let parsedPathData = newPathData;
 
-                // The API might return a JSON string or a direct object
                 if (typeof newPathData === "string") {
                     try {
                         parsedPathData = JSON.parse(newPathData);
@@ -195,7 +193,6 @@ const GraphView: React.FC = () => {
                 }
                 const newLinks = parsedPathData.links || [];
 
-                // Append new nodes/links, avoiding duplicates
                 newNodes.forEach((node: any) => {
                     if (!updatedNodes.find((n) => n.id === node.id)) {
                         updatedNodes.push(node);
@@ -212,7 +209,6 @@ const GraphView: React.FC = () => {
             }
         }
 
-        // BFS path search on the updated data
         const finalStartData = updatedNodes.find(
             (n) => n.name === startNode.value || n.id.toString() === startNode.value
         );
@@ -241,14 +237,12 @@ const GraphView: React.FC = () => {
         }
     };
 
-    // Clear BFS search
     const handleClearBfsSearch = () => {
         setStartNode(null);
         setTargetNode(null);
         setBfsPath(null);
     };
 
-    // Toggle filters
     const toggleFilters = () => {
         setFiltersActive((prev) => !prev);
         if (!filtersActive && pathWindowOpen) {
@@ -256,7 +250,6 @@ const GraphView: React.FC = () => {
         }
     };
 
-    // If there's no data, show a placeholder
     if (graphData.nodes.length === 0 && graphData.links.length === 0) {
         return <h2>No network data available</h2>;
     }
@@ -319,7 +312,7 @@ const GraphView: React.FC = () => {
                     gridActive={gridActive}
                     bfsPath={bfsPath}
                     selectedAffiliations={selectedAffiliations}
-                    affiliationColorMap={affiliationColorMap} // Uncomment if using color map
+                    affiliationColorMap={affiliationColorMap}
                 />
             </div>
 
