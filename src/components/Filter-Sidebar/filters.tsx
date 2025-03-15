@@ -1,4 +1,3 @@
-// src/components/Filter-Sidebar/filters.tsx
 import React, { useState, useEffect } from "react";
 import "../../styles/components/filters.scss";
 
@@ -16,6 +15,7 @@ const Filters: React.FC<FiltersProps> = ({
   onClose,
 }) => {
   const [localSelected, setLocalSelected] = useState<string[]>(selectedAffiliations);
+  const [activeTab, setActiveTab] = useState<"affiliations" | "journals">("affiliations");
 
   useEffect(() => {
     setLocalSelected(selectedAffiliations);
@@ -35,38 +35,66 @@ const Filters: React.FC<FiltersProps> = ({
   return (
     <div className="path-window p-3 bg-light border rounded">
       <div className="path-window-header d-flex justify-content-between align-items-center">
-        <h3 className="mb-0 text-secondary-color">Affiliation Filters</h3>
+        <h3 className="mb-0 text-secondary-color">Filters</h3>
         <button className="btn btn-link p-0" onClick={onClose}>
           <i className="mdi mdi-close"></i>
         </button>
       </div>
 
+      {/* Add tab navigation */}
+      <ul className="nav nav-tabs mt-3">
+        <li className="nav-item">
+          <button
+            className={`nav-link ${activeTab === "affiliations" ? "active" : ""}`}
+            onClick={() => setActiveTab("affiliations")}
+          >
+            Affiliations
+          </button>
+        </li>
+        <li className="nav-item">
+          <button
+            className={`nav-link ${activeTab === "journals" ? "active" : ""}`}
+            onClick={() => setActiveTab("journals")}
+          >
+            Journals
+          </button>
+        </li>
+      </ul>
+
       <div className="filters-content mt-3">
-        <p className="text-muted">
-          Select affiliations to highlight
-        </p>
-        
-        {/* Fixed height container with scrollbar */}
-        <div className="filters-list-container">
-          <ul className="list-unstyled">
-            {affiliations.map((affiliation) => (
-              <li key={affiliation}>
-                <div className="form-check">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    id={affiliation}
-                    checked={localSelected.includes(affiliation)}
-                    onChange={() => handleCheckboxChange(affiliation)}
-                  />
-                  <label className="form-check-label" htmlFor={affiliation}>
-                    {affiliation}
-                  </label>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {activeTab === "affiliations" ? (
+          <>
+            <p className="text-muted">
+              Select affiliations to highlight
+            </p>
+            
+            {/* Fixed height container with scrollbar */}
+            <div className="filters-list-container">
+              <ul className="list-unstyled">
+                {affiliations.map((affiliation) => (
+                  <li key={affiliation}>
+                    <div className="form-check">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        id={affiliation}
+                        checked={localSelected.includes(affiliation)}
+                        onChange={() => handleCheckboxChange(affiliation)}
+                      />
+                      <label className="form-check-label" htmlFor={affiliation}>
+                        {affiliation}
+                      </label>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
+        ) : (
+          <div className="text-center py-4">
+            <p className="text-muted">Journal filters available soon.</p>
+          </div>
+        )}
       </div>
     </div>
   );
