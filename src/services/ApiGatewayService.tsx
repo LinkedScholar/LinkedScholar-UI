@@ -97,20 +97,21 @@ export const getArticlesFromAuthor = async (
 
 export const getPath = async (
     logged: boolean,
-    author_id: string,
-    source: string
+    fromId: string,
+    toId: string,
+    source: string = "dblp"
 ): Promise<any> => {
     try {
         const url = logged ? `${API_BASE_URL}/path` : `${API_PUBLIC_BASE_URL}/path`;
-        // Since the /path endpoint uses @RequestParam in the backend, we pass the parameters via axios' params.
-        const response = await axios.post(
-            url,
-            null, // No body
-            {
-                params: { author_id, source },
-                withCredentials: true,
-            }
-        );
+        const payload = {
+            from_id: fromId,
+            to_id: toId,
+            to_source: source,
+        };
+        const response = await axios.post(url, payload, {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+        });
         return response.data;
     } catch (error) {
         console.error("Error fetching path:", error);
