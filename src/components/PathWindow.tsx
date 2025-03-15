@@ -65,7 +65,6 @@ const PathWindow: React.FC<PathWindowProps> = ({
 
             {expanded && (
                 <div className="path-form mt-3">
-                    {/* Start Node Selection (researcher only) */}
                     <div className="mb-3">
                         <label className="form-label">Start Node (Researcher):</label>
                         <CreatableSelect

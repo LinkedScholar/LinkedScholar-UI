@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../redux/store";
 import { fetchSession } from "../redux/authSlice";
 import axios from "axios";
-import { getNetwork } from "../components/services/ApiGatewayService";
+import { getNetwork } from "../services/ApiGatewayService";
 import RegistrationModal from "../components/modals/RegistrationModal";
 import PricingModal from "../components/modals/PricingModal";
 

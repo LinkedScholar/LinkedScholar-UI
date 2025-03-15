@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../redux/store";
-import { getNetwork } from "./services/ApiGatewayService";
+import { getNetwork } from "../services/ApiGatewayService";
 import axios from "axios";
 import RegistrationModal from "./modals/RegistrationModal";
 import PricingModal from "./modals/PricingModal";

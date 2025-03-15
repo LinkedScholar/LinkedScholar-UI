@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NodeDatum } from "../../types/graphTypes";
-import {getArticlesFromAuthor} from "../services/ApiGatewayService";
+import {getArticlesFromAuthor} from "../../services/ApiGatewayService";
 import {useSelector} from "react-redux";
 import {RootState} from "../../redux/store";
 import "../../styles/components/publicationsContent.scss";
