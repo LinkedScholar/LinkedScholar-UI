@@ -1,93 +1,121 @@
 @import "../app.scss"; // Import global styles
 
-.filters-sidebar {
-  position: fixed;
-  top: 160px;
-  bottom: 80px;
-  right: -400px; // Hidden off-screen by default
-  width: 400px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 24px;
-  border-left: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 16px 0 0 16px;
-  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.2);
-  z-index: 9999; // Very high z-index to appear on top
-  overflow-y: auto;
-  scrollbar-gutter: stable;
-  user-select: none;
-  transition: right 0.3s ease-in-out, width 0.3s ease, padding 0.3s ease;
+// Main styling for the filters component (now using path-window class)
+.path-window {
+  background-color: #ffffff !important;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  padding: 16px;
 
-  &.open {
-    right: 0;
-  }
-
-  .filters-header {
+  .path-window-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    margin-bottom: 12px;
-    padding-bottom: 8px;
+    margin-bottom: 10px;
 
-    h4 {
+    h3 {
       font-size: 18px;
-      font-weight: 700;
+      font-weight: 600;
       color: $primary-color;
       margin: 0;
     }
 
-    .btn-close {
-      background-color: $primary-color;
-      border: none;
-      color: #fff;
-      width: 2rem;
-      height: 2rem;
-      border-radius: 50%;
+    .btn-link {
+      color: $primary-color;
+      font-size: 1.1rem;
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-      opacity: 1;
-      transition: background-color 0.2s ease;
-      cursor: pointer;
-
-      &:hover {
-        background-color: darken($primary-color, 10%);
-      }
+      text-decoration: none;
+      padding: 0;
+      margin-bottom: 0;
     }
   }
 
   .filters-content {
-    padding: 0 12px;
+    margin-top: 1rem;
 
     p {
-      font-size: 14px;
+      font-size: 15px;
       color: $secondary-color;
-      margin-bottom: 16px;
+      margin-bottom: 15px;
+    }
+  }
+}
+
+// Scrollable container for the filters list
+.filters-list-container {
+  height: 300px; 
+  overflow-y: auto; 
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: white;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #a4a4a4; 
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #004c99;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    margin-bottom: 6px;
+    padding: 4px 20px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+
+    &:last-child {
+      margin-bottom: 0;
     }
 
-    ul {
-      list-style: none;
-      padding: 0;
+    &:hover {
+      background-color: #f8f9fa;
+    }
+  }
 
-      li {
-        margin-bottom: 8px;
+  // Checkbox styling
+  .form-check {
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+    margin: 0;
+    padding: 5px;
+    word-break: break-word;
 
-        .form-check {
-          display: flex;
-          align-items: center;
+    input[type="checkbox"] {
+      margin-right: 10px;
+      margin-top: 2px;
+    }
 
-          input[type="checkbox"] {
-            margin-right: 8px;
-          }
+    .form-check-input:checked + .form-check-label {
+      font-weight: 500;
+      color: #0066cc;
+    }
 
-          label {
-            font-size: 14px;
-            color: #333;
-          }
-        }
-      }
+    label {
+      font-size: 14px;
+      color: #333;
+      font-weight: 400;
+      cursor: pointer;
+      line-height: 1.4;
     }
   }
 }

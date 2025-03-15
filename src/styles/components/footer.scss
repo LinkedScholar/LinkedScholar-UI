@@ -18,12 +18,15 @@
     background: rgba(255, 255, 255, 0.5);
 }
 
-/* Footer Branding */
 .footer-brand p {
     text-align: center;
     font-size: 13px;
     font-weight: bold;
     color: $primary-color 
+}
+
+.footer-brand span {
+    color: $secondary-color
 }
 
 /* Footer Links */
@@ -34,13 +37,13 @@
 
 .footer-links .nav-link {
     font-size: 14px;
-    color: $primary-color; // Uses SCSS variable
+    color: $primary-color; 
     text-decoration: none;
     transition: color 0.3s ease-in-out;
 }
 
 .footer-links .nav-link:hover {
-    color: $primary-color; // Uses SCSS variable
+    color: $primary-color; 
     text-decoration: underline;
 }
 
@@ -58,7 +61,7 @@
 }
 
 .sponsor-link:hover {
-    background: $secondary-color; // Uses SCSS variable
+    background: $secondary-color; 
     color: white;
 }
 

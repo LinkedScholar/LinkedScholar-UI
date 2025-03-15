@@ -79,8 +79,12 @@ const GraphView: React.FC = () => {
   };
 
   const togglePathWindow = () => {
-    setPathWindowOpen((prev) => !prev);
+    setPathWindowOpen(prev => !prev);
+    if (!pathWindowOpen && filtersActive) {
+      setFiltersActive(false);
+    }
   };
+
 
   const handleBfsSearch = () => {
     if (!startNode || !targetNode) {
@@ -123,40 +127,41 @@ const GraphView: React.FC = () => {
     setBfsPath(null);
   };
 
+  const toggleFilters = () => {
+    setFiltersActive(prev => !prev);
+    if (!filtersActive && pathWindowOpen) {
+      setPathWindowOpen(false); // Close path window when opening filters
+    }
+  };
+  
+
   return (
       <div className="graph-view-container">
-        <div className="container position-absolute start-50 translate-middle-x mt-5 pt-5">
-          <div className="row justify-content-between align-items-center">
-            <div className="col-auto">
-              <MiniSearcher />
-            </div>
-            <div className="col-auto">
-              <Toolbar
-                  gridActive={gridActive}
-                  filtersActive={filtersActive}
-                  pathWindowActive={pathWindowOpen}
-                  toggleGrid={() => setGridActive((prev) => !prev)}
-                  toggleFilters={() => setFiltersActive((prev) => !prev)}
-                  togglePathWindow={togglePathWindow}
-                  resetSimulation={() => forceGraphRef.current?.resetSimulation()}
-              />
-            </div>
-          </div>
+        <div className="position-absolute" style={{ top: "100px", left: "80px", zIndex: 1000 }}>
+          <Toolbar
+            gridActive={gridActive}
+            filtersActive={filtersActive}
+            pathWindowActive={pathWindowOpen}
+            toggleGrid={() => setGridActive((prev) => !prev)}
+            toggleFilters={toggleFilters}
+            togglePathWindow={togglePathWindow}
+            resetSimulation={() => forceGraphRef.current?.resetSimulation()}
+          />
         </div>
 
         {filtersActive && (
-            <div className="position-absolute" style={{ top: "160px", left: "80px", zIndex: 1000 }}>
-              <Filters
-                  affiliations={affiliations}
-                  selectedAffiliations={selectedAffiliations}
-                  onFilterChange={setSelectedAffiliations}
-                  onClose={() => setFiltersActive(false)}
-              />
-            </div>
-        )}
+          <div className="position-absolute" style={{ top: "180px", left: "80px", zIndex: 1000 }}>
+            <Filters
+                affiliations={affiliations}
+                selectedAffiliations={selectedAffiliations}
+                onFilterChange={setSelectedAffiliations}
+                onClose={() => setFiltersActive(false)}
+            />
+          </div>
+      )}
 
         {pathWindowOpen && (
-            <div className="position-absolute" style={{ top: "160px", left: "80px", zIndex: 1000 }}>
+            <div className="position-absolute" style={{ top: "180px", left: "80px", zIndex: 1000 }}>
               <PathWindow
                   bfsPath={bfsPath}
                   nodes={networkData.nodes}
