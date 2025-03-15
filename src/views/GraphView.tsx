@@ -1,5 +1,6 @@
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 import ForceGraph from "../components/Graph/ForceGraph";
 import Toolbar from "../components/Toolbar";
 import MiniSearcher from "../components/MiniSearcher";
@@ -8,8 +9,10 @@ import PathWindow from "../components/PathWindow";
 import Filters from "../components/Filter-Sidebar/filters";
 import { LinkDatum, NodeDatum } from "../types/graphTypes";
 import { bfs } from "../utils/bfs";
+import { getPath } from "../services/ApiGatewayService";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/views/graphView.scss";
+import {RootState} from "../redux/store";
 
 interface NetworkData {
   nodes: NodeDatum[];
@@ -20,8 +23,11 @@ const GraphView: React.FC = () => {
   const location = useLocation();
   const rawNetworkData: any = location.state?.networkData;
 
-  const networkData: NetworkData | undefined = useMemo(() => {
-    if (!rawNetworkData) return undefined;
+
+  const computedNetworkData: NetworkData = useMemo(() => {
+    if (!rawNetworkData) {
+      return { nodes: [], links: [] };
+    }
     if (rawNetworkData.authors && rawNetworkData.articles) {
       const authors: NodeDatum[] = rawNetworkData.authors.map((author: any) => ({
         ...author,
@@ -38,19 +44,26 @@ const GraphView: React.FC = () => {
         links: rawNetworkData.links,
       };
     }
-    // Fallback if the data is already merged
     return rawNetworkData;
   }, [rawNetworkData]);
 
-  // Collect affiliations from researcher nodes
+  // Create a state variable to hold and update your graph data.
+  // (Always initialized even if empty.)
+  const [graphData, setGraphData] = useState<NetworkData>(computedNetworkData);
+
+  // Update graphData state when computedNetworkData changes.
+  useEffect(() => {
+    setGraphData(computedNetworkData);
+  }, [computedNetworkData]);
+
+  // Collect affiliations from researcher nodes.
   const affiliations = useMemo(() => {
-    if (!networkData) return [];
     const affSet = new Set<string>();
-    networkData.nodes.forEach((node) => {
+    graphData.nodes.forEach((node) => {
       if (node.affiliation) affSet.add(node.affiliation);
     });
     return Array.from(affSet);
-  }, [networkData]);
+  }, [graphData]);
 
   const forceGraphRef = useRef<{ resetSimulation: () => void } | null>(null);
   const [selectedNode, setSelectedNode] = useState<NodeDatum | null>(null);
@@ -63,9 +76,7 @@ const GraphView: React.FC = () => {
   const [targetType, setTargetType] = useState<"Affiliation" | "researcher">("Affiliation");
   const [selectedAffiliations, setSelectedAffiliations] = useState<string[]>([]);
 
-  if (!networkData) {
-    return <h2>No network data available</h2>;
-  }
+  const { authenticated, status } = useSelector((state: RootState) => state.auth);
 
   const handleNodeClick = (node: NodeDatum | null) => {
     setSelectedNode(node);
@@ -82,33 +93,100 @@ const GraphView: React.FC = () => {
     setPathWindowOpen((prev) => !prev);
   };
 
-  const handleBfsSearch = () => {
+  const handleBfsSearch = async () => {
     if (!startNode || !targetNode) {
       alert("Please select both start and end nodes.");
       return;
     }
 
-    const startId =
-        networkData.nodes.find(
-            (n) => n.name === startNode.value || n.id === startNode.value
-        )?.id || startNode.value;
+    let updatedNodes = [...graphData.nodes];
+    let updatedLinks = [...graphData.links];
+
+    const startData = graphData.nodes.find(
+        (n) => n.name === startNode.value || n.id.toString() === startNode.value
+    );
+
+    let targetData = null;
+    if (targetType === "researcher") {
+      targetData = graphData.nodes.find(
+          (n) => n.name === targetNode.value || n.id.toString() === targetNode.value
+      );
+    }
+
+    if (!startData || (targetType === "researcher" && !targetData)) {
+      try {
+        const source = "dblp"
+        const newPathData = await getPath(authenticated, startNode.value, targetNode.value, source);
+        let parsedPathData = newPathData;
+        if (typeof newPathData === "string") {
+          try {
+            parsedPathData = JSON.parse(newPathData);
+          } catch (e) {
+            console.error("Failed to parse getPath response:", e);
+            throw e;
+          }
+        }
+        let newNodes: any[] = [];
+        if (parsedPathData.articles || parsedPathData.authors) {
+          if (parsedPathData.articles) {
+            newNodes = newNodes.concat(
+                parsedPathData.articles.map((article: any) => ({
+                  id: article.id,
+                  type: "article",
+                  title: article.title,
+                  name: article.title,
+                }))
+            );
+          }
+          if (parsedPathData.authors) {
+            newNodes = newNodes.concat(
+                parsedPathData.authors.map((author: any) => ({
+                  ...author,
+                  type: "researcher",
+                }))
+            );
+          }
+        } else if (parsedPathData.nodes) {
+          newNodes = parsedPathData.nodes;
+        }
+        const newLinks = parsedPathData.links || [];
+
+        // Append new nodes (avoiding duplicates) and links.
+        newNodes.forEach((node: any) => {
+          if (!updatedNodes.find((n) => n.id === node.id)) {
+            updatedNodes.push(node);
+          }
+        });
+        newLinks.forEach((link: any) => {
+          updatedLinks.push(link);
+        });
+        setGraphData({ nodes: updatedNodes, links: updatedLinks });
+      } catch (error) {
+        console.error("Error fetching path:", error);
+        return;
+      }
+    }
+
+    const finalStartData = updatedNodes.find(
+        (n) => n.name === startNode.value || n.id.toString() === startNode.value
+    );
+    const startId = finalStartData ? finalStartData.id : startNode.value;
 
     let targetValue: string;
     if (targetType === "researcher") {
-      const foundTarget = networkData.nodes.find(
-          (n) => n.name === targetNode.value || n.id === targetNode.value
+      const finalTargetData = updatedNodes.find(
+          (n) => n.name === targetNode.value || n.id.toString() === targetNode.value
       );
-      if (!foundTarget) {
+      if (!finalTargetData) {
         alert("Researcher target not found in the network.");
         return;
       }
-      targetValue = foundTarget.id;
+      targetValue = finalTargetData.id;
     } else {
       targetValue = targetNode.value;
     }
 
-    const path = bfs(startId, targetValue, networkData.nodes, networkData.links, targetType);
-
+    const path = bfs(startId, targetValue, updatedNodes, updatedLinks, targetType);
     if (path) {
       setBfsPath(path);
     } else {
@@ -122,6 +200,10 @@ const GraphView: React.FC = () => {
     setTargetNode(null);
     setBfsPath(null);
   };
+
+  if (graphData.nodes.length === 0 && graphData.links.length === 0) {
+    return <h2>No network data available</h2>;
+  }
 
   return (
       <div className="graph-view-container">
@@ -159,7 +241,7 @@ const GraphView: React.FC = () => {
             <div className="position-absolute" style={{ top: "160px", left: "80px", zIndex: 1000 }}>
               <PathWindow
                   bfsPath={bfsPath}
-                  nodes={networkData.nodes}
+                  nodes={graphData.nodes}
                   expanded={true}
                   setExpanded={(expanded) => {
                     if (!expanded) setPathWindowOpen(false);
@@ -178,8 +260,8 @@ const GraphView: React.FC = () => {
 
         <div className="graph-container">
           <ForceGraph
-              nodes={networkData.nodes}
-              links={networkData.links}
+              nodes={graphData.nodes}
+              links={graphData.links}
               onNodeClick={handleNodeClick}
               gridActive={gridActive}
               bfsPath={bfsPath}
