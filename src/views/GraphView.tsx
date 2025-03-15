@@ -15,57 +15,57 @@ import "../styles/views/graphView.scss";
 import {RootState} from "../redux/store";
 
 interface NetworkData {
-  nodes: NodeDatum[];
-  links: LinkDatum[];
+    nodes: NodeDatum[];
+    links: LinkDatum[];
 }
 
 const GraphView: React.FC = () => {
-  const location = useLocation();
-  const rawNetworkData: any = location.state?.networkData;
+    const location = useLocation();
+    const rawNetworkData: any = location.state?.networkData;
 
 
-  const computedNetworkData: NetworkData = useMemo(() => {
-    if (!rawNetworkData) {
-      return { nodes: [], links: [] };
-    }
-    if (rawNetworkData.authors && rawNetworkData.articles) {
-      const authors: NodeDatum[] = rawNetworkData.authors.map((author: any) => ({
-        ...author,
-        type: "researcher",
-      }));
-      const articles: NodeDatum[] = rawNetworkData.articles.map((article: any) => ({
-        id: article.id,
-        type: "article",
-        title: article.title,
-        name: article.title, // Use title as name for uniform labeling
-      }));
-      return {
-        nodes: [...authors, ...articles],
-        links: rawNetworkData.links,
-      };
-    }
-    return rawNetworkData;
-  }, [rawNetworkData]);
+    const computedNetworkData: NetworkData = useMemo(() => {
+        if (!rawNetworkData) {
+            return { nodes: [], links: [] };
+        }
+        if (rawNetworkData.authors && rawNetworkData.articles) {
+            const authors: NodeDatum[] = rawNetworkData.authors.map((author: any) => ({
+                ...author,
+                type: "researcher",
+            }));
+            const articles: NodeDatum[] = rawNetworkData.articles.map((article: any) => ({
+                id: article.id,
+                type: "article",
+                title: article.title,
+                name: article.title, // Use title as name for uniform labeling
+            }));
+            return {
+                nodes: [...authors, ...articles],
+                links: rawNetworkData.links,
+            };
+        }
+        return rawNetworkData;
+    }, [rawNetworkData]);
 
-  // Create a state variable to hold and update your graph data.
-  // (Always initialized even if empty.)
-  const [graphData, setGraphData] = useState<NetworkData>(computedNetworkData);
+    // Create a state variable to hold and update your graph data.
+    // (Always initialized even if empty.)
+    const [graphData, setGraphData] = useState<NetworkData>(computedNetworkData);
 
-  // Update graphData state when computedNetworkData changes.
-  useEffect(() => {
-    setGraphData(computedNetworkData);
-  }, [computedNetworkData]);
+    // Update graphData state when computedNetworkData changes.
+    useEffect(() => {
+        setGraphData(computedNetworkData);
+    }, [computedNetworkData]);
 
-  // Collect affiliations from researcher nodes.
-  const affiliations = useMemo(() => {
-    const affSet = new Set<string>();
-    graphData.nodes.forEach((node) => {
-      if (node.affiliation) affSet.add(node.affiliation);
-    });
-    return Array.from(affSet);
-  }, [graphData]);
+    // Collect affiliations from researcher nodes.
+    const affiliations = useMemo(() => {
+        const affSet = new Set<string>();
+        graphData.nodes.forEach((node) => {
+            if (node.affiliation) affSet.add(node.affiliation);
+        });
+        return Array.from(affSet);
+    }, [graphData]);
 
-  const forceGraphRef = useRef<{ resetSimulation: () => void } | null>(null);
+    const forceGraphRef = useRef<{ resetSimulation: () => void } | null>(null);
   const [selectedNode, setSelectedNode] = useState<NodeDatum | null>(null);
   const [gridActive, setGridActive] = useState(false);
   const [filtersActive, setFiltersActive] = useState(false);
@@ -90,8 +90,12 @@ const GraphView: React.FC = () => {
   };
 
   const togglePathWindow = () => {
-    setPathWindowOpen((prev) => !prev);
+    setPathWindowOpen(prev => !prev);
+    if (!pathWindowOpen && filtersActive) {
+      setFiltersActive(false);
+    }
   };
+
 
   const handleBfsSearch = async () => {
     if (!startNode || !targetNode) {
@@ -201,44 +205,44 @@ const GraphView: React.FC = () => {
     setBfsPath(null);
   };
 
+  const toggleFilters = () => {
+    setFiltersActive(prev => !prev);
+    if (!filtersActive && pathWindowOpen) {
+      setPathWindowOpen(false); // Close path window when opening filters
+    }
+  };
+
   if (graphData.nodes.length === 0 && graphData.links.length === 0) {
     return <h2>No network data available</h2>;
   }
 
-  return (
+    return (
       <div className="graph-view-container">
-        <div className="container position-absolute start-50 translate-middle-x mt-5 pt-5">
-          <div className="row justify-content-between align-items-center">
-            <div className="col-auto">
-              <MiniSearcher />
-            </div>
-            <div className="col-auto">
-              <Toolbar
-                  gridActive={gridActive}
-                  filtersActive={filtersActive}
-                  pathWindowActive={pathWindowOpen}
-                  toggleGrid={() => setGridActive((prev) => !prev)}
-                  toggleFilters={() => setFiltersActive((prev) => !prev)}
-                  togglePathWindow={togglePathWindow}
-                  resetSimulation={() => forceGraphRef.current?.resetSimulation()}
-              />
-            </div>
-          </div>
+        <div className="position-absolute" style={{ top: "100px", left: "80px", zIndex: 1000 }}>
+          <Toolbar
+            gridActive={gridActive}
+            filtersActive={filtersActive}
+            pathWindowActive={pathWindowOpen}
+            toggleGrid={() => setGridActive((prev) => !prev)}
+            toggleFilters={toggleFilters}
+            togglePathWindow={togglePathWindow}
+            resetSimulation={() => forceGraphRef.current?.resetSimulation()}
+          />
         </div>
 
         {filtersActive && (
-            <div className="position-absolute" style={{ top: "160px", left: "80px", zIndex: 1000 }}>
-              <Filters
-                  affiliations={affiliations}
-                  selectedAffiliations={selectedAffiliations}
-                  onFilterChange={setSelectedAffiliations}
-                  onClose={() => setFiltersActive(false)}
-              />
-            </div>
-        )}
+          <div className="position-absolute" style={{ top: "180px", left: "80px", zIndex: 1000 }}>
+            <Filters
+                affiliations={affiliations}
+                selectedAffiliations={selectedAffiliations}
+                onFilterChange={setSelectedAffiliations}
+                onClose={() => setFiltersActive(false)}
+            />
+          </div>
+      )}
 
         {pathWindowOpen && (
-            <div className="position-absolute" style={{ top: "160px", left: "80px", zIndex: 1000 }}>
+            <div className="position-absolute" style={{ top: "180px", left: "80px", zIndex: 1000 }}>
               <PathWindow
                   bfsPath={bfsPath}
                   nodes={graphData.nodes}
