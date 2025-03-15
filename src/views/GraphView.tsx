@@ -116,7 +116,7 @@ const GraphView: React.FC = () => {
     if (!startData || (targetType === "researcher" && !targetData)) {
       try {
         const source = "dblp"
-        const newPathData = await getPath(authenticated, startNode.value, targetNode.value, source);
+        const newPathData = await getPath(authenticated, startNode.label, targetNode.value, source);
         let parsedPathData = newPathData;
         if (typeof newPathData === "string") {
           try {
