@@ -30,7 +30,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
     const selectedNodeRef = useRef<NodeDatum | null>(null);
     const updateHighlightRef = useRef<(selNode: NodeDatum | null) => void>(() => {});
 
-    // Create a ref to always hold the latest selected affiliations.
+    // Hold the latest selected affiliations
     const selectedAffiliationsRef = useRef<string[]>(selectedAffiliations);
     useEffect(() => {
         selectedAffiliationsRef.current = selectedAffiliations;
@@ -40,6 +40,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
         selectedNodeRef.current = selectedNode;
     }, [selectedNode]);
 
+    // Main simulation effect (without gridActive dependency)
     useEffect(() => {
         if (!svgRef.current) return;
         const svg = d3.select(svgRef.current);
@@ -49,31 +50,9 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
         const height = window.innerHeight;
         svg.attr("width", width).attr("height", height);
 
+        // Create zoom group
         const zoomGroup = svg.append("g");
         zoomGroupRef.current = zoomGroup;
-
-        if (gridActive) {
-            const gridSpacing = 50;
-            const defs = svg.append<SVGDefsElement>("defs");
-            defs
-                .append("pattern")
-                .attr("id", "grid")
-                .attr("width", gridSpacing)
-                .attr("height", gridSpacing)
-                .attr("patternUnits", "userSpaceOnUse")
-                .append("path")
-                .attr("d", `M ${gridSpacing} 0 L 0 0 L 0 ${gridSpacing}`)
-                .attr("fill", "none")
-                .attr("stroke", "#ccc")
-                .attr("stroke-width", 1);
-            gridRectRef.current = zoomGroup
-                .insert("rect", ":first-child")
-                .attr("x", -width)
-                .attr("y", -height)
-                .attr("width", width * 3)
-                .attr("height", height * 3)
-                .attr("fill", "url(#grid)");
-        }
 
         const zoom = d3
             .zoom<SVGSVGElement, unknown>()
@@ -145,7 +124,9 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             .style("fill", "white")
             .style("pointer-events", "none")
             .style("font-weight", "bold")
-            .text((d) => (d.type === "researcher" ? (d.name ? d.name.split(" ")[0] : "") : ""))
+            .text((d) =>
+                d.type === "researcher" ? (d.name ? d.name.split(" ")[0] : "") : ""
+            )
             .style("opacity", (d) => (d.type === "researcher" ? 1 : 0));
 
         nodeGroup
@@ -193,7 +174,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             }
         });
 
-        // Add hover events for researcher nodes to highlight their connections.
+        // Add hover events for researcher nodes to highlight connections.
         nodeGroup
             .filter((d) => d.type !== "article")
             .on("mouseover", function (event, d) {
@@ -201,7 +182,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                     updateHighlightRef.current(d);
                 }
             })
-            .on("mouseout", function (event, d) {
+            .on("mouseout", function () {
                 if (updateHighlightRef.current) {
                     updateHighlightRef.current(selectedNodeRef.current);
                 }
@@ -254,12 +235,10 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             nodeGroup
                 .selectAll<SVGCircleElement, NodeDatum>("circle")
                 .attr("fill", (d) => {
-                    // Highlight selected/connected nodes first.
                     if (selNode) {
                         if (d === selNode) return "#ffcc00";
                         if (connectedNodes.has(d)) return "#ffcc00";
                     }
-                    // For researcher nodes: if filters are active and the node's affiliation does not match any selected affiliation, color it grey.
                     if (d.type === "researcher" && selectedAffiliationsRef.current.length > 0) {
                         let match = false;
                         if (Array.isArray(d.affiliation)) {
@@ -271,7 +250,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                         }
                         if (!match) return "#d3d3d3";
                     }
-                    // Otherwise, if an affiliation color exists, use it.
                     if (d.affiliation && affiliationColorMap) {
                         if (Array.isArray(d.affiliation)) {
                             const foundAff = d.affiliation.find(a => affiliationColorMap[a]);
@@ -280,7 +258,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                             return affiliationColorMap[d.affiliation];
                         }
                     }
-                    // Fallbacks.
                     if (d.type === "article") return "#888888";
                     return "#0066cc";
                 })
@@ -374,6 +351,46 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
         };
     }, [nodes, links, bfsPath, affiliationColorMap]);
 
+    // Separate effect to update the grid without resetting the simulation.
+    useEffect(() => {
+        if (!svgRef.current || !zoomGroupRef.current) return;
+        const svg = d3.select(svgRef.current);
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        // Remove existing grid rect if present.
+        if (gridRectRef.current) {
+            gridRectRef.current.remove();
+            gridRectRef.current = null;
+        }
+        if (gridActive) {
+            const gridSpacing = 50;
+            // Ensure a defs element with the grid pattern exists.
+            let defs = svg.select<SVGDefsElement>("defs");
+            if (defs.empty()) {
+                defs = svg.append<SVGDefsElement>("defs");
+                defs
+                    .append<SVGPatternElement>("pattern")
+                    .attr("id", "grid")
+                    .attr("width", gridSpacing)
+                    .attr("height", gridSpacing)
+                    .attr("patternUnits", "userSpaceOnUse")
+                    .append("path")
+                    .attr("d", `M ${gridSpacing} 0 L 0 0 L 0 ${gridSpacing}`)
+                    .attr("fill", "none")
+                    .attr("stroke", "#ccc")
+                    .attr("stroke-width", 1);
+            }
+            gridRectRef.current = zoomGroupRef.current
+                .insert("rect", ":first-child")
+                .attr("x", -width)
+                .attr("y", -height)
+                .attr("width", width * 3)
+                .attr("height", height * 3)
+                .attr("fill", "url(#grid)");
+        }
+    }, [gridActive]);
+
+    // Update highlights when selected affiliations or selected node change.
     useEffect(() => {
         if (updateHighlightRef.current) {
             updateHighlightRef.current(selectedNode);
