@@ -84,14 +84,32 @@
 .mini-search-error {
   color: #dc3545;
   font-size: 14px;
-  margin-top: 4px;
+  margin-top: 8px;
   text-align: center;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 6px 12px; 
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  position: absolute; 
+  top: 100%; 
+  width: auto; 
+  max-width: 95%; 
+  z-index: 1002; 
 }
 
 /* Delay message styling */
 .mini-search-delay-message {
   color: #0066cc;
   font-size: 14px;
-  margin-top: 4px;
+  margin-top: 8px;
   text-align: center;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 6px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 100%;
+  width: auto;
+  max-width: 95%;
+  z-index: 1002;
 }

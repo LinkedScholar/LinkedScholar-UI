@@ -54,7 +54,9 @@ const Sponsor: React.FC = () => {
                 {/* Separator */}
                 <hr className="sponsor-separator" />
                 
-                {/* Buy Me a Coffee and Custom Donation */}
+                
+                {/* DISABLED FOR NOW - Buy Me a Coffee and Custom Donation */}
+                {/*
                 <div className="sponsorship-tiers">
                     <div className="sponsor-card">
                         <h3 style={{ fontWeight: 'bold' }}>☕ Buy Me a Coffee</h3>
@@ -77,7 +79,7 @@ const Sponsor: React.FC = () => {
                         </a>
                     </div>
                 </div>
-
+                */}
             </main>
 
         </div>

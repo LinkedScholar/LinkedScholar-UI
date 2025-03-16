@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import '../../styles/views/footer/contact.scss'
-
+import React, { useState, useRef } from 'react';
+import emailjs from '@emailjs/browser';
+import '../../styles/views/footer/contact.scss';
 
 const Contact: React.FC = () => {
+    const formRef = useRef<HTMLFormElement>(null);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -10,7 +11,9 @@ const Contact: React.FC = () => {
         message: ''
     });
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -18,6 +21,8 @@ const Contact: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        setError('');
+        setSuccess('');
 
         // Basic validation
         if (!formData.name || !formData.email || !formData.message) {
@@ -25,15 +30,40 @@ const Contact: React.FC = () => {
             return;
         }
 
-        setError('');
-        alert('Message sent! We will get back to you soon.');
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            setError('Please enter a valid email address.');
+            return;
+        }
 
-        // Here you can handle the form submission logic (e.g., API call)
+        setIsSubmitting(true);
+
+        const serviceId = 'service_jrgov99';
+        const templateId = 'template_y1w8v9d';
+        const userId = 'Q0tzAQdm791WSxTrd';
+
+        emailjs.sendForm(serviceId, templateId, formRef.current!, userId)
+            .then((result) => {
+                console.log('Email successfully sent!', result.text);
+                setSuccess('Message sent! We will get back to you soon.');
+                setFormData({
+                    name: '',
+                    email: '',
+                    subject: '',
+                    message: ''
+                });
+            }, (error) => {
+                console.error('Failed to send email:', error.text);
+                setError('Failed to send message. Please try again later.');
+            })
+            .finally(() => {
+                setIsSubmitting(false);
+            });
     };
 
     return (
         <div className="page-container">
-
             <main className="content">
                 <h1 className="footer-page-title">Contact Us</h1>
                 <p className="contact-description">
@@ -41,8 +71,9 @@ const Contact: React.FC = () => {
                 </p>
 
                 {error && <p className="error-message">{error}</p>}
+                {success && <p className="success-message">{success}</p>}
 
-                <form className="contact-form" onSubmit={handleSubmit}>
+                <form className="contact-form" ref={formRef} onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label htmlFor="name">Name *</label>
                         <input
@@ -89,10 +120,15 @@ const Contact: React.FC = () => {
                         />
                     </div>
 
-                    <button type="submit" className="submit-button">Send Message</button>
+                    <button 
+                        type="submit" 
+                        className="submit-button"
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? 'Sending...' : 'Send Message'}
+                    </button>
                 </form>
             </main>
-
         </div>
     );
 };
