@@ -39,7 +39,7 @@ const Contribute: React.FC = () => {
                     </p>
                     <div className="github-repo">
                         <a
-                            href="https://github.com/MikoMikarro/ResearchStalker"
+                            href="https://github.com/LinkedScholar"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="github-link"

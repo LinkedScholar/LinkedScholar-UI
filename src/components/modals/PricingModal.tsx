@@ -25,8 +25,11 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
           {/* Close Button */}
           <button className="close-button" onClick={onClose}>×</button>
 
-          <h2 className="text-primary">Upgrade to Premium</h2>
-          <p className="text-muted">You have reached the monthly graph limit in the Free plan.</p>
+          <h2 className="title-container">
+            <span className="title-linked">Support </span>
+            <span className="title-scholar">LinkedScholar</span>
+          </h2>
+          <p className="text-muted">You've reached the free usage limit. Become a supporter to continue exploring!</p>
 
           {/* Billing Toggle */}
           <div className="billing-toggle">
@@ -45,25 +48,28 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
           <div className="pricing-plans">
             {/* Free Plan */}
             <div className="pricing-plan free">
-              <h3>Free Plan</h3>
+              <h3>Community</h3>
               <p className="price">€0</p>
               <ul>
                 <li>5 graphs per month</li>
-                <li>All features included</li>
+                <li>Basic features</li>
+                <li>Community support</li>
               </ul>
               <button className="plan-button disabled" disabled>Current Plan</button>
             </div>
 
             {/* Pro Plan */}
             <div className="pricing-plan premium">
-              <h3>Pro Plan</h3>
+              <h3>Supporter</h3>
               <p className="price">€{displayPrice}<span className="fs-6">/month</span></p>
               <ul>
                 <li>Unlimited graphs</li>
                 <li>All features included</li>
+                <li>Help sustain the platform</li>
+                <li>Support ongoing development</li>
               </ul>
               <button className="plan-button" onClick={() => window.open("/", "_blank")}>
-                Upgrade Now
+                Become a Supporter
               </button>
               <p className="small text-muted">{isAnnual ? billedText : "\u00A0"}</p>
             </div>
@@ -71,8 +77,10 @@ const PricingModal: React.FC<PricingModalProps> = ({ isOpen, onClose }) => {
 
           <div className="pricing-footer">
             <p>
+              Your support helps us maintain and improve this open research tool. 
+              <br />
               Questions? <a href="/help">Check our FAQs</a> or{" "}
-              <a href="/contact">Contact Support</a>
+              <a href="/contact">Contact Us</a>
             </p>
           </div>
         </div>
