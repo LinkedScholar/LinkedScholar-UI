@@ -1,6 +1,7 @@
 import React from "react";
 import { NodeDatum } from "../../types/graphTypes";
 import PublicationsContent from "./PublicationsContent";
+import Tag from "./Tag";
 
 const isURL = (str: string): boolean => {
     try {
@@ -36,7 +37,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                                                            onAddInterest,
                                                        }) => {
     if (activeTab === "researcher") {
-        const ignoreKeys = ["id", "x", "y", "fx", "fy", "vx", "vy", "fixed"];
+        const ignoreKeys = ["id", "x", "y", "fx", "fy", "vx", "vy", "fixed", "type", "index"];
         const sortedEntries = Object.entries(selectedNode)
             .filter(([key]) => !ignoreKeys.includes(key))
             .sort(([keyA], [keyB]) => {
