@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import '../../styles/views/footer/contact.scss'
-
+import React, { useState, useRef } from 'react';
+import emailjs from '@emailjs/browser';
+import '../../styles/views/footer/contact.scss';
 
 const Contact: React.FC = () => {
+    const formRef = useRef<HTMLFormElement>(null);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -10,7 +11,8 @@ const Contact: React.FC = () => {
         message: ''
     });
 
-    const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [status, setStatus] = useState<{message: string, isError: boolean} | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -18,81 +20,99 @@ const Contact: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        setStatus(null);
 
         // Basic validation
         if (!formData.name || !formData.email || !formData.message) {
-            setError('Please fill in all required fields.');
+            setStatus({ message: 'Please fill in all required fields.', isError: true });
             return;
         }
 
-        setError('');
-        alert('Message sent! We will get back to you soon.');
+        setIsSubmitting(true);
 
-        // Here you can handle the form submission logic (e.g., API call)
+        // Replace with your actual EmailJS credentials
+        const serviceId = 'YOUR_SERVICE_ID';
+        const templateId = 'YOUR_TEMPLATE_ID';
+        const userId = 'Q0tzAQdm791WSxTrd';
+
+        emailjs.sendForm(serviceId, templateId, formRef.current!, userId)
+            .then(() => {
+                setStatus({ message: 'Message sent! We\'ll get back to you soon.', isError: false });
+                setFormData({ name: '', email: '', subject: '', message: '' });
+            })
+            .catch(() => {
+                setStatus({ message: 'Failed to send message. Please try again.', isError: true });
+            })
+            .finally(() => {
+                setIsSubmitting(false);
+            });
     };
 
     return (
-        <div className="page-container">
+        <div className="contact-container">
+            <div className="contact-content">
+                <h2 className="contact-title">Contact Us</h2>
+                
+                {status && (
+                    <div className={status.isError ? "status-message error" : "status-message success"}>
+                        {status.message}
+                    </div>
+                )}
 
-            <main className="content">
-                <h1 className="footer-page-title">Contact Us</h1>
-                <p className="contact-description">
-                    Have questions or need assistance? Fill out the form below, and we'll get back to you as soon as possible.
-                </p>
-
-                {error && <p className="error-message">{error}</p>}
-
-                <form className="contact-form" onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="name">Name *</label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            required
-                        />
+                <form className="compact-form" ref={formRef} onSubmit={handleSubmit}>
+                    <div className="form-row">
+                        <div className="form-group">
+                            <input
+                                type="text"
+                                name="name"
+                                placeholder="Name *"
+                                value={formData.name}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="Email *"
+                                value={formData.email}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="email">Email *</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="subject">Subject</label>
                         <input
                             type="text"
-                            id="subject"
                             name="subject"
+                            placeholder="Subject"
                             value={formData.subject}
                             onChange={handleChange}
                         />
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="message">Message *</label>
                         <textarea
-                            id="message"
                             name="message"
+                            placeholder="Your message *"
                             value={formData.message}
                             onChange={handleChange}
+                            rows={4}
                             required
                         />
                     </div>
 
-                    <button type="submit" className="submit-button">Send Message</button>
+                    <button 
+                        type="submit" 
+                        className="submit-button"
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? 'Sending...' : 'Send Message'}
+                    </button>
                 </form>
-            </main>
-
+            </div>
         </div>
     );
 };

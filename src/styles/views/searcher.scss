@@ -141,6 +141,56 @@ $shadow-light: rgba(0, 0, 0, 0.15);
   font-style: italic;
 }
 
+.delay-message {
+  margin-top: 20px;
+  padding: 15px 25px;
+  background-color: rgba($secondary-color, 0.1);
+  border-left: 4px solid $secondary-color;
+  border-radius: 8px;
+  max-width: 650px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  animation: pulse 2s infinite;
+  
+  p {
+    margin: 5px 0;
+    color: $secondary-color;
+    font-size: 15px;
+    font-weight: 500;
+    
+    &:first-child {
+      font-weight: 600;
+    }
+  }
+  
+  /* Add a loading indicator */
+  &::after {
+    content: "...";
+    display: inline-block;
+    width: 1em;
+    text-align: left;
+    animation: ellipsis 1.5s infinite;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba($secondary-color, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba($secondary-color, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba($secondary-color, 0);
+  }
+}
+
+/* Ellipsis animation */
+@keyframes ellipsis {
+  0% { content: "."; }
+  33% { content: ".."; }
+  66% { content: "..."; }
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .title {

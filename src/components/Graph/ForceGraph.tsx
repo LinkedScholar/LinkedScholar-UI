@@ -11,6 +11,7 @@ interface ForceGraphProps {
     gridActive: boolean;
     bfsPath: string[] | null;
     selectedAffiliations: string[];
+    affiliationColorMap?: { [key: string]: string };
 }
 
 const ForceGraph: React.FC<ForceGraphProps> = ({
@@ -20,6 +21,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                                                    gridActive,
                                                    bfsPath,
                                                    selectedAffiliations,
+                                                   affiliationColorMap,
                                                }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const zoomGroupRef = useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
@@ -28,10 +30,17 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
     const selectedNodeRef = useRef<NodeDatum | null>(null);
     const updateHighlightRef = useRef<(selNode: NodeDatum | null) => void>(() => {});
 
+    // Hold the latest selected affiliations
+    const selectedAffiliationsRef = useRef<string[]>(selectedAffiliations);
+    useEffect(() => {
+        selectedAffiliationsRef.current = selectedAffiliations;
+    }, [selectedAffiliations]);
+
     useEffect(() => {
         selectedNodeRef.current = selectedNode;
     }, [selectedNode]);
 
+    // Main simulation effect (without gridActive dependency)
     useEffect(() => {
         if (!svgRef.current) return;
         const svg = d3.select(svgRef.current);
@@ -41,31 +50,9 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
         const height = window.innerHeight;
         svg.attr("width", width).attr("height", height);
 
+        // Create zoom group
         const zoomGroup = svg.append("g");
         zoomGroupRef.current = zoomGroup;
-
-        if (gridActive) {
-            const gridSpacing = 50;
-            const defs = svg.append<SVGDefsElement>("defs");
-            defs
-                .append("pattern")
-                .attr("id", "grid")
-                .attr("width", gridSpacing)
-                .attr("height", gridSpacing)
-                .attr("patternUnits", "userSpaceOnUse")
-                .append("path")
-                .attr("d", `M ${gridSpacing} 0 L 0 0 L 0 ${gridSpacing}`)
-                .attr("fill", "none")
-                .attr("stroke", "#ccc")
-                .attr("stroke-width", 1);
-            gridRectRef.current = zoomGroup
-                .insert("rect", ":first-child")
-                .attr("x", -width)
-                .attr("y", -height)
-                .attr("width", width * 3)
-                .attr("height", height * 3)
-                .attr("fill", "url(#grid)");
-        }
 
         const zoom = d3
             .zoom<SVGSVGElement, unknown>()
@@ -73,7 +60,11 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             .filter((event) => event.type !== "dblclick")
             .on("zoom", (event) => {
                 zoomGroup.attr("transform", event.transform);
-                zoomGroup.selectAll(".node-label").style("opacity", event.transform.k > 1 ? 1 : 0);
+                zoomGroup
+                    .selectAll(".node-label")
+                    .transition()
+                    .duration(100)
+                    .style("opacity", event.transform.k > 0.6 ? 1 : 0);
             });
         svg.call(zoom);
 
@@ -117,7 +108,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
 
         nodeGroup
             .append("circle")
-            .attr("r", (d) => (d.type === "article" ? 10 : 16))
+            .attr("r", (d) => (d.type === "article" ? 10 : 25))
             .attr("stroke", "#003366")
             .attr("stroke-width", 2)
             .attr("class", (d) =>
@@ -129,11 +120,13 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             .attr("class", "node-label")
             .attr("dy", 5)
             .attr("text-anchor", "middle")
-            .style("font-size", "12px")
+            .style("font-size", (d) => (d.type === "researcher" ? "14px" : "12px"))
             .style("fill", "white")
             .style("pointer-events", "none")
             .style("font-weight", "bold")
-            .text((d) => (d.type === "researcher" ? (d.name ? d.name.split(" ")[0] : "") : ""))
+            .text((d) =>
+                d.type === "researcher" ? (d.name ? d.name.split(" ")[0] : "") : ""
+            )
             .style("opacity", (d) => (d.type === "researcher" ? 1 : 0));
 
         nodeGroup
@@ -170,7 +163,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                 selectedNodeRef.current = null;
                 onNodeClick(null);
             } else {
-                // Select: fix node at its current position
                 d.fx = d.x;
                 d.fy = d.y;
                 setSelectedNode(d);
@@ -181,6 +173,20 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                 updateHighlightRef.current(selectedNodeRef.current);
             }
         });
+
+        // Add hover events for researcher nodes to highlight connections.
+        nodeGroup
+            .filter((d) => d.type !== "article")
+            .on("mouseover", function (event, d) {
+                if (updateHighlightRef.current) {
+                    updateHighlightRef.current(d);
+                }
+            })
+            .on("mouseout", function () {
+                if (updateHighlightRef.current) {
+                    updateHighlightRef.current(selectedNodeRef.current);
+                }
+            });
 
         const updateHighlight = (selNode: NodeDatum | null) => {
             const bfsSet = bfsPath ? new Set(bfsPath.map((id) => id.toString())) : new Set<string>();
@@ -225,19 +231,49 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                 });
                 extraResearcherNodes.forEach((r) => connectedNodes.add(r));
             }
+
             nodeGroup
                 .selectAll<SVGCircleElement, NodeDatum>("circle")
                 .attr("fill", (d) => {
-                    const nodeId = d.id.toString();
-                    if (bfsSet.has(nodeId)) return "#32CD32";
                     if (selNode) {
                         if (d === selNode) return "#ffcc00";
                         if (connectedNodes.has(d)) return "#ffcc00";
                     }
-                    if (selectedAffiliations.includes(d.affiliation as string)) return "#FF6347";
+                    if (d.type === "researcher" && selectedAffiliationsRef.current.length > 0) {
+                        let match = false;
+                        if (Array.isArray(d.affiliation)) {
+                            match = d.affiliation.some(a => selectedAffiliationsRef.current.includes(a));
+                        } else {
+                            if (d.affiliation != null) {
+                                match = selectedAffiliationsRef.current.includes(d.affiliation);
+                            }
+                        }
+                        if (!match) return "#d3d3d3";
+                    }
+                    if (d.affiliation && affiliationColorMap) {
+                        if (Array.isArray(d.affiliation)) {
+                            const foundAff = d.affiliation.find(a => affiliationColorMap[a]);
+                            if (foundAff) return affiliationColorMap[foundAff];
+                        } else if (affiliationColorMap[d.affiliation]) {
+                            return affiliationColorMap[d.affiliation];
+                        }
+                    }
                     if (d.type === "article") return "#888888";
                     return "#0066cc";
+                })
+                .attr("stroke", (d) => {
+                    const nodeId = d.id.toString();
+                    if (bfsSet.has(nodeId)) return "#32CD32";
+                    if (selNode && (d === selNode || connectedNodes.has(d))) return "#ff9900";
+                    return "#003366";
+                })
+                .attr("stroke-width", (d) => {
+                    const nodeId = d.id.toString();
+                    if (bfsSet.has(nodeId)) return 3;
+                    if (selNode && (d === selNode || connectedNodes.has(d))) return 3;
+                    return 2;
                 });
+
             linkSelection
                 .attr("stroke", (d) => {
                     const sourceId = (d.source as NodeDatum).id.toString();
@@ -313,55 +349,53 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             simulation.stop();
             window.removeEventListener("resize", handleResize);
         };
-    }, [nodes, links, bfsPath, selectedAffiliations]);
+    }, [nodes, links, bfsPath, affiliationColorMap]);
 
+    // Separate effect to update the grid without resetting the simulation.
     useEffect(() => {
-        if (!svgRef.current) return;
+        if (!svgRef.current || !zoomGroupRef.current) return;
         const svg = d3.select(svgRef.current);
         const width = window.innerWidth;
         const height = window.innerHeight;
-        if (zoomGroupRef.current) {
-            if (gridActive) {
-                if (!gridRectRef.current) {
-                    const gridSpacing = 50;
-                    let defs = svg.select<SVGDefsElement>("defs");
-                    if (defs.empty()) {
-                        defs = svg.append<SVGDefsElement>("defs");
-                    }
-                    defs
-                        .append("pattern")
-                        .attr("id", "grid")
-                        .attr("width", gridSpacing)
-                        .attr("height", gridSpacing)
-                        .attr("patternUnits", "userSpaceOnUse")
-                        .append("path")
-                        .attr("d", `M ${gridSpacing} 0 L 0 0 L 0 ${gridSpacing}`)
-                        .attr("fill", "none")
-                        .attr("stroke", "#ccc")
-                        .attr("stroke-width", 1);
-                    gridRectRef.current = zoomGroupRef.current
-                        .insert("rect", ":first-child")
-                        .attr("x", -width)
-                        .attr("y", -height)
-                        .attr("width", width * 3)
-                        .attr("height", height * 3)
-                        .attr("fill", "url(#grid)");
-                } else {
-                    gridRectRef.current.style("display", "block");
-                }
-            } else {
-                if (gridRectRef.current) {
-                    gridRectRef.current.style("display", "none");
-                }
+        // Remove existing grid rect if present.
+        if (gridRectRef.current) {
+            gridRectRef.current.remove();
+            gridRectRef.current = null;
+        }
+        if (gridActive) {
+            const gridSpacing = 50;
+            // Ensure a defs element with the grid pattern exists.
+            let defs = svg.select<SVGDefsElement>("defs");
+            if (defs.empty()) {
+                defs = svg.append<SVGDefsElement>("defs");
+                defs
+                    .append<SVGPatternElement>("pattern")
+                    .attr("id", "grid")
+                    .attr("width", gridSpacing)
+                    .attr("height", gridSpacing)
+                    .attr("patternUnits", "userSpaceOnUse")
+                    .append("path")
+                    .attr("d", `M ${gridSpacing} 0 L 0 0 L 0 ${gridSpacing}`)
+                    .attr("fill", "none")
+                    .attr("stroke", "#ccc")
+                    .attr("stroke-width", 1);
             }
+            gridRectRef.current = zoomGroupRef.current
+                .insert("rect", ":first-child")
+                .attr("x", -width)
+                .attr("y", -height)
+                .attr("width", width * 3)
+                .attr("height", height * 3)
+                .attr("fill", "url(#grid)");
         }
     }, [gridActive]);
 
+    // Update highlights when selected affiliations or selected node change.
     useEffect(() => {
         if (updateHighlightRef.current) {
             updateHighlightRef.current(selectedNode);
         }
-    }, [selectedNode]);
+    }, [selectedAffiliations, selectedNode]);
 
     return <svg ref={svgRef} className="force-graph-container" />;
 };

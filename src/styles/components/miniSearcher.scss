@@ -1,103 +1,115 @@
-@import "../app.scss"; // Import global styles
-
+/* Container for the mini searcher */
 .mini-searcher-container {
-  left: 40px;
-  z-index: 10;
-}
-
-.new-search-button {
-  background: $background-grey;
-  color: $secondary-color;
-  border: 1px solid $secondary-color;
-  border-radius: 25px;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: 500;
-  transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.new-search-button:hover {
-  background: $secondary-color;
-  color: $background-grey;
-}
-
-.new-search-button:active {
-  background: darken($secondary-color, 10%);
-}
-
-.mini-searcher {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  background: rgba($background-grey, 0.95); // Slight transparency
-  padding: 10px;
-  height: 60px;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px $shadow-light;
-  transition: all 0.3s ease;
+  align-items: center;
+  width: 100%;
+  padding: 8px 0;
 }
 
+/* Base styling for the searcher form */
 .mini-search-form {
+  width: 100%;
+  max-width: 400px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 8px 16px;
+  border-radius: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease, background 0.3s ease;
 }
 
+.mini-search-form:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Wrapper for input and buttons */
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Search icon styling */
+.search-icon {
+  font-size: 20px;
+  color: #0066cc;
+  margin-right: 8px;
+}
+
+/* Input field styling */
 .mini-search-input {
-  width: 200px;
-  padding: 8px;
-  font-size: 14px;
-  border: 1px solid darken($background-grey, 10%);
-  border-radius: 6px;
-}
-
-.mini-search-button {
-  background: $secondary-color;
+  flex: 1;
   border: none;
-  color: $background-grey;
-  padding: 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-
-  &:hover {
-    background: lighten($secondary-color, 10%);
-  }
-
-  &:active {
-    background: darken($secondary-color, 10%);
-  }
+  background: transparent;
+  font-size: 16px;
+  color: #003366;
+  outline: none;
 }
 
-.mini-search-button i {
-  font-size: 18px;
-}
-
-.mini-search-close {
+/* Clear button styling */
+.mini-search-clear {
   background: none;
   border: none;
-  color: #d93025;
-  padding: 8px;
-  border-radius: 6px;
+  color: #0066cc;
+  font-size: 20px;
   cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: rgba(217, 48, 37, 0.1);
-  }
+  padding: 0 8px;
 }
 
-.mini-search-close i {
-  font-size: 18px;
+.mini-search-clear:hover {
+  color: #004c99;
 }
 
+/* Search button styling */
+.mini-search-button {
+  background: #0066cc;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: background 0.3s ease;
+}
+
+.mini-search-button:hover {
+  background: #004c99;
+}
+
+/* Error message styling */
 .mini-search-error {
-  color: red;
-  font-size: 12px;
-  margin-top: 4px;
+  color: #dc3545;
+  font-size: 14px;
+  margin-top: 8px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 6px 12px; 
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  position: absolute; 
+  top: 100%; 
+  width: auto; 
+  max-width: 95%; 
+  z-index: 1002; 
+}
+
+/* Delay message styling */
+.mini-search-delay-message {
+  color: #0066cc;
+  font-size: 14px;
+  margin-top: 8px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 6px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 100%;
+  width: auto;
+  max-width: 95%;
+  z-index: 1002;
 }

@@ -126,8 +126,8 @@ const Searcher: React.FC = () => {
             {error && <p className="error-message">{error}</p>}
             {showDelayMessage && (
                 <div className="delay-message">
-                    <p>We haven't found the researcher in our database.</p>
-                    <p>We are building its network, please wait...</p>
+                    <p>Building Researcher Network</p>
+                    <p>Please wait while we analyze the connections</p>
                 </div>
             )}
 

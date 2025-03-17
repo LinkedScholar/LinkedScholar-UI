@@ -155,6 +155,24 @@ $shadow-light: rgba(0, 0, 0, 0.15);
   }
 }
 
+.title-container {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 15px;
+  font-size: 1.7rem;
+  font-weight: 600;
+}
+
+.title-linked {
+  color: $primary-color;
+}
+
+.title-scholar {
+  color: $secondary-color;
+}
+
 /* Close Button Styling */
 .close-button {
   position: absolute;

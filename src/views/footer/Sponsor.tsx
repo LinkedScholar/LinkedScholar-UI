@@ -20,7 +20,7 @@ const Sponsor: React.FC = () => {
                             <li>Access to our Discord</li>
                             <li>Be featured as a Donator</li>
                         </ul>
-                        <a href="https://www.paypal.com/donate/?business=YOUR_PAYPAL_BUSINESS_EMAIL&amount=10" target="_blank" rel="noopener noreferrer">
+                        <a href="https://www.paypal.com/ncp/payment/FBPRA5T7Z936J" target="_blank" rel="noopener noreferrer">
                             <button className="donate-button">Donate $10</button>
                         </a>
                     </div>
@@ -32,7 +32,7 @@ const Sponsor: React.FC = () => {
                             <li>Access to our Discord</li>
                             <li>Access to development channels</li>
                         </ul>
-                        <a href="https://www.paypal.com/donate/?business=YOUR_PAYPAL_BUSINESS_EMAIL&amount=50" target="_blank" rel="noopener noreferrer">
+                        <a href="https://www.paypal.com/ncp/payment/HSXLQN4NQHWEA" target="_blank" rel="noopener noreferrer">
                             <button className="donate-button">Donate $50</button>
                         </a>
                     </div>
@@ -45,7 +45,7 @@ const Sponsor: React.FC = () => {
                             <li>Special API usage plan</li>
                             <li>Company logo on the website</li>
                         </ul>
-                        <a href="mailto:contact@LinkedScholar.com">
+                        <a href="mailto:contact@linkedscholar.io">
                             <button className="donate-button">Contact Us</button>
                         </a>
                     </div>
@@ -53,8 +53,10 @@ const Sponsor: React.FC = () => {
 
                 {/* Separator */}
                 <hr className="sponsor-separator" />
-
-                {/* Buy Me a Coffee and Custom Donation */}
+                
+                
+                {/* DISABLED FOR NOW - Buy Me a Coffee and Custom Donation */}
+                {/*
                 <div className="sponsorship-tiers">
                     <div className="sponsor-card">
                         <h3 style={{ fontWeight: 'bold' }}>☕ Buy Me a Coffee</h3>
@@ -77,6 +79,7 @@ const Sponsor: React.FC = () => {
                         </a>
                     </div>
                 </div>
+                */}
             </main>
 
         </div>
