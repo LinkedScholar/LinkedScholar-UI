@@ -11,6 +11,8 @@ import PricingModal from "../components/modals/PricingModal";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/views/searcher.scss";
 
+const REACT_APP_LOCAL_MODE = true
+
 const Searcher: React.FC = () => {
     const navigate = useNavigate();
     const dispatch: AppDispatch = useDispatch();
@@ -50,7 +52,7 @@ const Searcher: React.FC = () => {
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
-        setShowDelayMessage(false); // Reset the delay message on new search
+        setShowDelayMessage(false);
 
         if (searchTerm.trim()) {
             const profileData = extractProfileData(searchTerm);
@@ -59,13 +61,27 @@ const Searcher: React.FC = () => {
                 return;
             }
 
-            // Start a timer that will display the delay message after 1 second
             const delayTimer = setTimeout(() => {
                 setShowDelayMessage(true);
             }, 1000);
 
             try {
-                const response = await getNetwork(authenticated, profileData.author_id, profileData.source, 1);
+                let response;
+                if (REACT_APP_LOCAL_MODE) {
+                    const localResponse = await fetch("/data/localNetwork.json");
+                    if (!localResponse.ok) {
+                        throw new Error("Failed to fetch local data");
+                    }
+                    response = await localResponse.json();
+                } else {
+                    response = await getNetwork(
+                        authenticated,
+                        profileData.author_id,
+                        profileData.source,
+                        1
+                    );
+                }
+
                 clearTimeout(delayTimer);
                 setShowDelayMessage(false);
                 navigate("/network", { state: { networkData: response } });
