@@ -23,7 +23,15 @@ const GraphView: React.FC = () => {
     const location = useLocation();
     const rawNetworkData: any = location.state?.networkData;
 
-    // Convert raw network data into a standardized { nodes, links } structure.
+    useEffect(() => {
+        setPathWindowOpen(false);
+        setFiltersActive(false);
+        setBfsPath(null);
+        setStartNode(null);
+        setTargetNode(null);
+    }, [rawNetworkData]);
+
+
     const computedNetworkData: NetworkData = useMemo(() => {
         if (!rawNetworkData) {
             return { nodes: [], links: [] };
