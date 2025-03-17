@@ -11,7 +11,7 @@ import PricingModal from "../components/modals/PricingModal";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/views/searcher.scss";
 
-const REACT_APP_LOCAL_MODE = process.env.REACT_APP_LOCAL_MODE || true;
+const REACT_APP_LOCAL_MODE = process.env.REACT_APP_LOCAL_MODE === "true";
 
 const Searcher: React.FC = () => {
     const navigate = useNavigate();
