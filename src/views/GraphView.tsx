@@ -114,10 +114,8 @@ const GraphView: React.FC = () => {
     const [targetType, setTargetType] = useState<"Affiliation" | "researcher">("Affiliation");
     const [selectedAffiliations, setSelectedAffiliations] = useState<string[]>([]);
 
-    // Example auth usage
     const { authenticated } = useSelector((state: RootState) => state.auth);
 
-    // Handle node click in ForceGraph
     const handleNodeClick = (node: NodeDatum | null) => {
         setSelectedNode(node);
         if (node) {
