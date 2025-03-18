@@ -36,7 +36,8 @@ const Navbar: React.FC = () => {
     const navigate = useNavigate();
 
     const handleLogout = async () => {
-        await fetch("http://localhost:8080/api/user/logout", {
+        let the_string = process.env.REACT_APP_BASE_URL || "http://localhost:8080";
+        await fetch(the_string + "/api/user/logout", {
             method: "POST",
             credentials: "include",
         });

@@ -22,7 +22,8 @@ const initialState: AuthState = {
 
 // Fetch user session from backend
 export const fetchSession = createAsyncThunk("auth/fetchSession", async () => {
-    const response = await fetch("http://localhost:8080/api/user/session", {
+    let the_string = process.env.REACT_APP_BASE_URL || "http://localhost:8080";
+    const response = await fetch(the_string + "/api/user/session", {
         credentials: "include",
     });
 

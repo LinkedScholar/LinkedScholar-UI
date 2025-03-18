@@ -14,13 +14,15 @@ const Login: React.FC = () => {
     }, [dispatch]);
 
     const handleLogin = () => {
-        window.location.href = "http://localhost:8080/oauth2/authorization/google";
+        let the_string = process.env.REACT_APP_BASE_URL || "http://localhost:8080";
+        window.location.href = the_string + "/oauth2/authorization/google";
     };
 
     const navigate = useNavigate();
 
     const handleLogout = async () => {
-        await fetch("http://localhost:8080/api/user/logout", {
+        let the_string = process.env.REACT_APP_BASE_URL || "http://localhost:8080";
+        await fetch(the_string + "/api/user/logout", {
             method: "POST",
             credentials: "include",
         });
