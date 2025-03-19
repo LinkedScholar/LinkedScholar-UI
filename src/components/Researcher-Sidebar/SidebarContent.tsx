@@ -37,7 +37,18 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                                                            onAddInterest,
                                                        }) => {
     if (activeTab === "researcher") {
-        const ignoreKeys = ["id", "x", "y", "fx", "fy", "vx", "vy", "fixed", "type", "index"];
+        const ignoreKeys = [
+            "id",
+            "x",
+            "y",
+            "fx",
+            "fy",
+            "vx",
+            "vy",
+            "fixed",
+            "type",
+            "index",
+        ];
         const sortedEntries = Object.entries(selectedNode)
             .filter(([key]) => !ignoreKeys.includes(key))
             .sort(([keyA], [keyB]) => {
@@ -77,9 +88,49 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                             </div>
                         );
                     }
+
+                    if (
+                        key.toLowerCase() === "web_pages" ||
+                        key.toLowerCase() === "webpages"
+                    ) {
+                        const websites = String(value)
+                            .split(",")
+                            .map((w) => w.trim())
+                            .filter((w) => w.length > 0);
+                        if (websites.length === 0) return null;
+                        return (
+                            <div key={key} className="metadata-item">
+                                <p className="metadata-key">
+                                    {formatKeyName(key)}:&nbsp;
+                                </p>
+                                <div className="metadata-value">
+                                    {websites.map((site, index) => (
+                                        <div key={index} style={{ marginBottom: "0.5rem" }}>
+                                            <a
+                                                href={
+                                                    site.startsWith("http")
+                                                        ? site
+                                                        : `https://${site}`
+                                                }
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="metadata-value-link"
+                                            >
+                                                {site}
+                                            </a>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    }
+
+
                     return (
                         <div key={key} className="metadata-item">
-                            <p className="metadata-key">{formatKeyName(key)}:&nbsp;</p>
+                            <p className="metadata-key">
+                                {formatKeyName(key)}:&nbsp;
+                            </p>
                             {isURL(String(value)) ? (
                                 <a
                                     href={
