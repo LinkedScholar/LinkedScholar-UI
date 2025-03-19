@@ -6,7 +6,9 @@
   flex-direction: column;
   gap: 16px;
 
+
   .publication-card {
+
     background: #f9f9f9;
     border: 1px solid #ddd;
     padding: 16px;
@@ -15,6 +17,7 @@
     &:hover {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
+
     .pub-title {
       font-size: 18px;
       font-weight: 700;
