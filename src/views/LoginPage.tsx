@@ -21,7 +21,8 @@ const LoginPage: React.FC = () => {
     }, [authenticated, navigate]);
 
     const handleLogin = (provider: string) => {
-        window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
+        let the_string = process.env.REACT_APP_BASE_URL || "http://localhost:8080";
+        window.location.href = the_string + `/oauth2/authorization/${provider}`;
     };
 
     return (
