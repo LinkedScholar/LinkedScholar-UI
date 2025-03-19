@@ -33,7 +33,6 @@ export const getNetwork = async (
 ): Promise<any> => {
     try {
         const url = logged ? `${API_BASE_URL}/network` : `${API_PUBLIC_BASE_URL}/network`;
-        // Send JSON instead of URLSearchParams because the backend expects JSON.
         const response = await axios.post(
             url,
             { author_id, source, recursivity },
