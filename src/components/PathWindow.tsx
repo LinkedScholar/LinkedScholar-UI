@@ -10,8 +10,8 @@ interface PathWindowProps {
     setExpanded: (expanded: boolean) => void;
     startNode: { value: string; label: string } | null;
     setStartNode: (option: { value: string; label: string } | null) => void;
-    targetType: "Affiliation" | "researcher";
-    setTargetType: (type: "Affiliation" | "researcher") => void;
+    targetType: "affiliation" | "author";
+    setTargetType: (type: "affiliation" | "author") => void;
     targetNode: { value: string; label: string } | null;
     setTargetNode: (option: { value: string; label: string } | null) => void;
     handleSearch: () => void;
@@ -35,6 +35,7 @@ const PathWindow: React.FC<PathWindowProps> = ({
     const [startMenuIsOpen, setStartMenuIsOpen] = useState<boolean>(false);
     const [targetMenuIsOpen, setTargetMenuIsOpen] = useState<boolean>(false);
 
+    // Researcher options loaded from all nodes.
     const researcherOptions = nodes.map((nd) => {
         const display = nd.name ? nd.name : nd.id.toString();
         return {
@@ -43,20 +44,25 @@ const PathWindow: React.FC<PathWindowProps> = ({
         };
     });
 
+    // Load all affiliations, handling both arrays and single string values.
+    const allAffiliations = nodes.flatMap((nd) => {
+        if (Array.isArray(nd.affiliation)) {
+            return nd.affiliation;
+        } else if (typeof nd.affiliation === "string") {
+            return [nd.affiliation];
+        }
+        return [];
+    });
     const affiliationOptions = Array.from(
-        new Set(
-            nodes
-                .map((nd) => nd.affiliation)
-                .filter((aff): aff is string => typeof aff === "string" && aff.trim() !== "")
-        )
+        new Set(allAffiliations.filter((aff) => aff.trim() !== ""))
     ).map((aff) => ({
         value: aff,
         label: aff,
     }));
 
     return (
-        <div className="path-window p-3 bg-light border rounded">
-            <div className="path-window-header d-flex justify-content-between align-items-center">
+        <div className="path-window p-3 bg-light border rounded shadow-sm">
+            <div className="path-window-header d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
                 <h3 className="mb-0 text-secondary-color">Find Path</h3>
                 <button className="btn btn-link p-0" onClick={() => setExpanded(false)}>
                     <i className="mdi mdi-close"></i>
@@ -64,9 +70,9 @@ const PathWindow: React.FC<PathWindowProps> = ({
             </div>
 
             {expanded && (
-                <div className="path-form mt-3">
+                <div className="path-form">
                     <div className="mb-3">
-                        <label className="form-label">Start Node (Researcher):</label>
+                        <label className="form-label">Start Researcher:</label>
                         <CreatableSelect
                             value={startNode}
                             onChange={(option) =>
@@ -76,7 +82,7 @@ const PathWindow: React.FC<PathWindowProps> = ({
                                 setStartNode({ value: inputValue, label: inputValue })
                             }
                             options={researcherOptions}
-                            placeholder="Select or type a start node..."
+                            placeholder="Select researcher..."
                             className="node-select"
                             isSearchable
                             formatCreateLabel={(inputValue) => `Search "${inputValue}"`}
@@ -108,37 +114,41 @@ const PathWindow: React.FC<PathWindowProps> = ({
                             <button
                                 type="button"
                                 className={`btn ${
-                                    targetType === "Affiliation"
+                                    targetType === "affiliation"
                                         ? "btn-primary"
                                         : "btn-outline-primary"
-                                }`}
+                                } d-flex align-items-center`}
                                 onClick={() => {
-                                    setTargetType("Affiliation");
+                                    setTargetType("affiliation");
                                     setTargetNode(null);
                                 }}
                             >
-                                Affiliation
+                                <i className="mdi mdi-domain me-1"></i> Affiliation
                             </button>
                             <button
                                 type="button"
                                 className={`btn ${
-                                    targetType === "researcher"
+                                    targetType === "author"
                                         ? "btn-primary"
                                         : "btn-outline-primary"
-                                }`}
+                                } d-flex align-items-center`}
                                 onClick={() => {
-                                    setTargetType("researcher");
+                                    setTargetType("author");
                                     setTargetNode(null);
                                 }}
                             >
-                                Researcher
+                                <i className="mdi mdi-account me-1"></i> Researcher
                             </button>
                         </div>
                     </div>
 
-                    {/* Target Node Selection */}
+                    {/* Target Selection */}
                     <div className="mb-3">
-                        <label className="form-label">Target Node:</label>
+                        <label className="form-label">
+                            {targetType === "affiliation"
+                                ? "Target Affiliation:"
+                                : "Target Researcher:"}
+                        </label>
                         <CreatableSelect
                             value={targetNode}
                             onChange={(option) =>
@@ -148,9 +158,13 @@ const PathWindow: React.FC<PathWindowProps> = ({
                                 setTargetNode({ value: inputValue, label: inputValue })
                             }
                             options={
-                                targetType === "Affiliation" ? affiliationOptions : researcherOptions
+                                targetType === "affiliation" ? affiliationOptions : researcherOptions
                             }
-                            placeholder="Select or type a target node..."
+                            placeholder={
+                                targetType === "affiliation"
+                                    ? "Select an affiliation..."
+                                    : "Select a researcher..."
+                            }
                             className="node-select"
                             isSearchable
                             formatCreateLabel={(inputValue) => `Search "${inputValue}"`}
@@ -183,24 +197,6 @@ const PathWindow: React.FC<PathWindowProps> = ({
                             <i className="mdi mdi-close"></i> Clear Search
                         </button>
                     </div>
-
-                    {bfsPath && (
-                        <div className="bfs-path mt-3">
-                            <h3>Path:</h3>
-                            <ul>
-                                {bfsPath.map((nodeId, index) => {
-                                    const found = nodes.find(
-                                        (n) => n.id.toString() === nodeId || n.name === nodeId
-                                    );
-                                    return (
-                                        <li key={index}>
-                                            {found?.name || found?.affiliation || nodeId}
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        </div>
-                    )}
                 </div>
             )}
         </div>

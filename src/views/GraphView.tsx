@@ -39,7 +39,7 @@ const GraphView: React.FC = () => {
         if (rawNetworkData.authors && rawNetworkData.articles) {
             const authors: NodeDatum[] = rawNetworkData.authors.map((author: any) => ({
                 ...author,
-                type: "researcher",
+                type: "author",
             }));
             const articles: NodeDatum[] = rawNetworkData.articles.map((article: any) => ({
                 id: article.id,
@@ -111,7 +111,7 @@ const GraphView: React.FC = () => {
     const [startNode, setStartNode] = useState<{ value: string; label: string } | null>(null);
     const [targetNode, setTargetNode] = useState<{ value: string; label: string } | null>(null);
     const [bfsPath, setBfsPath] = useState<string[] | null>(null);
-    const [targetType, setTargetType] = useState<"Affiliation" | "researcher">("Affiliation");
+    const [targetType, setTargetType] = useState<"affiliation" | "author">("affiliation");
     const [selectedAffiliations, setSelectedAffiliations] = useState<string[]>([]);
 
     const { authenticated } = useSelector((state: RootState) => state.auth);
@@ -126,7 +126,6 @@ const GraphView: React.FC = () => {
         }
     };
 
-    // Close the sidebar
     const handleCloseSidebar = () => {
         setSelectedNode(null);
     };
@@ -152,17 +151,15 @@ const GraphView: React.FC = () => {
         );
 
         let targetData = null;
-        if (targetType === "researcher") {
+        if (targetType === "author") {
             targetData = graphData.nodes.find(
                 (n) => n.name === targetNode.value || n.id.toString() === targetNode.value
             );
         }
 
-        // If the local graph doesn't contain the start/target node, fetch from API
-        if (!startData || (targetType === "researcher" && !targetData)) {
+        if (!startData || (targetType === "author" && !targetData) || (targetType === "affiliation" && !targetData)) {
             try {
-                const source = "dblp"; // Example data source
-                const newPathData = await getPath(authenticated, startNode.label, targetNode.value, source);
+                const newPathData = await getPath(authenticated, startNode.label, targetNode.value, targetType);
                 let parsedPathData = newPathData;
 
                 if (typeof newPathData === "string") {
@@ -190,7 +187,7 @@ const GraphView: React.FC = () => {
                         newNodes = newNodes.concat(
                             parsedPathData.authors.map((author: any) => ({
                                 ...author,
-                                type: "researcher",
+                                type: "author",
                             }))
                         );
                     }
@@ -221,7 +218,7 @@ const GraphView: React.FC = () => {
         const startId = finalStartData ? finalStartData.id : startNode.value;
 
         let targetValue: string;
-        if (targetType === "researcher") {
+        if (targetType === "author") {
             const finalTargetData = updatedNodes.find(
                 (n) => n.name === targetNode.value || n.id.toString() === targetNode.value
             );
@@ -238,7 +235,6 @@ const GraphView: React.FC = () => {
         if (path) {
             setBfsPath(path);
         } else {
-            alert("No path found between the selected nodes.");
             setBfsPath(null);
         }
     };

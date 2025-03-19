@@ -14,7 +14,7 @@ interface ResearcherSidebarProps {
     bfsPath?: string[] | null;
     onBFSRequest?: (
         startId: string,
-        connectionType: "Affiliation" | "researcher",
+        connectionType: "affiliation" | "author",
         selectedValue: string
     ) => void;
 }
@@ -31,9 +31,9 @@ const ResearcherSidebar: React.FC<ResearcherSidebarProps> = ({
     const sidebarRef = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
     const [compressed, setCompressed] = useState(false);
-    const [activeTab, setActiveTab] = useState<"researcher" | "group" | "publications">("researcher");
+    const [activeTab, setActiveTab] = useState<"author" | "group" | "publications">("author");
     const [selectedConnection, setSelectedConnection] = useState<{ value: string; label: string } | null>(null);
-    const [connectionType, setConnectionType] = useState<"Affiliation" | "researcher">("Affiliation");
+    const [connectionType, setConnectionType] = useState<"affiliation" | "author">("affiliation");
     const [connectionExpanded, setConnectionExpanded] = useState(false);
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [menuIsOpen, setMenuIsOpen] = useState<boolean | undefined>(undefined);

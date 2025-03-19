@@ -19,17 +19,9 @@ const Toolbar: React.FC<ToolbarProps> = ({
                                              toggleGrid,
                                              toggleFilters,
                                              togglePathWindow,
-                                             resetSimulation,
                                          }) => {
     return (
         <div className="toolbar">
-            <button
-                className="toolbar-button"
-                onClick={resetSimulation}
-                title="Reset Simulation"
-            >
-                <i className="mdi mdi-home"></i>
-            </button>
             <button
                 className={`toolbar-button ${gridActive ? "active" : ""}`}
                 onClick={toggleGrid}

@@ -75,8 +75,8 @@ const Navbar: React.FC = () => {
               >
                 <span className="navbar-toggler-icon"></span>
               </button>
-      
-              <div className="collapse navbar-collapse" id="navbarNav">
+              {/* 
+              <div className="collapse navbar-collapse d-none" id="navbarNav">
                 {status === "loading" ? (
                   <p className="loading-text">Loading...</p>
                 ) : authenticated ? (
@@ -105,6 +105,8 @@ const Navbar: React.FC = () => {
                   </button>
                 )}
               </div>
+               */}
+
             </div>
             
             {/* Mobile Search Bar - shown below navbar on small screens */}
