@@ -1,16 +1,16 @@
 import React from "react";
 
 interface SidebarTabsProps {
-    activeTab: "researcher" | "group" | "publications";
-    setActiveTab: (tab: "researcher" | "group" | "publications") => void;
+    activeTab: "author" | "group" | "publications";
+    setActiveTab: (tab: "author" | "group" | "publications") => void;
 }
 
 const SidebarTabs: React.FC<SidebarTabsProps> = ({ activeTab, setActiveTab }) => (
     <ul className="nav nav-tabs mb-3">
         <li className="nav-item">
             <button
-                className={`nav-link ${activeTab === "researcher" ? "active" : ""}`}
-                onClick={() => setActiveTab("researcher")}
+                className={`nav-link ${activeTab === "author" ? "active" : ""}`}
+                onClick={() => setActiveTab("author")}
             >
                 Researcher
             </button>

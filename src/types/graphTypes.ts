@@ -1,6 +1,6 @@
 import { SimulationNodeDatum, SimulationLinkDatum } from "d3-force";
 
-export type NodeType = "researcher" | "article";
+export type NodeType = "author" | "article";
 
 export interface NodeDatum extends SimulationNodeDatum {
     id: string;
