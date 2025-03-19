@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
+import "../../styles/components/Graph/forceGraph.scss";
 import { NodeDatum, LinkDatum } from "../../types/graphTypes";
 import { createForceSimulation } from "../../utils/forceSimulation";
 
@@ -28,7 +29,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
     const [selectedNode, setSelectedNode] = useState<NodeDatum | null>(null);
     const selectedNodeRef = useRef<NodeDatum | null>(null);
     const updateHighlightRef = useRef<(selNode: NodeDatum | null) => void>(() => {});
-    const bfsAnimationRef = useRef<number | null>(null);
 
     // Hold the latest selected affiliations
     const selectedAffiliationsRef = useRef<string[]>(selectedAffiliations);
@@ -39,6 +39,46 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
     useEffect(() => {
         selectedNodeRef.current = selectedNode;
     }, [selectedNode]);
+    useEffect(() => {
+        if (!svgRef.current || !zoomGroupRef.current) return;
+        const svg = d3.select(svgRef.current);
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        // Remove any existing grid
+        if (gridRectRef.current) {
+            gridRectRef.current.remove();
+            gridRectRef.current = null;
+        }
+        if (gridActive) {
+            const gridSpacing = 50;
+            // Ensure the grid pattern is defined
+            let defs = svg.select<SVGDefsElement>("defs");
+            if (defs.empty()) {
+                defs = svg.append<SVGDefsElement>("defs");
+            }
+            if (defs.select("#grid").empty()) {
+                defs
+                    .append<SVGPatternElement>("pattern")
+                    .attr("id", "grid")
+                    .attr("width", gridSpacing)
+                    .attr("height", gridSpacing)
+                    .attr("patternUnits", "userSpaceOnUse")
+                    .append("path")
+                    .attr("d", `M ${gridSpacing} 0 L 0 0 L 0 ${gridSpacing}`)
+                    .attr("fill", "none")
+                    .attr("stroke", "#ccc")
+                    .attr("stroke-width", 1);
+            }
+            gridRectRef.current = zoomGroupRef.current
+                .insert("rect", ":first-child")
+                .attr("x", -width)
+                .attr("y", -height)
+                .attr("width", width * 3)
+                .attr("height", height * 3)
+                .attr("fill", "url(#grid)")
+                .style("pointer-events", "none"); // So it doesn't block mouse interactions
+        }
+    }, [gridActive]);
 
     // Main simulation effect
     useEffect(() => {
@@ -495,9 +535,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
 
         window.addEventListener("resize", handleResize);
         return () => {
-            if (bfsAnimationRef.current) {
-                window.clearTimeout(bfsAnimationRef.current);
-            }
             simulation.stop();
             window.removeEventListener("resize", handleResize);
         };
