@@ -3,39 +3,18 @@ import axios from "axios";
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080/api";
 const API_PUBLIC_BASE_URL = process.env.REACT_APP_API_PUBLIC_URL || "http://localhost:8080/public";
 
-export const getProfile = async (
-    logged: boolean,
-    author_id: string,
-    source: string
-): Promise<any> => {
-    try {
-        const url = logged ? `${API_BASE_URL}/profile` : `${API_PUBLIC_BASE_URL}/profile`;
-        const response = await axios.post(
-            url,
-            { author_id, source },
-            {
-                headers: { "Content-Type": "application/json" },
-                withCredentials: true,
-            }
-        );
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching profile:", error);
-        throw error;
-    }
-};
 
 export const getNetwork = async (
     logged: boolean,
     author_id: string,
-    source: string,
+    kind: string,
     recursivity: number = 1
 ): Promise<any> => {
     try {
         const url = logged ? `${API_BASE_URL}/network` : `${API_PUBLIC_BASE_URL}/network`;
         const response = await axios.post(
             url,
-            { author_id, source, recursivity },
+            { author_id, source: kind, recursivity },
             {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
@@ -73,7 +52,6 @@ export const getBestMatchings = async (
 export const getArticlesFromAuthor = async (
     logged: boolean,
     author_id: string,
-    source: string
 ): Promise<any> => {
     try {
         const url = logged
@@ -81,7 +59,7 @@ export const getArticlesFromAuthor = async (
             : `${API_PUBLIC_BASE_URL}/articles_from_author`;
         const response = await axios.post(
             url,
-            { author_id, source },
+            { author_id },
             {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
@@ -98,14 +76,14 @@ export const getPath = async (
     logged: boolean,
     fromId: string,
     toId: string,
-    source: string = "dblp"
+    kind: string = "dblp"
 ): Promise<any> => {
     try {
         const url = logged ? `${API_BASE_URL}/path` : `${API_PUBLIC_BASE_URL}/path`;
         const payload = {
             from_id: fromId,
             to_id: toId,
-            to_source: source,
+            kind: kind,
         };
         const response = await axios.post(url, payload, {
             headers: { "Content-Type": "application/json" },

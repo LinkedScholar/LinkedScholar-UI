@@ -198,14 +198,14 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             .attr("class", "node-label")
             .attr("dy", 5)
             .attr("text-anchor", "middle")
-            .style("font-size", (d) => (d.type === "researcher" ? "14px" : "12px"))
+            .style("font-size", (d) => (d.type === "author" ? "14px" : "12px"))
             .style("fill", "white")
             .style("pointer-events", "none")
             .style("font-weight", "bold")
             .text((d) =>
-                d.type === "researcher" ? (d.name ? d.name.split(" ")[0] : "") : ""
+                d.type === "author" ? (d.name ? d.name.split(" ")[0] : "") : ""
             )
-            .style("opacity", (d) => (d.type === "researcher" ? 1 : 0));
+            .style("opacity", (d) => (d.type === "author" ? 1 : 0));
 
         // Draw BFS indices – only for non-publication nodes (skip articles)
         if (bfsPath && bfsPath.length > 0) {
@@ -323,13 +323,13 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                         links.forEach((link) => {
                             if (
                                 link.source === node &&
-                                (link.target as NodeDatum).type === "researcher" &&
+                                (link.target as NodeDatum).type === "author" &&
                                 (link.target as NodeDatum).id !== selNode.id
                             ) {
                                 extraResearcherNodes.add(link.target as NodeDatum);
                             } else if (
                                 link.target === node &&
-                                (link.source as NodeDatum).type === "researcher" &&
+                                (link.source as NodeDatum).type === "author" &&
                                 (link.source as NodeDatum).id !== selNode.id
                             ) {
                                 extraResearcherNodes.add(link.source as NodeDatum);
@@ -347,7 +347,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                         if (d === selNode) return "#ffcc00";
                         if (connectedNodes.has(d)) return "#ffcc00";
                     }
-                    if (d.type === "researcher" && selectedAffiliationsRef.current.length > 0) {
+                    if (d.type === "author" && selectedAffiliationsRef.current.length > 0) {
                         let match = false;
                         if (Array.isArray(d.affiliation)) {
                             match = d.affiliation.some((a) => selectedAffiliationsRef.current.includes(a));

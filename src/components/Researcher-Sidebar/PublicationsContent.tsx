@@ -89,9 +89,8 @@ const PublicationsContent: React.FC<PublicationsContentProps> = ({ selectedNode 
         const fetchPublications = async () => {
             setLoading(true);
             try {
-             // TODO remove or add in network request
-                const source = "dblp";
-                const data = await getArticlesFromAuthor(authenticated, selectedNode.name.toString(), source);
+
+                const data = await getArticlesFromAuthor(authenticated, selectedNode.name.toString());
                 setPublications(Array.isArray(data) ? data : data.publications);
                 setLoading(false);
             } catch (err) {

@@ -26,7 +26,7 @@ const capitalizeFirstLetter = (text: string): string =>
     text.replace(/\b\w/g, (char) => char.toUpperCase());
 
 interface SidebarContentProps {
-    activeTab: "researcher" | "group" | "publications";
+    activeTab: "author" | "group" | "publications";
     selectedNode: NodeDatum;
     onAddInterest?: (interest: string) => void;
 }
@@ -36,7 +36,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                                                            selectedNode,
                                                            onAddInterest,
                                                        }) => {
-    if (activeTab === "researcher") {
+    if (activeTab === "author") {
         const ignoreKeys = [
             "id",
             "x",
