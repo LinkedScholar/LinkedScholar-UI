@@ -42,8 +42,8 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
     useEffect(() => {
         if (!svgRef.current || !zoomGroupRef.current) return;
         const svg = d3.select(svgRef.current);
-        const width = window.innerWidth;
-        const height = window.innerHeight;
+        const width = window.innerWidth*25;
+        const height = window.innerHeight*25;
         // Remove any existing grid
         if (gridRectRef.current) {
             gridRectRef.current.remove();
@@ -71,10 +71,10 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             }
             gridRectRef.current = zoomGroupRef.current
                 .insert("rect", ":first-child")
-                .attr("x", -width)
-                .attr("y", -height)
-                .attr("width", width * 3)
-                .attr("height", height * 3)
+                .attr("x", -width/2)
+                .attr("y", -height/2)
+                .attr("width", width)
+                .attr("height", height)
                 .attr("fill", "url(#grid)")
                 .style("pointer-events", "none"); // So it doesn't block mouse interactions
         }
