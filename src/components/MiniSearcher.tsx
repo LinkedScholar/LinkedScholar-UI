@@ -119,8 +119,7 @@ const MiniSearcher: React.FC = () => {
           {error && <p className="mini-search-error">{error}</p>}
           {showDelayMessage && (
               <div className="mini-search-delay-message">
-                <p>We haven't found the researcher in our database.</p>
-                <p>We are building its network, please wait...</p>
+                <p>We are building the network, please wait...</p>
               </div>
           )}
         </div>
