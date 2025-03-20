@@ -80,6 +80,7 @@ const ResearcherSidebar: React.FC<ResearcherSidebarProps> = ({
             className={`researcher-sidebar ${isVisible ? "open" : ""} ${compressed ? "compressed" : ""}`}
             ref={sidebarRef}
         >
+            
             <SidebarHeader
                 title="Researcher Details"
                 onClose={onClose}
