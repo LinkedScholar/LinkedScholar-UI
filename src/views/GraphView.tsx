@@ -140,7 +140,6 @@ const GraphView: React.FC = () => {
 
     const handleBfsSearch = async () => {
         if (!startNode || !targetNode) {
-            alert("Please select both start and end nodes.");
             return;
         }
 
@@ -220,7 +219,6 @@ const GraphView: React.FC = () => {
                 (n) => n.name === targetNode.value || n.id.toString() === targetNode.value
             );
             if (!finalTargetData) {
-                alert("Researcher target not found in the network.");
                 return;
             }
             targetValue = finalTargetData.id;

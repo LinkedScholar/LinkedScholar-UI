@@ -62,7 +62,6 @@ const ResearcherSidebar: React.FC<ResearcherSidebarProps> = ({
 
     const handleSearch = () => {
         if (!selectedConnection) {
-            alert(`Please select a ${connectionType}.`);
             return;
         }
         setIsSearchActive(true);
