@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import ForceGraph from "../components/Graph/ForceGraph";
+import ForceGraph, { ForceGraphHandle } from "../components/Graph/ForceGraph";
 import Toolbar from "../components/Toolbar";
 import ResearcherSidebar from "../components/Researcher-Sidebar/ResearcherSidebar";
 import PathWindow from "../components/PathWindow";
@@ -31,7 +31,6 @@ const GraphView: React.FC = () => {
         setTargetNode(null);
     }, [rawNetworkData]);
 
-
     const computedNetworkData: NetworkData = useMemo(() => {
         if (!rawNetworkData) {
             return { nodes: [], links: [] };
@@ -45,7 +44,7 @@ const GraphView: React.FC = () => {
                 id: article.id,
                 type: "article",
                 title: article.title,
-                name: article.title, // Use the article title as the node's name
+                name: article.title,
             }));
             return {
                 nodes: [...authors, ...articles],
@@ -55,10 +54,7 @@ const GraphView: React.FC = () => {
         return rawNetworkData;
     }, [rawNetworkData]);
 
-    // Graph data state
     const [graphData, setGraphData] = useState<NetworkData>(computedNetworkData);
-
-    // Update the graph data whenever computedNetworkData changes
     useEffect(() => {
         setGraphData(computedNetworkData);
     }, [computedNetworkData]);
@@ -81,7 +77,6 @@ const GraphView: React.FC = () => {
         return Array.from(affSet);
     }, [graphData]);
 
-    // Ensure unique, non-empty affiliations.
     const uniqueAffiliations = useMemo(() => {
         return Array.from(
             new Set(
@@ -102,8 +97,7 @@ const GraphView: React.FC = () => {
         return map;
     }, [uniqueAffiliations]);
 
-    // Hooks and state for path/BFS logic
-    const forceGraphRef = useRef<{ resetSimulation: () => void } | null>(null);
+    const forceGraphRef = useRef<ForceGraphHandle | null>(null);
     const [selectedNode, setSelectedNode] = useState<NodeDatum | null>(null);
     const [gridActive, setGridActive] = useState(false);
     const [filtersActive, setFiltersActive] = useState(false);
@@ -132,7 +126,7 @@ const GraphView: React.FC = () => {
         setSelectedNode(null);
         selectedNodeRef.current = null;
         if (updateHighlightRef.current) {
-            console.log("disabling highlight")
+            console.log("disabling highlight");
             updateHighlightRef.current(null);
         }
     };
@@ -168,7 +162,6 @@ const GraphView: React.FC = () => {
             try {
                 const newPathData = await getPath(authenticated, startNode.label, targetNode.value, targetType);
                 let parsedPathData = newPathData;
-
                 if (typeof newPathData === "string") {
                     try {
                         parsedPathData = JSON.parse(newPathData);
@@ -177,7 +170,6 @@ const GraphView: React.FC = () => {
                         throw e;
                     }
                 }
-
                 let newNodes: any[] = [];
                 if (parsedPathData.articles || parsedPathData.authors) {
                     if (parsedPathData.articles) {
@@ -202,7 +194,6 @@ const GraphView: React.FC = () => {
                     newNodes = parsedPathData.nodes;
                 }
                 const newLinks = parsedPathData.links || [];
-
                 newNodes.forEach((node: any) => {
                     if (!updatedNodes.find((n) => n.id === node.id)) {
                         updatedNodes.push(node);
@@ -211,7 +202,6 @@ const GraphView: React.FC = () => {
                 newLinks.forEach((link: any) => {
                     updatedLinks.push(link);
                 });
-
                 setGraphData({ nodes: updatedNodes, links: updatedLinks });
             } catch (error) {
                 console.error("Error fetching path:", error);
@@ -243,6 +233,19 @@ const GraphView: React.FC = () => {
             setBfsPath(path);
         } else {
             setBfsPath(null);
+        }
+
+        // Mark and center the searched researcher node
+        const researcherNode = updatedNodes.find(
+            (node) => node.id.toString() === startId.toString()
+        );
+        if (researcherNode) {
+            setSelectedNode(researcherNode);
+            selectedNodeRef.current = researcherNode;
+            if (updateHighlightRef.current) {
+                updateHighlightRef.current(researcherNode);
+            }
+            forceGraphRef.current?.centerOnNode(researcherNode);
         }
     };
 
@@ -315,6 +318,7 @@ const GraphView: React.FC = () => {
             {/* Main Graph */}
             <div className="graph-container">
                 <ForceGraph
+                    ref={forceGraphRef}
                     nodes={graphData.nodes}
                     links={graphData.links}
                     onNodeClick={handleNodeClick}
@@ -327,7 +331,6 @@ const GraphView: React.FC = () => {
                 />
             </div>
 
-            {/* Sidebar for Selected Researcher */}
             <ResearcherSidebar selectedNode={selectedNode} onClose={handleCloseSidebar} />
         </div>
     );

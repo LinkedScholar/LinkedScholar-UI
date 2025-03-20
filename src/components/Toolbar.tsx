@@ -19,6 +19,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                                              toggleGrid,
                                              toggleFilters,
                                              togglePathWindow,
+                                             resetSimulation,
                                          }) => {
     return (
         <div className="toolbar">
@@ -42,6 +43,13 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 title="Find Path"
             >
                 <i className="mdi mdi-source-branch"></i>
+            </button>
+            <button
+                className="toolbar-button"
+                onClick={resetSimulation}
+                title="Home"
+            >
+                <i className="mdi mdi-home"></i>
             </button>
         </div>
     );
