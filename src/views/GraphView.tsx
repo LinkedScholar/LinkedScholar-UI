@@ -113,6 +113,8 @@ const GraphView: React.FC = () => {
     const [bfsPath, setBfsPath] = useState<string[] | null>(null);
     const [targetType, setTargetType] = useState<"affiliation" | "author">("affiliation");
     const [selectedAffiliations, setSelectedAffiliations] = useState<string[]>([]);
+    const selectedNodeRef = useRef<NodeDatum | null>(null);
+    const updateHighlightRef = useRef<(selNode: NodeDatum | null) => void>(() => {});
 
     const { authenticated } = useSelector((state: RootState) => state.auth);
 
@@ -128,6 +130,11 @@ const GraphView: React.FC = () => {
 
     const handleCloseSidebar = () => {
         setSelectedNode(null);
+        selectedNodeRef.current = null;
+        if (updateHighlightRef.current) {
+            console.log("disabling highlight")
+            updateHighlightRef.current(null);
+        }
     };
 
     const togglePathWindow = () => {
@@ -315,6 +322,8 @@ const GraphView: React.FC = () => {
                     bfsPath={bfsPath}
                     selectedAffiliations={selectedAffiliations}
                     affiliationColorMap={affiliationColorMap}
+                    updateHighlightRef={updateHighlightRef}
+                    selectedNodeRef={selectedNodeRef}
                 />
             </div>
 

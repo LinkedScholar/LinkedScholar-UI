@@ -12,6 +12,9 @@ interface ForceGraphProps {
     bfsPath: string[] | null;
     selectedAffiliations: string[];
     affiliationColorMap?: { [key: string]: string };
+    updateHighlightRef: React.RefObject<(selNode: NodeDatum | null) => void>;
+    selectedNodeRef: React.RefObject<NodeDatum | null>;
+}
 }
 
 const ForceGraph: React.FC<ForceGraphProps> = ({
@@ -22,13 +25,13 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                                                    bfsPath,
                                                    selectedAffiliations,
                                                    affiliationColorMap,
+                                                   updateHighlightRef,
+                                                   selectedNodeRef
                                                }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const zoomGroupRef = useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
     const gridRectRef = useRef<d3.Selection<SVGRectElement, unknown, null, undefined> | null>(null);
     const [selectedNode, setSelectedNode] = useState<NodeDatum | null>(null);
-    const selectedNodeRef = useRef<NodeDatum | null>(null);
-    const updateHighlightRef = useRef<(selNode: NodeDatum | null) => void>(() => {});
 
     // Hold the latest selected affiliations
     const selectedAffiliationsRef = useRef<string[]>(selectedAffiliations);
@@ -76,7 +79,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                 .attr("width", width)
                 .attr("height", height)
                 .attr("fill", "url(#grid)")
-                .style("pointer-events", "none"); // So it doesn't block mouse interactions
+                .style("pointer-events", "none");
         }
     }, [gridActive]);
 
@@ -539,43 +542,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             window.removeEventListener("resize", handleResize);
         };
     }, [nodes, links, bfsPath, affiliationColorMap]);
-
-    useEffect(() => {
-        if (!svgRef.current || !zoomGroupRef.current) return;
-        const svg = d3.select(svgRef.current);
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        if (gridRectRef.current) {
-            gridRectRef.current.remove();
-            gridRectRef.current = null;
-        }
-        if (gridActive) {
-            const gridSpacing = 50;
-            let defs = svg.select<SVGDefsElement>("defs");
-            if (defs.empty()) {
-                defs = svg.append<SVGDefsElement>("defs");
-                defs
-                    .append<SVGPatternElement>("pattern")
-                    .attr("id", "grid")
-                    .attr("width", gridSpacing)
-                    .attr("height", gridSpacing)
-                    .attr("patternUnits", "userSpaceOnUse")
-                    .append("path")
-                    .attr("d", `M ${gridSpacing} 0 L 0 0 L 0 ${gridSpacing}`)
-                    .attr("fill", "none")
-                    .attr("stroke", "#ccc")
-                    .attr("stroke-width", 1);
-            }
-            gridRectRef.current = zoomGroupRef.current
-                .insert("rect", ":first-child")
-                .attr("x", -width)
-                .attr("y", -height)
-                .attr("width", width * 3)
-                .attr("height", height * 3)
-                .attr("fill", "url(#grid)");
-        }
-    }, [gridActive]);
-
     useEffect(() => {
         if (updateHighlightRef.current) {
             updateHighlightRef.current(selectedNode);
