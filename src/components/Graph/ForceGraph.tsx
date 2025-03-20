@@ -15,7 +15,6 @@ interface ForceGraphProps {
     updateHighlightRef: React.RefObject<(selNode: NodeDatum | null) => void>;
     selectedNodeRef: React.RefObject<NodeDatum | null>;
 }
-}
 
 const ForceGraph: React.FC<ForceGraphProps> = ({
                                                    nodes,
