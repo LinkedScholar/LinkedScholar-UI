@@ -5,12 +5,12 @@
   z-index: 10;
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 20px;
+  gap: 6px;
+  padding: 10px;
   background: rgba($background-grey, 0.95);
   border-radius: 12px;
-  box-shadow: 0 4px 8px $shadow-light;
-  height: 60px; /* Matches MiniSearcher */
+  box-shadow: 0 4px 6px $shadow-light;
+  /* Removed fixed height to accommodate auto-sized buttons */
 }
 
 .toolbar-button {
@@ -18,30 +18,34 @@
   border: none;
   font-size: 20px;
   cursor: pointer;
-  padding: 10px;
-  border-radius: 50%;
+  padding: 10px 16px;
+  border-radius: 4px;
   transition: background 0.2s ease, transform 0.1s ease;
 
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px; /* Matches MiniSearcher */
+  gap: 8px;
 
   i {
     font-size: 20px;
     color: $secondary-color; // Use primary color for icons
   }
 
+  span {
+    font-size: 16px;
+    color: $secondary-color;
+  }
+
   &:hover {
     background: rgba($primary-color, 0.1);
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
 
   &.active {
     background: $secondary-color;
 
-    i {
+    i,
+    span {
       color: white;
     }
   }
