@@ -400,10 +400,6 @@ const ForceGraph = forwardRef<ForceGraphHandle, ForceGraphProps>(({
             nodeGroup
                 .selectAll<SVGCircleElement, NodeDatum>("circle.node")
                 .attr("fill", (d) => {
-                    if (selNode) {
-                        if (d === selNode) return "#ffcc00";
-                        if (connectedNodes.has(d)) return "#ffcc00";
-                    }
                     if (d.type === "author" && selectedAffiliationsRef.current.length > 0) {
                         let match = false;
                         if (Array.isArray(d.affiliation)) {
@@ -429,13 +425,16 @@ const ForceGraph = forwardRef<ForceGraphHandle, ForceGraphProps>(({
                 .attr("stroke", (d) => {
                     const nodeId = d.id.toString();
                     if (bfsSet.has(nodeId)) return "#32CD32";
-                    if (selNode && (d === selNode || connectedNodes.has(d))) return "#ff9900";
+                    if (selNode && (d === selNode || connectedNodes.has(d))) return "#ffcc00";
                     return "#003366";
                 })
                 .attr("stroke-width", (d) => {
                     const nodeId = d.id.toString();
                     if (bfsSet.has(nodeId)) return 3;
-                    if (selNode && (d === selNode || connectedNodes.has(d))) return 3;
+                    if (selNode) {
+                        if (d === selNode) return 7;
+                        if (connectedNodes.has(d)) return 3;
+                    }
                     return 2;
                 })
                 .attr("filter", (d) => {

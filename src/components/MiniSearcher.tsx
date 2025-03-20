@@ -38,7 +38,6 @@ const MiniSearcher: React.FC = () => {
         return { author_id: match[1], source: "research_gate" };
       }
     } else {
-      // Assume if not Google Scholar or ResearchGate, pass it to DBLP logic
       return { author_id: url, source: "dblp" };
     }
     return null;
@@ -56,18 +55,22 @@ const MiniSearcher: React.FC = () => {
         return;
       }
 
-      // Start a timer to display a delay message after 1 second
       const delayTimer = setTimeout(() => {
         setShowDelayMessage(true);
       }, 1000);
 
       try {
-        // Note: The last parameter (1) here makes the mini searcher work as the searcher.
-        const response = await getNetwork(authenticated, profileData.author_id, profileData.source, 1);
+        const response = await getNetwork(
+            authenticated,
+            profileData.author_id,
+            profileData.source,
+            1
+        );
         clearTimeout(delayTimer);
         setShowDelayMessage(false);
         setSearchTerm("");
-        navigate("/network", { state: { networkData: response } });
+        const centerId = response.center_id || profileData.author_id;
+        navigate("/network", { state: { networkData: response, centerId } });
       } catch (error) {
         clearTimeout(delayTimer);
         setShowDelayMessage(false);

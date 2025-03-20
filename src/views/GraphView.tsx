@@ -22,6 +22,8 @@ interface NetworkData {
 const GraphView: React.FC = () => {
     const location = useLocation();
     const rawNetworkData: any = location.state?.networkData;
+    // Retrieve centerId passed from the Searcher view
+    const centerId = location.state?.centerId;
 
     useEffect(() => {
         setPathWindowOpen(false);
@@ -259,6 +261,23 @@ const GraphView: React.FC = () => {
             setPathWindowOpen(false);
         }
     };
+
+    // NEW: Once graph data is loaded, check if a centerId was passed and set that node as selected
+    useEffect(() => {
+        if (centerId && graphData.nodes.length > 0) {
+            const centerNode = graphData.nodes.find(
+                (node) => node.id.toString() === centerId.toString()
+            );
+            if (centerNode) {
+                setSelectedNode(centerNode);
+                selectedNodeRef.current = centerNode;
+                if (updateHighlightRef.current) {
+                    updateHighlightRef.current(centerNode);
+                }
+                forceGraphRef.current?.centerOnNode(centerNode);
+            }
+        }
+    }, [centerId, graphData]);
 
     if (graphData.nodes.length === 0 && graphData.links.length === 0) {
         return <h2>No network data available</h2>;

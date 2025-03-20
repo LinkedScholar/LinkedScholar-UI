@@ -84,7 +84,10 @@ const Searcher: React.FC = () => {
 
                 clearTimeout(delayTimer);
                 setShowDelayMessage(false);
-                navigate("/network", { state: { networkData: response } });
+
+                const centerId = response.center_id || profileData.author_id;
+
+                navigate("/network", { state: { networkData: response, centerId } });
             } catch (error) {
                 clearTimeout(delayTimer);
                 setShowDelayMessage(false);
