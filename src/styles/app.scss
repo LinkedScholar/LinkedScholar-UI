@@ -10,6 +10,11 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
 /* Heading Styles */
 h2 {
   color: $primary-color;
