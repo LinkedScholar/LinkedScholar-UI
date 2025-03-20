@@ -20,6 +20,8 @@ interface ForceGraphProps {
     updateHighlightRef: React.RefObject<(selNode: NodeDatum | null) => void>;
     selectedNodeRef: React.RefObject<NodeDatum | null>;
 }
+const ZOOM_OUT_LIMIT = 0.2
+const ZOOM_IN_LIMIT = 3
 
 const ForceGraph = forwardRef<ForceGraphHandle, ForceGraphProps>(({
                                                                       nodes,
@@ -141,7 +143,7 @@ const ForceGraph = forwardRef<ForceGraphHandle, ForceGraphProps>(({
 
         const zoom = d3
             .zoom<SVGSVGElement, unknown>()
-            .scaleExtent([0.5, 3])
+            .scaleExtent([ZOOM_OUT_LIMIT, ZOOM_IN_LIMIT])
             .filter((event) => event.type !== "dblclick")
             .on("zoom", (event) => {
                 zoomGroup.attr("transform", event.transform);
