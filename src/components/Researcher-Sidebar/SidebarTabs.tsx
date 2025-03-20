@@ -15,7 +15,7 @@ const SidebarTabs: React.FC<SidebarTabsProps> = ({ activeTab, setActiveTab }) =>
                 Researcher
             </button>
         </li>
-        <li className="nav-item">
+        <li className="d-none nav-item">
             <button
                 className={`nav-link ${activeTab === "group" ? "active" : ""}`}
                 onClick={() => setActiveTab("group")}
