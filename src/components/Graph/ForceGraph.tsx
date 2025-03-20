@@ -20,6 +20,8 @@ interface ForceGraphProps {
     updateHighlightRef: React.RefObject<(selNode: NodeDatum | null) => void>;
     selectedNodeRef: React.RefObject<NodeDatum | null>;
 }
+const ZOOM_OUT_LIMIT = 0.2
+const ZOOM_IN_LIMIT = 3
 
 const ForceGraph = forwardRef<ForceGraphHandle, ForceGraphProps>(({
                                                                       nodes,
@@ -141,7 +143,7 @@ const ForceGraph = forwardRef<ForceGraphHandle, ForceGraphProps>(({
 
         const zoom = d3
             .zoom<SVGSVGElement, unknown>()
-            .scaleExtent([0.5, 3])
+            .scaleExtent([ZOOM_OUT_LIMIT, ZOOM_IN_LIMIT])
             .filter((event) => event.type !== "dblclick")
             .on("zoom", (event) => {
                 zoomGroup.attr("transform", event.transform);
@@ -400,10 +402,6 @@ const ForceGraph = forwardRef<ForceGraphHandle, ForceGraphProps>(({
             nodeGroup
                 .selectAll<SVGCircleElement, NodeDatum>("circle.node")
                 .attr("fill", (d) => {
-                    if (selNode) {
-                        if (d === selNode) return "#ffcc00";
-                        if (connectedNodes.has(d)) return "#ffcc00";
-                    }
                     if (d.type === "author" && selectedAffiliationsRef.current.length > 0) {
                         let match = false;
                         if (Array.isArray(d.affiliation)) {
@@ -429,13 +427,16 @@ const ForceGraph = forwardRef<ForceGraphHandle, ForceGraphProps>(({
                 .attr("stroke", (d) => {
                     const nodeId = d.id.toString();
                     if (bfsSet.has(nodeId)) return "#32CD32";
-                    if (selNode && (d === selNode || connectedNodes.has(d))) return "#ff9900";
+                    if (selNode && (d === selNode || connectedNodes.has(d))) return "#ffcc00";
                     return "#003366";
                 })
                 .attr("stroke-width", (d) => {
                     const nodeId = d.id.toString();
                     if (bfsSet.has(nodeId)) return 3;
-                    if (selNode && (d === selNode || connectedNodes.has(d))) return 3;
+                    if (selNode) {
+                        if (d === selNode) return 7;
+                        if (connectedNodes.has(d)) return 3;
+                    }
                     return 2;
                 })
                 .attr("filter", (d) => {

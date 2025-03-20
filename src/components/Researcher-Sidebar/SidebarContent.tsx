@@ -30,27 +30,20 @@ interface SidebarContentProps {
     selectedNode: NodeDatum;
     onAddInterest?: (interest: string) => void;
 }
-
 const SidebarContent: React.FC<SidebarContentProps> = ({
                                                            activeTab,
                                                            selectedNode,
                                                            onAddInterest,
                                                        }) => {
     if (activeTab === "author") {
-        const ignoreKeys = [
-            "id",
-            "x",
-            "y",
-            "fx",
-            "fy",
-            "vx",
-            "vy",
-            "fixed",
-            "type",
-            "index",
-        ];
+        const ignoreKeys = ["id", "x", "y", "fx", "fy", "vx", "vy", "fixed", "type", "index"];
         const sortedEntries = Object.entries(selectedNode)
-            .filter(([key]) => !ignoreKeys.includes(key))
+            .filter(([key, value]) =>
+                !ignoreKeys.includes(key) &&
+                value !== null &&
+                value !== undefined &&
+                String(value).trim() !== "" // Ensure no empty or whitespace-only values
+            )
             .sort(([keyA], [keyB]) => {
                 if (keyA.toLowerCase() === "name") return -1;
                 if (keyB.toLowerCase() === "name") return 1;
@@ -62,6 +55,9 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
         return (
             <div className="sidebar-content">
                 {sortedEntries.map(([key, value]) => {
+                    const formattedKey = formatKeyName(key);
+
+                    // Handling interests as tags
                     if (key.toLowerCase().includes("interest")) {
                         const interests = String(value)
                             .split(",")
@@ -72,83 +68,55 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                             <div key={key} className="metadata-item full-width">
                                 <div className="interest-tags">
                                     {interests.map((interest, index) => (
-                                        <span key={index} className="interest-tag">
-                      {interest}
-                                            {onAddInterest && (
-                                                <button
-                                                    className="remove-interest btn btn-sm btn-outline-primary ms-1"
-                                                    onClick={() => onAddInterest(interest)}
-                                                >
-                                                    <i className="mdi mdi-plus"></i>
-                                                </button>
-                                            )}
-                    </span>
+                                        <Tag key={index} label={interest} />
                                     ))}
                                 </div>
                             </div>
                         );
                     }
 
-                    if (
-                        key.toLowerCase() === "web_pages" ||
-                        key.toLowerCase() === "webpages"
-                    ) {
-                        const websites = String(value)
+                    // Handling Affiliation & Journals as tags
+                    if (key.toLowerCase() === "affiliation" || key.toLowerCase() === "journals") {
+                        const items = String(value)
                             .split(",")
-                            .map((w) => w.trim())
-                            .filter((w) => w.length > 0);
-                        if (websites.length === 0) return null;
+                            .map((item) => item.trim())
+                            .filter((item) => item.length > 0);
+
+                        if (items.length === 0) return null;
                         return (
                             <div key={key} className="metadata-item">
-                                <p className="metadata-key">
-                                    {formatKeyName(key)}:&nbsp;
-                                </p>
-                                <div className="metadata-value">
-                                    {websites.map((site, index) => (
-                                        <div key={index} style={{ marginBottom: "0.5rem" }}>
-                                            <a
-                                                href={
-                                                    site.startsWith("http")
-                                                        ? site
-                                                        : `https://${site}`
-                                                }
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="metadata-value-link"
-                                            >
-                                                {site}
-                                            </a>
-                                        </div>
+                                <p className="metadata-key">{formattedKey}:</p>
+                                <div className="tag-container">
+                                    {items.map((item, index) => (
+                                        <Tag key={index} label={item} />
                                     ))}
                                 </div>
                             </div>
                         );
                     }
 
-
-                    return (
-                        <div key={key} className="metadata-item">
-                            <p className="metadata-key">
-                                {formatKeyName(key)}:&nbsp;
-                            </p>
-                            {isURL(String(value)) ? (
+                    // Handling URLs
+                    if (isURL(String(value))) {
+                        return (
+                            <div key={key} className="metadata-item">
+                                <p className="metadata-key">{formattedKey}:</p>
                                 <a
-                                    href={
-                                        String(value).startsWith("http")
-                                            ? String(value)
-                                            : `https://${String(value)}`
-                                    }
+                                    href={String(value).startsWith("http") ? String(value) : `https://${String(value)}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="metadata-value-link"
                                 >
                                     {String(value)}
                                 </a>
-                            ) : (
-                                <p className="metadata-value">
-                                    {capitalizeFirstLetter(String(value))}
-                                </p>
-                            )}
+                            </div>
+                        );
+                    }
+
+                    // Default case for other metadata
+                    return (
+                        <div key={key} className="metadata-item">
+                            <p className="metadata-key">{formattedKey}:</p>
+                            <p className="metadata-value">{capitalizeFirstLetter(String(value))}</p>
                         </div>
                     );
                 })}
@@ -158,9 +126,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
         return (
             <div className="sidebar-content">
                 <div className="metadata-item">
-                    <p className="metadata-value">
-                        Group content goes here. Display all researchers from the same affiliation.
-                    </p>
+                    <p className="metadata-value">Group content goes here. Display all researchers from the same affiliation.</p>
                 </div>
             </div>
         );
