@@ -20,7 +20,11 @@ interface PathWindowProps {
 
 const ALLOWED_CHARACTERS_REGEX = /^[a-zA-Z0-9\s.,'-]+$/;
 
-const sanitizeInput = (input: string) => {
+const sanitizeInput = (input: unknown): string => {
+    if (typeof input !== "string") {
+        console.warn("sanitizeInput received a non-string value:", input);
+        return String(input ?? ""); // Convert null/undefined to empty string
+    }
     return input.replace(/[^a-zA-Z0-9\s.,'-]/g, '');
 };
 
