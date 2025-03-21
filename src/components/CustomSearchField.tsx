@@ -24,31 +24,44 @@ const CustomSearchField: React.FC<CustomSearchFieldProps> = ({
                                                                  onMenuClose
                                                              }) => {
     const [inputValue, setInputValue] = useState<string>("");
-    const [filteredOptions, setFilteredOptions] = useState<Array<{ value: string; label: string }>>(options.slice(0, 10));
+    const [filteredOptions, setFilteredOptions] = useState<Array<{ value: string; label: string }>>([]);
     const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
+    const [isInvalid, setIsInvalid] = useState<boolean>(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    // Initialize input value when a value is passed
     useEffect(() => {
         setInputValue(value?.label || "");
     }, [value]);
 
-    // Filter options based on input
+    const normalizeText = (text: string) => text.normalize("NFC").trim();
+
+    const isInvalidInput = (text: string) => {
+        const urlPattern = /^(https?:\/\/)/i;
+        const invalidChars = /[^\x20-\x7E]/g;
+        const xssPattern = /<script.*?>.*?<\/script>/gi;
+
+        return urlPattern.test(text) || invalidChars.test(text) || xssPattern.test(text);
+    };
+
     useEffect(() => {
-        if (inputValue.trim() === "") {
-            setFilteredOptions(options.slice(0, 10)); // Show first 10 options when empty
+        if (!inputValue.trim()) {
+            setFilteredOptions(options.slice(0, 10));
         } else {
             const filtered = options
-                .slice(0, 10); // Limit to 10 results for better performance
+                .filter(option => {
+                    if (typeof option.label !== "string") return false;
+                    const normalizedOption = normalizeText(option.label.toLowerCase());
+                    const normalizedInput = normalizeText(inputValue.toLowerCase());
+                    return normalizedOption.includes(normalizedInput);
+                })
+                .slice(0, 10);
             setFilteredOptions(filtered);
         }
-
-        // Reset highlighted index when options change
         setHighlightedIndex(-1);
+        setIsInvalid(isInvalidInput(inputValue));
     }, [inputValue, options]);
 
-    // Handle click outside to close dropdown
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
@@ -67,21 +80,18 @@ const CustomSearchField: React.FC<CustomSearchFieldProps> = ({
         };
     }, [onMenuClose]);
 
-    // Handle option selection
     const handleSelect = (option: { value: string; label: string }) => {
         onChange(option);
         setInputValue(option.label);
         onMenuClose();
+        setIsInvalid(false);
     };
 
-    // Handle keyboard navigation
     const handleKeyDown = (e: React.KeyboardEvent) => {
         switch (e.key) {
             case "ArrowDown":
                 e.preventDefault();
-                setHighlightedIndex(prev =>
-                    prev < filteredOptions.length - 1 ? prev + 1 : prev
-                );
+                setHighlightedIndex(prev => (prev < filteredOptions.length - 1 ? prev + 1 : prev));
                 break;
             case "ArrowUp":
                 e.preventDefault();
@@ -91,7 +101,7 @@ const CustomSearchField: React.FC<CustomSearchFieldProps> = ({
                 e.preventDefault();
                 if (highlightedIndex >= 0 && highlightedIndex < filteredOptions.length) {
                     handleSelect(filteredOptions[highlightedIndex]);
-                } else if (allowCustomValue && inputValue.trim() !== "" && filteredOptions.length === 0) {
+                } else if (allowCustomValue && inputValue.trim() !== "" && filteredOptions.length === 0 && !isInvalid) {
                     onCreateOption(inputValue);
                     onMenuClose();
                 }
@@ -105,81 +115,66 @@ const CustomSearchField: React.FC<CustomSearchFieldProps> = ({
         }
     };
 
-    // Clear the current selection
     const handleClear = (e: React.MouseEvent) => {
         e.stopPropagation();
         onChange(null);
         setInputValue("");
+        setIsInvalid(false);
         inputRef.current?.focus();
     };
 
     return (
         <div className="position-relative">
-            <div
-                className="form-control d-flex align-items-center node-select"
-                onClick={() => {
-                    onMenuOpen();
-                    inputRef.current?.focus();
-                }}
-            >
+            <div className={`form-control d-flex align-items-center node-select ${isInvalid ? "border-danger" : ""}`} onClick={onMenuOpen}>
                 <input
                     ref={inputRef}
                     type="text"
+                    maxLength={100}
                     className="flex-grow-1 border-0 p-0 bg-transparent"
                     value={inputValue}
                     onChange={(e) => {
-                        setInputValue(e.target.value);
+                        let newValue = e.target.value;
+                        setInputValue(newValue);
+                        setIsInvalid(isInvalidInput(newValue));
                         if (!menuIsOpen) onMenuOpen();
                     }}
-                    onFocus={() => onMenuOpen()}
+                    onFocus={onMenuOpen}
                     onKeyDown={handleKeyDown}
                     placeholder={placeholder}
+                    dir="auto"
+                    style={{ outline: isInvalid ? "2px solid red" : "none" }}
                 />
                 {inputValue && (
-                    <button
-                        className="btn btn-sm text-secondary bg-transparent border-0 p-0 ms-2"
-                        onClick={handleClear}
-                        type="button"
-                    >
+                    <button className="btn btn-sm text-secondary bg-transparent border-0 p-0 ms-2" onClick={handleClear} type="button">
                         <i className="mdi mdi-close"></i>
                     </button>
                 )}
             </div>
 
+            {isInvalid && (
+                <div className="text-danger small mt-1" style={{ animation: "fadeIn 0.5s ease-in-out" }}>
+                    URLs or special characters are not allowed.
+                </div>
+            )}
+
             {menuIsOpen && (
-                <div
-                    ref={dropdownRef}
-                    className="position-absolute w-100 mt-1 border rounded shadow-sm bg-white"
-                    style={{ maxHeight: "150px", overflowY: "auto", zIndex: 9999 }}
-                >
+                <div ref={dropdownRef} className="position-absolute w-100 mt-1 border rounded shadow-sm bg-white" style={{ maxHeight: "150px", overflowY: "auto", zIndex: 9999 }}>
                     {filteredOptions.length > 0 ? (
                         filteredOptions.map((option, index) => (
                             <div
                                 key={option.value}
-                                className={`p-2 cursor-pointer ${
-                                    highlightedIndex === index ? "bg-light" : ""
-                                }`}
+                                className={`p-2 cursor-pointer ${highlightedIndex === index ? "bg-light" : ""}`}
                                 onClick={() => handleSelect(option)}
                                 onMouseEnter={() => setHighlightedIndex(index)}
                             >
                                 {option.label}
                             </div>
                         ))
-                    ) : (
-                        allowCustomValue && inputValue.trim() !== "" ? (
-                            <div
-                                className="p-2 cursor-pointer text-primary"
-                                onClick={() => {
-                                    onCreateOption(inputValue);
-                                    onMenuClose();
-                                }}
-                            >
-                                <i className="mdi mdi-plus-circle me-1"></i>
-                                Search "{inputValue}"
-                            </div>
-                        ) : (
-                            <div className="p-2 text-muted">No matches found for "{inputValue}"</div>
-                        )
+                    ) : allowCustomValue && inputValue.trim() !== "" && !isInvalid && (
+                        <div className="p-2 cursor-pointer text-primary" onClick={() => { onCreateOption(inputValue); onMenuClose(); }}>
+                            <i className="mdi mdi-plus-circle me-1"></i>
+                            Search "{inputValue}"
+                        </div>
                     )}
                 </div>
             )}
