@@ -18,6 +18,12 @@ interface PathWindowProps {
     handleClearSearch: () => void;
 }
 
+const ALLOWED_CHARACTERS_REGEX = /^[a-zA-Z0-9\s.,'-]+$/;
+
+const sanitizeInput = (input: string) => {
+    return input.replace(/[^a-zA-Z0-9\s.,'-]/g, '');
+};
+
 const PathWindow: React.FC<PathWindowProps> = ({
                                                    bfsPath,
                                                    nodes,
@@ -35,29 +41,27 @@ const PathWindow: React.FC<PathWindowProps> = ({
     const [startMenuIsOpen, setStartMenuIsOpen] = useState<boolean>(false);
     const [targetMenuIsOpen, setTargetMenuIsOpen] = useState<boolean>(false);
 
-    // Researcher options loaded from all nodes - excluding nodes of type "article"
     const researcherOptions = nodes
         .filter(nd => nd.type !== "article")
         .map((nd) => {
-            const display = nd.name ? nd.name : nd.id.toString();
+            const display = nd.name ? sanitizeInput(nd.name) : nd.id.toString();
             return {
                 value: display,
                 label: display,
             };
         });
 
-    // Load all affiliations, handling both arrays and single string values
     const allAffiliations = nodes.flatMap((nd) => {
         if (Array.isArray(nd.affiliation)) {
-            return nd.affiliation;
+            return nd.affiliation.map(sanitizeInput);
         } else if (typeof nd.affiliation === "string") {
-            return [nd.affiliation];
+            return [sanitizeInput(nd.affiliation)];
         }
         return [];
     });
 
     const affiliationOptions = Array.from(
-        new Set(allAffiliations.filter((aff) => aff && aff.trim() !== ""))
+        new Set(allAffiliations.filter((aff) => aff && aff.trim() !== "")),
     ).map((aff) => ({
         value: aff,
         label: aff,
@@ -78,8 +82,17 @@ const PathWindow: React.FC<PathWindowProps> = ({
                         <label className="form-label">Start Researcher:</label>
                         <CustomSearchField
                             value={startNode}
-                            onChange={(option) => setStartNode(option)}
-                            onCreateOption={(inputValue) => setStartNode({ value: inputValue, label: inputValue })}
+                            onChange={(option) => {
+                                if (option && ALLOWED_CHARACTERS_REGEX.test(option.value)) {
+                                    setStartNode(option);
+                                }
+                            }}
+                            onCreateOption={(inputValue) => {
+                                const sanitizedValue = sanitizeInput(inputValue);
+                                if (sanitizedValue) {
+                                    setStartNode({ value: sanitizedValue, label: sanitizedValue });
+                                }
+                            }}
                             options={researcherOptions}
                             placeholder="Select researcher..."
                             allowCustomValue={false}
@@ -89,7 +102,6 @@ const PathWindow: React.FC<PathWindowProps> = ({
                         />
                     </div>
 
-                    {/* Target Type selection */}
                     <div className="mb-3">
                         <label className="form-label">Target Type:</label>
                         <div className="btn-group" role="group">
@@ -124,7 +136,6 @@ const PathWindow: React.FC<PathWindowProps> = ({
                         </div>
                     </div>
 
-                    {/* Target Selection */}
                     <div className="mb-3">
                         <label className="form-label">
                             {targetType === "affiliation"
@@ -133,8 +144,17 @@ const PathWindow: React.FC<PathWindowProps> = ({
                         </label>
                         <CustomSearchField
                             value={targetNode}
-                            onChange={(option) => setTargetNode(option)}
-                            onCreateOption={(inputValue) => setTargetNode({ value: inputValue, label: inputValue })}
+                            onChange={(option) => {
+                                if (option && ALLOWED_CHARACTERS_REGEX.test(option.value)) {
+                                    setTargetNode(option);
+                                }
+                            }}
+                            onCreateOption={(inputValue) => {
+                                const sanitizedValue = sanitizeInput(inputValue);
+                                if (sanitizedValue) {
+                                    setTargetNode({ value: sanitizedValue, label: sanitizedValue });
+                                }
+                            }}
                             options={
                                 targetType === "affiliation" ? affiliationOptions : researcherOptions
                             }
