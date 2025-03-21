@@ -40,8 +40,6 @@ const CustomSearchField: React.FC<CustomSearchFieldProps> = ({
             setFilteredOptions(options.slice(0, 10)); // Show first 10 options when empty
         } else {
             const filtered = options
-                .filter(option =>
-                    option.label.toLowerCase().includes(inputValue.toLowerCase()))
                 .slice(0, 10); // Limit to 10 results for better performance
             setFilteredOptions(filtered);
         }
