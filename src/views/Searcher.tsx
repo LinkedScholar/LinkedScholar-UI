@@ -43,7 +43,6 @@ const Searcher: React.FC = () => {
                 return { author_id: match[1], source: "research_gate" };
             }
         } else {
-            // Assume if not Google Scholar or ResearchGate, we pass it to DBLP logic
             return { author_id: url, source: "dblp" };
         }
         return null;
@@ -110,6 +109,7 @@ const Searcher: React.FC = () => {
 
     return (
         <div className="search-page">
+
             <header className="search-header">
                 <div className="title-container">
                     <h1 className="title">
@@ -137,9 +137,7 @@ const Searcher: React.FC = () => {
                 <button type="submit" className="search-button" onClick={handleSearch}>
                     Search
                 </button>
-                <button type="button" className="search-button-secondary" onClick={() => setSearchTerm("")}>
-                    Clear
-                </button>
+                <button type="button" className="search-button-secondary" onClick={() => setSearchTerm("")}>Clear</button>
             </div>
 
             {error && <p className="error-message">{error}</p>}
@@ -149,7 +147,10 @@ const Searcher: React.FC = () => {
                     <p>Please wait while we analyze the connections</p>
                 </div>
             )}
-
+            <div className="mt-5 alert alert-warning text-center" role="alert">
+                We are experiencing issues with some researcher data.<br />
+                You might find unexpected behavior. We are currently working to fix it.
+            </div>
             <RegistrationModal isOpen={isRegistrationModalOpen} onClose={() => setIsRegistrationModalOpen(false)} />
             <PricingModal isOpen={isPricingModalOpen} onClose={() => setIsPricingModalOpen(false)} />
         </div>
