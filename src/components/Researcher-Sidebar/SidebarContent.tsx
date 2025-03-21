@@ -95,19 +95,28 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                         );
                     }
 
-                    // Handling URLs
-                    if (isURL(String(value))) {
+
+                    if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'string' && isURL(value[0])) {
+                        const urls = value
+                            .map((url: string) => url.trim())
+                            .filter((url) => url.length > 0);
+
                         return (
                             <div key={key} className="metadata-item">
                                 <p className="metadata-key">{formattedKey}:</p>
-                                <a
-                                    href={String(value).startsWith("http") ? String(value) : `https://${String(value)}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="metadata-value-link"
-                                >
-                                    {String(value)}
-                                </a>
+                                <div className="url-container">
+                                    {urls.map((url, index) => (
+                                        <a
+                                            key={index}
+                                            href={url.startsWith("http") ? url : `https://${url}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="metadata-value-link"
+                                        >
+                                            {url}
+                                        </a>
+                                    ))}
+                                </div>
                             </div>
                         );
                     }

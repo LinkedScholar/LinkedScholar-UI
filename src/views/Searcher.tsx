@@ -147,7 +147,7 @@ const Searcher: React.FC = () => {
                     <p>Please wait while we analyze the connections</p>
                 </div>
             )}
-            <div className="mt-5 alert alert-warning text-center" role="alert">
+            <div className="d-none mt-5 alert alert-warning text-center" role="alert">
                 We are experiencing issues with some researcher data.<br />
                 You might find unexpected behavior. We are currently working to fix it.
             </div>
