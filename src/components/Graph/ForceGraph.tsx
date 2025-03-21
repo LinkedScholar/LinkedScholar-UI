@@ -262,7 +262,7 @@ const ForceGraph = forwardRef<ForceGraphHandle, ForceGraphProps>(({
             .style("pointer-events", "none")
             .style("font-weight", "bold")
             .text((d) =>
-                d.type === "author" ? (d.name ? d.name : "") : ""
+                d?.type === "author" && typeof d?.name === "string" ? d.name.split(" ")[0] || "" : ""
             )
             .style("opacity", (d) => (d.type === "author" ? 1 : 0));
 
