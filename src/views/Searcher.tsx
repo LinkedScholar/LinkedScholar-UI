@@ -116,7 +116,7 @@ const Searcher: React.FC = () => {
                         <span className="title-linked">Linked</span>
                         <span className="title-scholar">Scholar</span>
                     </h1>
-                    <span className="version-text">v.α</span>
+                    <span className="version-text">α</span>
                 </div>
                 <p className="search-info">Find and analyze researcher networks with ease.</p>
             </header>

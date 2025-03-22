@@ -47,8 +47,10 @@ $shadow-light: rgba(0, 0, 0, 0.15);
 }
 
 .version-text {
-  font-size: 16px; // Increased from 14px
+  font-size: 20px; // Increased from 14px
   font-weight: 300;
+  font-family: fangsong;
+  font-style: italic;
   color: #888;
   position: relative;
 }
