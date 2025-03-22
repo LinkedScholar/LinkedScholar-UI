@@ -1,8 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 import * as d3 from "d3";
 import "../../styles/components/Graph/forceGraph.scss";
 import { NodeDatum, LinkDatum } from "../../types/graphTypes";
 import { createForceSimulation } from "../../utils/forceSimulation";
+
+export interface ForceGraphHandle {
+    resetSimulation: () => void;
+    centerOnNode: (node: NodeDatum) => void;
+}
 
 interface ForceGraphProps {
     nodes: NodeDatum[];
@@ -12,23 +17,31 @@ interface ForceGraphProps {
     bfsPath: string[] | null;
     selectedAffiliations: string[];
     affiliationColorMap?: { [key: string]: string };
+    updateHighlightRef: React.RefObject<(selNode: NodeDatum | null) => void>;
+    selectedNodeRef: React.RefObject<NodeDatum | null>;
 }
+const ZOOM_OUT_LIMIT = 0.2
+const ZOOM_IN_LIMIT = 3
 
-const ForceGraph: React.FC<ForceGraphProps> = ({
-                                                   nodes,
-                                                   links,
-                                                   onNodeClick,
-                                                   gridActive,
-                                                   bfsPath,
-                                                   selectedAffiliations,
-                                                   affiliationColorMap,
-                                               }) => {
+const ForceGraph = forwardRef<ForceGraphHandle, ForceGraphProps>(({
+                                                                      nodes,
+                                                                      links,
+                                                                      onNodeClick,
+                                                                      gridActive,
+                                                                      bfsPath,
+                                                                      selectedAffiliations,
+                                                                      affiliationColorMap,
+                                                                      updateHighlightRef,
+                                                                      selectedNodeRef,
+                                                                  }, ref) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const zoomGroupRef = useRef<d3.Selection<SVGGElement, unknown, null, undefined> | null>(null);
     const gridRectRef = useRef<d3.Selection<SVGRectElement, unknown, null, undefined> | null>(null);
     const [selectedNode, setSelectedNode] = useState<NodeDatum | null>(null);
-    const selectedNodeRef = useRef<NodeDatum | null>(null);
-    const updateHighlightRef = useRef<(selNode: NodeDatum | null) => void>(() => {});
+    const simulationRef = useRef<d3.Simulation<NodeDatum, undefined> | null>(null);
+
+    // Store the zoom behavior in a ref for centering functionality
+    const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
 
     // Hold the latest selected affiliations
     const selectedAffiliationsRef = useRef<string[]>(selectedAffiliations);
@@ -39,11 +52,12 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
     useEffect(() => {
         selectedNodeRef.current = selectedNode;
     }, [selectedNode]);
+
     useEffect(() => {
         if (!svgRef.current || !zoomGroupRef.current) return;
         const svg = d3.select(svgRef.current);
-        const width = window.innerWidth;
-        const height = window.innerHeight;
+        const width = window.innerWidth * 25;
+        const height = window.innerHeight * 25;
         // Remove any existing grid
         if (gridRectRef.current) {
             gridRectRef.current.remove();
@@ -71,12 +85,12 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             }
             gridRectRef.current = zoomGroupRef.current
                 .insert("rect", ":first-child")
-                .attr("x", -width)
-                .attr("y", -height)
-                .attr("width", width * 3)
-                .attr("height", height * 3)
+                .attr("x", -width / 2)
+                .attr("y", -height / 2)
+                .attr("width", width)
+                .attr("height", height)
                 .attr("fill", "url(#grid)")
-                .style("pointer-events", "none"); // So it doesn't block mouse interactions
+                .style("pointer-events", "none");
         }
     }, [gridActive]);
 
@@ -129,7 +143,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
 
         const zoom = d3
             .zoom<SVGSVGElement, unknown>()
-            .scaleExtent([0.5, 3])
+            .scaleExtent([ZOOM_OUT_LIMIT, ZOOM_IN_LIMIT])
             .filter((event) => event.type !== "dblclick")
             .on("zoom", (event) => {
                 zoomGroup.attr("transform", event.transform);
@@ -140,8 +154,22 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                     .style("opacity", event.transform.k > 0.6 ? 1 : 0);
             });
         svg.call(zoom);
+        // Store zoom behavior for centering
+        zoomRef.current = zoom;
+
+        // Initialize all nodes with fixed positions after initial simulation
+        nodes.forEach(node => {
+            if (node.x === undefined || node.y === undefined) {
+                node.x = Math.random() * width;
+                node.y = Math.random() * height;
+            }
+            // Initially do not fix the positions to allow the simulation to run once
+            node.fx = null;
+            node.fy = null;
+        });
 
         const simulation = createForceSimulation(nodes, links, width, height);
+        simulationRef.current = simulation;
 
         // Group for BFS path (should be drawn below the regular links)
         const bfsPathGroup = zoomGroup.append("g").attr("class", "bfs-path-group");
@@ -168,19 +196,50 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             .enter()
             .append("g")
             .call(
-                d3
-                    .drag<SVGGElement, NodeDatum>()
-                    .on("start", (event, d) => {
-                        if (!event.active) simulation.alphaTarget(0.3).restart();
+                d3.drag<SVGGElement, NodeDatum>()
+                    .on("start", function (event, d) {
+                        if (!event.active) simulation.alphaTarget(0.1).restart();
+                        // Only make the current node draggable
                         d.fx = d.x;
                         d.fy = d.y;
                     })
-                    .on("drag", (event, d) => {
+                    .on("drag", function (event, d) {
+                        // Update only the dragged node
                         d.fx = event.x;
                         d.fy = event.y;
+                        // Now 'this' correctly refers to the dragged DOM element
+                        d3.select(this).attr("transform", `translate(${event.x}, ${event.y})`);
+
+                        // Update connected links manually
+                        linkSelection
+                            .filter((link) => link.source === d || link.target === d)
+                            .attr("x1", (link) => {
+                                const src = link.source as NodeDatum;
+                                return src.fx ?? src.x ?? 0;
+                            })
+                            .attr("y1", (link) => {
+                                const src = link.source as NodeDatum;
+                                return src.fy ?? src.y ?? 0;
+                            })
+                            .attr("x2", (link) => {
+                                const tgt = link.target as NodeDatum;
+                                return tgt.fx ?? tgt.x ?? 0;
+                            })
+                            .attr("y2", (link) => {
+                                const tgt = link.target as NodeDatum;
+                                return tgt.fy ?? tgt.y ?? 0;
+                            });
+
+                        // Update BFS path if it exists
+                        if (bfsPath && bfsPath.length > 0) {
+                            drawBfsPath();
+                        }
                     })
-                    .on("end", (event, d) => {
+                    .on("end", function (event, d) {
                         if (!event.active) simulation.alphaTarget(0);
+                        // Keep the node fixed at its new position
+                        d.x = d.fx ?? d.x;
+                        d.y = d.fy ?? d.y;
                     })
             );
 
@@ -203,7 +262,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             .style("pointer-events", "none")
             .style("font-weight", "bold")
             .text((d) =>
-                d.type === "author" ? (d.name ? d.name.split(" ")[0] : "") : ""
+                d?.type === "author" && typeof d?.name === "string" ? d.name.split(" ")[0] || "" : ""
             )
             .style("opacity", (d) => (d.type === "author" ? 1 : 0));
 
@@ -265,12 +324,12 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             event.stopPropagation();
             if (d.type === "article") return;
             if (selectedNodeRef.current === d) {
-                d.fx = null;
-                d.fy = null;
+                // Keep the position fixed when selected, just toggle selection status
                 setSelectedNode(null);
                 selectedNodeRef.current = null;
                 onNodeClick(null);
             } else {
+                // Fix the position but don't let the simulation move it
                 d.fx = d.x;
                 d.fy = d.y;
                 setSelectedNode(d);
@@ -343,10 +402,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             nodeGroup
                 .selectAll<SVGCircleElement, NodeDatum>("circle.node")
                 .attr("fill", (d) => {
-                    if (selNode) {
-                        if (d === selNode) return "#ffcc00";
-                        if (connectedNodes.has(d)) return "#ffcc00";
-                    }
                     if (d.type === "author" && selectedAffiliationsRef.current.length > 0) {
                         let match = false;
                         if (Array.isArray(d.affiliation)) {
@@ -372,13 +427,16 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                 .attr("stroke", (d) => {
                     const nodeId = d.id.toString();
                     if (bfsSet.has(nodeId)) return "#32CD32";
-                    if (selNode && (d === selNode || connectedNodes.has(d))) return "#ff9900";
+                    if (selNode && (d === selNode || connectedNodes.has(d))) return "#ffcc00";
                     return "#003366";
                 })
                 .attr("stroke-width", (d) => {
                     const nodeId = d.id.toString();
                     if (bfsSet.has(nodeId)) return 3;
-                    if (selNode && (d === selNode || connectedNodes.has(d))) return 3;
+                    if (selNode) {
+                        if (d === selNode) return 7;
+                        if (connectedNodes.has(d)) return 3;
+                    }
                     return 2;
                 })
                 .attr("filter", (d) => {
@@ -446,7 +504,7 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                 d3.select(this).select("g.article-tooltip").transition().duration(200).style("opacity", 0);
             });
 
-        // Draw static BFS path (include all nodes in sequence, without merging extra links)
+        // Draw static BFS path function
         const drawBfsPath = () => {
             bfsPathGroup.selectAll("*").remove();
 
@@ -461,8 +519,13 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
                 const pathData: [number, number][] = [];
                 bfsPath.forEach((nodeId) => {
                     const node = nodeMap.get(nodeId);
-                    if (node && node.x !== undefined && node.y !== undefined) {
-                        pathData.push([node.x, node.y]);
+                    // Use fx/fy if they exist (for dragged nodes), otherwise use x/y
+                    if (node) {
+                        const nodeX = node.fx !== null ? node.fx : node.x;
+                        const nodeY = node.fy !== null ? node.fy : node.y;
+                        if (nodeX !== undefined && nodeY !== undefined) {
+                            pathData.push([nodeX, nodeY]);
+                        }
                     }
                 });
 
@@ -514,13 +577,57 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             }
         };
 
+        // Run the simulation for a short time to get initial positions
+        simulation.tick(100);
+
+        // After the initial layout, fix all node positions
+        setTimeout(() => {
+            // Fix all nodes in place after initial layout
+            nodes.forEach(node => {
+                node.fx = node.x;
+                node.fy = node.y;
+            });
+
+            // Stop the simulation
+            simulation.stop();
+
+            // Initial render with fixed positions
+            linkSelection
+                .attr("x1", (d) => (d.source as NodeDatum).x ?? 0)
+                .attr("y1", (d) => (d.source as NodeDatum).y ?? 0)
+                .attr("x2", (d) => (d.target as NodeDatum).x ?? 0)
+                .attr("y2", (d) => (d.target as NodeDatum).y ?? 0);
+
+            nodeGroup.attr("transform", (d) => `translate(${d.x}, ${d.y})`);
+
+            // Draw the BFS path with fixed positions
+            drawBfsPath();
+        }, 100);
+
         simulation.on("tick", () => {
             linkSelection
-                .attr("x1", (d) => (d.source as NodeDatum).x!)
-                .attr("y1", (d) => (d.source as NodeDatum).y!)
-                .attr("x2", (d) => (d.target as NodeDatum).x!)
-                .attr("y2", (d) => (d.target as NodeDatum).y!);
-            nodeGroup.attr("transform", (d) => `translate(${d.x}, ${d.y})`);
+                .attr("x1", (d) => {
+                    const source = d.source as NodeDatum;
+                    return source.fx ?? source.x ?? 0;
+                })
+                .attr("y1", (d) => {
+                    const source = d.source as NodeDatum;
+                    return source.fy ?? source.y ?? 0;
+                })
+                .attr("x2", (d) => {
+                    const target = d.target as NodeDatum;
+                    return target.fx ?? target.x ?? 0;
+                })
+                .attr("y2", (d) => {
+                    const target = d.target as NodeDatum;
+                    return target.fy ?? target.y ?? 0;
+                });
+
+            nodeGroup.attr("transform", (d) => {
+                const x = d.fx ?? d.x ?? 0;
+                const y = d.fy ?? d.y ?? 0;
+                return `translate(${x}, ${y})`;
+            });
 
             // Update the static BFS path on each tick
             drawBfsPath();
@@ -530,7 +637,6 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
             const newWidth = window.innerWidth;
             const newHeight = window.innerHeight;
             svg.attr("width", newWidth).attr("height", newHeight);
-            simulation.force("center", d3.forceCenter(newWidth / 2, newHeight / 2)).alpha(1).restart();
         };
 
         window.addEventListener("resize", handleResize);
@@ -541,48 +647,54 @@ const ForceGraph: React.FC<ForceGraphProps> = ({
     }, [nodes, links, bfsPath, affiliationColorMap]);
 
     useEffect(() => {
-        if (!svgRef.current || !zoomGroupRef.current) return;
-        const svg = d3.select(svgRef.current);
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        if (gridRectRef.current) {
-            gridRectRef.current.remove();
-            gridRectRef.current = null;
-        }
-        if (gridActive) {
-            const gridSpacing = 50;
-            let defs = svg.select<SVGDefsElement>("defs");
-            if (defs.empty()) {
-                defs = svg.append<SVGDefsElement>("defs");
-                defs
-                    .append<SVGPatternElement>("pattern")
-                    .attr("id", "grid")
-                    .attr("width", gridSpacing)
-                    .attr("height", gridSpacing)
-                    .attr("patternUnits", "userSpaceOnUse")
-                    .append("path")
-                    .attr("d", `M ${gridSpacing} 0 L 0 0 L 0 ${gridSpacing}`)
-                    .attr("fill", "none")
-                    .attr("stroke", "#ccc")
-                    .attr("stroke-width", 1);
-            }
-            gridRectRef.current = zoomGroupRef.current
-                .insert("rect", ":first-child")
-                .attr("x", -width)
-                .attr("y", -height)
-                .attr("width", width * 3)
-                .attr("height", height * 3)
-                .attr("fill", "url(#grid)");
-        }
-    }, [gridActive]);
-
-    useEffect(() => {
         if (updateHighlightRef.current) {
             updateHighlightRef.current(selectedNode);
         }
     }, [selectedAffiliations, selectedNode]);
 
+    // Add a function to reset the graph layout
+    const resetLayout = () => {
+        if (simulationRef.current) {
+            // Unfix all nodes
+            nodes.forEach(node => {
+                node.fx = null;
+                node.fy = null;
+            });
+
+            // Restart simulation
+            simulationRef.current.alpha(1).restart();
+
+            // After layout, fix all positions again
+            setTimeout(() => {
+                nodes.forEach(node => {
+                    node.fx = node.x;
+                    node.fy = node.y;
+                });
+                simulationRef.current?.stop();
+            }, 2000);
+        }
+    };
+
+    // Expose resetSimulation and centerOnNode via the ref
+    useImperativeHandle(ref, () => ({
+        resetSimulation: () => resetLayout(),
+        centerOnNode: (node: NodeDatum) => {
+            if (!svgRef.current || !zoomRef.current) return;
+            const svgEl = svgRef.current;
+            const currentTransform = d3.zoomTransform(svgEl);
+            const scale = currentTransform.k;
+            const { clientWidth, clientHeight } = svgEl;
+            const tx = clientWidth / 2 - (node.x ?? 0) * scale;
+            const ty = clientHeight / 2 - (node.y ?? 0) * scale;
+            const newTransform = d3.zoomIdentity.translate(tx, ty).scale(scale);
+            d3.select(svgEl)
+                .transition()
+                .duration(750)
+                .call(zoomRef.current.transform, newTransform);
+        }
+    }));
+
     return <svg ref={svgRef} className="force-graph-container" />;
-};
+});
 
 export default ForceGraph;

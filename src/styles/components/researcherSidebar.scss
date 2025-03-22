@@ -135,9 +135,13 @@
       }
 
       .metadata-value-link {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
         color: $secondary-color;
         text-decoration: none;
         transition: color 0.3s ease;
+        display: block  ;
 
         &:hover {
           color: darken($secondary-color, 10%);

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import CreatableSelect from "react-select/creatable";
 import { NodeDatum } from "../types/graphTypes";
+import CustomSearchField from "./CustomSearchField";
 import "../styles/components/pathWindow.scss";
 
 interface PathWindowProps {
@@ -35,16 +35,18 @@ const PathWindow: React.FC<PathWindowProps> = ({
     const [startMenuIsOpen, setStartMenuIsOpen] = useState<boolean>(false);
     const [targetMenuIsOpen, setTargetMenuIsOpen] = useState<boolean>(false);
 
-    // Researcher options loaded from all nodes.
-    const researcherOptions = nodes.map((nd) => {
-        const display = nd.name ? nd.name : nd.id.toString();
-        return {
-            value: display,
-            label: display,
-        };
-    });
+    // Researcher options loaded from all nodes - excluding nodes of type "article"
+    const researcherOptions = nodes
+        .filter(nd => nd.type !== "article")
+        .map((nd) => {
+            const display = nd.name ? nd.name : nd.id.toString();
+            return {
+                value: display,
+                label: display,
+            };
+        });
 
-    // Load all affiliations, handling both arrays and single string values.
+    // Load all affiliations, handling both arrays and single string values
     const allAffiliations = nodes.flatMap((nd) => {
         if (Array.isArray(nd.affiliation)) {
             return nd.affiliation;
@@ -53,8 +55,9 @@ const PathWindow: React.FC<PathWindowProps> = ({
         }
         return [];
     });
+
     const affiliationOptions = Array.from(
-        new Set(allAffiliations.filter((aff) => aff.trim() !== ""))
+        new Set(allAffiliations.filter((aff) => aff && aff.trim() !== ""))
     ).map((aff) => ({
         value: aff,
         label: aff,
@@ -73,37 +76,16 @@ const PathWindow: React.FC<PathWindowProps> = ({
                 <div className="path-form">
                     <div className="mb-3">
                         <label className="form-label">Start Researcher:</label>
-                        <CreatableSelect
+                        <CustomSearchField
                             value={startNode}
-                            onChange={(option) =>
-                                setStartNode(option as { value: string; label: string })
-                            }
-                            onCreateOption={(inputValue) =>
-                                setStartNode({ value: inputValue, label: inputValue })
-                            }
+                            onChange={(option) => setStartNode(option)}
+                            onCreateOption={(inputValue) => setStartNode({ value: inputValue, label: inputValue })}
                             options={researcherOptions}
                             placeholder="Select researcher..."
-                            className="node-select"
-                            isSearchable
-                            formatCreateLabel={(inputValue) => `Search "${inputValue}"`}
-                            noOptionsMessage={({ inputValue }) =>
-                                `No matches found for "${inputValue}"`
-                            }
-                            isValidNewOption={() => true}
-                            classNamePrefix="react-select"
-                            menuPortalTarget={document.body}
-                            maxMenuHeight={150}
-                            menuPosition="fixed"
-                            menuPlacement="auto"
+                            allowCustomValue={false}
                             menuIsOpen={startMenuIsOpen}
                             onMenuOpen={() => setStartMenuIsOpen(true)}
                             onMenuClose={() => setStartMenuIsOpen(false)}
-                            styles={{
-                                menuPortal: (base) => ({
-                                    ...base,
-                                    zIndex: 9999,
-                                }),
-                            }}
                         />
                     </div>
 
@@ -149,14 +131,10 @@ const PathWindow: React.FC<PathWindowProps> = ({
                                 ? "Target Affiliation:"
                                 : "Target Researcher:"}
                         </label>
-                        <CreatableSelect
+                        <CustomSearchField
                             value={targetNode}
-                            onChange={(option) =>
-                                setTargetNode(option as { value: string; label: string })
-                            }
-                            onCreateOption={(inputValue) =>
-                                setTargetNode({ value: inputValue, label: inputValue })
-                            }
+                            onChange={(option) => setTargetNode(option)}
+                            onCreateOption={(inputValue) => setTargetNode({ value: inputValue, label: inputValue })}
                             options={
                                 targetType === "affiliation" ? affiliationOptions : researcherOptions
                             }
@@ -165,27 +143,10 @@ const PathWindow: React.FC<PathWindowProps> = ({
                                     ? "Select an affiliation..."
                                     : "Select a researcher..."
                             }
-                            className="node-select"
-                            isSearchable
-                            formatCreateLabel={(inputValue) => `Search "${inputValue}"`}
-                            noOptionsMessage={({ inputValue }) =>
-                                `No matches found for "${inputValue}"`
-                            }
-                            isValidNewOption={() => true}
-                            classNamePrefix="react-select"
-                            menuPortalTarget={document.body}
-                            maxMenuHeight={150}
-                            menuPosition="fixed"
-                            menuPlacement="auto"
+                            allowCustomValue={true}
                             menuIsOpen={targetMenuIsOpen}
                             onMenuOpen={() => setTargetMenuIsOpen(true)}
                             onMenuClose={() => setTargetMenuIsOpen(false)}
-                            styles={{
-                                menuPortal: (base) => ({
-                                    ...base,
-                                    zIndex: 9999,
-                                }),
-                            }}
                         />
                     </div>
 

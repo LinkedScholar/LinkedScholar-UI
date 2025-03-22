@@ -19,6 +19,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                                              toggleGrid,
                                              toggleFilters,
                                              togglePathWindow,
+                                             resetSimulation,
                                          }) => {
     return (
         <div className="toolbar">
@@ -28,6 +29,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 title="Toggle Grid"
             >
                 <i className="mdi mdi-view-grid"></i>
+                <span>Grid</span>
             </button>
             <button
                 className={`toolbar-button ${filtersActive ? "active" : ""}`}
@@ -35,6 +37,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 title="Toggle Filters"
             >
                 <i className="mdi mdi-filter"></i>
+                <span>Filters</span>
             </button>
             <button
                 className={`toolbar-button ${pathWindowActive ? "active" : ""}`}
@@ -42,6 +45,15 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 title="Find Path"
             >
                 <i className="mdi mdi-source-branch"></i>
+                <span>Path</span>
+            </button>
+            <button
+                className="toolbar-button"
+                onClick={resetSimulation}
+                title="Reset Simulation"
+            >
+                <i className="mdi mdi-refresh"></i>
+                <span>Reset Simulation</span>
             </button>
         </div>
     );
