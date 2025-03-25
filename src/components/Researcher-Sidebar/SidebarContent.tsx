@@ -36,7 +36,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                                                            onAddInterest,
                                                        }) => {
     if (activeTab === "author") {
-        const ignoreKeys = ["id", "x", "y", "fx", "fy", "vx", "vy", "fixed", "type", "index"];
+        const ignoreKeys = ["id", "x", "y", "fx", "fy", "vx", "vy", "fixed", "type", "index", "s2id"];
         const sortedEntries = Object.entries(selectedNode)
             .filter(([key, value]) =>
                 !ignoreKeys.includes(key) &&

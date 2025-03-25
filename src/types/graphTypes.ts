@@ -8,6 +8,7 @@ export interface NodeDatum extends SimulationNodeDatum {
     name: string;
     affiliation?: string | undefined;
     title?: string;
+    s2id?: string;
     fx?: number | null;
     fy?: number | null;
     fixed?: boolean;

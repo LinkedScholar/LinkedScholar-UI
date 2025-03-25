@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 
 interface CustomSearchFieldProps {
     value: { value: string; label: string } | null;
-    onChange: (option: { value: string; label: string } | null) => void;
+    onChange: (option: { value: string; label: string, id:string } | null) => void;
     onCreateOption: (inputValue: string) => void;
-    options: Array<{ value: string; label: string }>;
+    options: Array<{ value: string; label: string, id:string}>;
     placeholder: string;
     allowCustomValue?: boolean;
     menuIsOpen: boolean;
@@ -24,7 +24,7 @@ const CustomSearchField: React.FC<CustomSearchFieldProps> = ({
                                                                  onMenuClose
                                                              }) => {
     const [inputValue, setInputValue] = useState<string>("");
-    const [filteredOptions, setFilteredOptions] = useState<Array<{ value: string; label: string }>>([]);
+    const [filteredOptions, setFilteredOptions] = useState<Array<{ value: string; label: string, id: string }>>([]);
     const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
     const [isInvalid, setIsInvalid] = useState<boolean>(false);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -80,7 +80,7 @@ const CustomSearchField: React.FC<CustomSearchFieldProps> = ({
         };
     }, [onMenuClose]);
 
-    const handleSelect = (option: { value: string; label: string }) => {
+    const handleSelect = (option: { value: string; label: string, id: string }) => {
         onChange(option);
         setInputValue(option.label);
         onMenuClose();

@@ -9,11 +9,11 @@ interface PathWindowProps {
     expanded: boolean;
     setExpanded: (expanded: boolean) => void;
     startNode: { value: string; label: string } | null;
-    setStartNode: (option: { value: string; label: string } | null) => void;
+    setStartNode: (option: { value: string; label: string, id: string } | null) => void;
     targetType: "affiliation" | "author";
     setTargetType: (type: "affiliation" | "author") => void;
     targetNode: { value: string; label: string } | null;
-    setTargetNode: (option: { value: string; label: string } | null) => void;
+    setTargetNode: (option: { value: string; label: string, id: string} | null) => void;
     handleSearch: () => void;
     handleClearSearch: () => void;
 }
@@ -40,9 +40,11 @@ const PathWindow: React.FC<PathWindowProps> = ({
         .filter(nd => nd.type !== "article")
         .map((nd) => {
             const display = nd.name ? nd.name : nd.id.toString();
+            const id = nd.s2id ? nd.s2id : nd.id.toString();
             return {
                 value: display,
                 label: display,
+                id: id
             };
         });
 
@@ -61,6 +63,7 @@ const PathWindow: React.FC<PathWindowProps> = ({
     ).map((aff) => ({
         value: aff,
         label: aff,
+        id: aff,
     }));
 
     return (
@@ -79,7 +82,7 @@ const PathWindow: React.FC<PathWindowProps> = ({
                         <CustomSearchField
                             value={startNode}
                             onChange={(option) => setStartNode(option)}
-                            onCreateOption={(inputValue) => setStartNode({ value: inputValue, label: inputValue })}
+                            onCreateOption={(inputValue) => setStartNode({ value: inputValue, label: inputValue, id: inputValue})}
                             options={researcherOptions}
                             placeholder="Select researcher..."
                             allowCustomValue={false}
@@ -134,7 +137,7 @@ const PathWindow: React.FC<PathWindowProps> = ({
                         <CustomSearchField
                             value={targetNode}
                             onChange={(option) => setTargetNode(option)}
-                            onCreateOption={(inputValue) => setTargetNode({ value: inputValue, label: inputValue })}
+                            onCreateOption={(inputValue) => setTargetNode({ value: inputValue, label: inputValue, id: inputValue})}
                             options={
                                 targetType === "affiliation" ? affiliationOptions : researcherOptions
                             }

@@ -6,20 +6,11 @@ import { RootState } from "../../redux/store";
 import "../../styles/components/publicationsContent.scss";
 
 interface Publication {
-    author: string;
-    booktitle?: string;
-    cdrom?: string;
-    cite?: string;
-    crossref?: string;
-    editor?: string;
+    authors: string[];
     ee?: string[];
     id: string;
     journal?: string;
-    month?: string;
-    number?: string;
     pages?: string;
-    publnr?: string;
-    stream?: string;
     title: string;
     url?: string;
     volume?: string;
@@ -31,16 +22,18 @@ const PublicationCard: React.FC<{ publication: Publication }> = ({ publication }
         <div className="publication-card">
             <h3 className="pub-title">{publication.title}</h3>
             <div>
-                <p className="pub-author"><strong>Author:</strong> {publication.author}</p>
-                <p className="pub-journal"><strong>Journal:</strong> {publication.journal}</p>
                 <p className="pub-year"><strong>Year:</strong> {publication.year}</p>
-                {publication.volume && <p className="pub-volume"><strong>Volume:</strong> {publication.volume}</p>}
-                {publication.number && <p className="pub-number"><strong>Number:</strong> {publication.number}</p>}
-                {publication.pages && <p className="pub-pages"><strong>Pages:</strong> {publication.pages}</p>}
+                <p className="pub-author"><strong>Authors: </strong>
+                    {publication.authors.map((author, index) => (
+                        <span key={index}>{author}</span>
+                    ))}</p>
+                {publication.journal!="null" && <p className="pub-journal"><strong>Journal:</strong> {publication.journal}</p>}
+                {publication.volume!="null" && <p className="pub-volume"><strong>Volume:</strong> {publication.volume}</p>}
+                {publication.pages!="null" && <p className="pub-pages"><strong>Pages:</strong> {publication.pages}</p>}
             </div>
             {publication.url && (
                 <a
-                    href={`https://dblp.org/${publication.url.replace(/^\/+/, "")}`}
+                    href={publication.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="pub-link"
