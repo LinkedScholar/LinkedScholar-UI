@@ -27,9 +27,9 @@ const PublicationCard: React.FC<{ publication: Publication }> = ({ publication }
                     {publication.authors.map((author, index) => (
                         <span key={index}>{author}, </span>
                     ))}</p>
-                {publication.journal & publication.journal!="null" && <p className="pub-journal"><strong>Journal:</strong> {publication.journal}</p>}
-                {publication.volume & publication.volume!="null" && <p className="pub-volume"><strong>Volume:</strong> {publication.volume}</p>}
-                {publication.pages & publication.pages!="null" && <p className="pub-pages"><strong>Pages:</strong> {publication.pages}</p>}
+                {publication.journal && publication.journal!="null" && <p className="pub-journal"><strong>Journal:</strong> {publication.journal}</p>}
+                {publication.volume && publication.volume!="null" && <p className="pub-volume"><strong>Volume:</strong> {publication.volume}</p>}
+                {publication.pages && publication.pages!="null" && <p className="pub-pages"><strong>Pages:</strong> {publication.pages}</p>}
             </div>
             {publication.url && (
                 <a
