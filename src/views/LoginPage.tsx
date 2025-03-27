@@ -25,6 +25,15 @@ const LoginPage: React.FC = () => {
         window.location.href = the_string + `/oauth2/authorization/${provider}`;
     };
 
+    /*
+    <button className="sso-btn google-btn" onClick={() => handleLogin("github")}>
+                <img src="/icons/github.svg" alt="GitHub" className="sso-icon" /> Sign in with GitHub
+
+         </button>
+            <button className="sso-btn  google-btn" onClick={() => handleLogin("microsoft")}>
+                <img src="/icons/microsoft.svg" alt="Microsoft" className="sso-icon" /> Sign in with Microsoft
+            </button>
+            */
     return (
         <div className="login-page">
             <h1 className="title">
@@ -36,12 +45,7 @@ const LoginPage: React.FC = () => {
             <button className="sso-btn google-btn" onClick={() => handleLogin("google")}>
                 <img src="/icons/google.svg" alt="Google" className="sso-icon" /> Sign in with Google
             </button>
-            <button className="sso-btn google-btn" onClick={() => handleLogin("github")}>
-                <img src="/icons/github.svg" alt="GitHub" className="sso-icon" /> Sign in with GitHub
-            </button>
-            <button className="sso-btn  google-btn" onClick={() => handleLogin("microsoft")}>
-                <img src="/icons/microsoft.svg" alt="Microsoft" className="sso-icon" /> Sign in with Microsoft
-            </button>
+
 
             <p className="disclaimer">
                 By signing in, you agree to our <a href="/terms">Terms of Service</a>.
