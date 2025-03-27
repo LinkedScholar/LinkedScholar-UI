@@ -1,14 +1,14 @@
 @import "../app.scss"; // Import global styles
 
 .publications {
-  padding: 16px;
+  padding: 0px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 
 
   .publication-card {
-
+    user-select: text;
     background: #f9f9f9;
     border: 1px solid #ddd;
     padding: 16px;
@@ -23,7 +23,6 @@
       font-weight: 700;
       margin-bottom: 8px;
       color: $primary-color;
-      user-select: text;
 
     }
     .pub-author,

@@ -104,8 +104,8 @@ const GraphView: React.FC = () => {
     const [gridActive, setGridActive] = useState(false);
     const [filtersActive, setFiltersActive] = useState(false);
     const [pathWindowOpen, setPathWindowOpen] = useState(false);
-    const [startNode, setStartNode] = useState<{ value: string; label: string } | null>(null);
-    const [targetNode, setTargetNode] = useState<{ value: string; label: string } | null>(null);
+    const [startNode, setStartNode] = useState<{ value: string; label: string; id: string} | null>(null);
+    const [targetNode, setTargetNode] = useState<{ value: string; label: string; id: string} | null>(null);
     const [bfsPath, setBfsPath] = useState<string[] | null>(null);
     const [targetType, setTargetType] = useState<"affiliation" | "author">("affiliation");
     const [selectedAffiliations, setSelectedAffiliations] = useState<string[]>([]);
@@ -120,6 +120,7 @@ const GraphView: React.FC = () => {
             setStartNode({
                 value: node.id.toString(),
                 label: node.name || node.id.toString(),
+                id: node.s2id || node.id.toString()
             });
         }
     };
@@ -161,7 +162,7 @@ const GraphView: React.FC = () => {
 
         if (!startData || (targetType === "author" && !targetData) || (targetType === "affiliation" && !targetData)) {
             try {
-                const newPathData = await getPath(authenticated, startNode.label, targetNode.value, targetType);
+                const newPathData = await getPath(authenticated, "s2id:"+startNode.id, targetNode.value, targetType);
                 let parsedPathData = newPathData;
                 if (typeof newPathData === "string") {
                     try {

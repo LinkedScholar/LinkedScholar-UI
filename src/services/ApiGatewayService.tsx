@@ -76,7 +76,7 @@ export const getPath = async (
     logged: boolean,
     fromId: string,
     toId: string,
-    kind: string = "dblp"
+    kind: string = "author"
 ): Promise<any> => {
     try {
         const url = logged ? `${API_BASE_URL}/path` : `${API_PUBLIC_BASE_URL}/path`;

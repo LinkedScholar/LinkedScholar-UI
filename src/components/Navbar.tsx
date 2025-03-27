@@ -75,7 +75,7 @@ const Navbar: React.FC = () => {
               >
                 <span className="navbar-toggler-icon"></span>
               </button>
-              {/* 
+              {
               <div className="collapse navbar-collapse d-none" id="navbarNav">
                 {status === "loading" ? (
                   <p className="loading-text">Loading...</p>
@@ -105,7 +105,7 @@ const Navbar: React.FC = () => {
                   </button>
                 )}
               </div>
-               */}
+               }
 
             </div>
             

@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-     <!-- Google Consent Mode setup -->
      <script>
-      // Default consent settings
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('consent', 'default', {
@@ -21,8 +19,6 @@
 
       gtag('config', 'G-CN00SFFKWW');
     </script>
-    <link rel="stylesheet" id="silktide-consent-manager-css" href="/cookie-banner/silktide-consent-manager.css">
-    <script src="/cookie-banner/silktide-consent-manager.js"></script>
     <script>
     silktideCookieBannerManager.updateCookieBannerConfig({
       background: {
@@ -47,7 +43,7 @@
         {
           id: "analytical",
           name: "Analytical",
-          description: "<p>These cookies help us improve the site by tracking which pages are most popular and how visitors move around the site.</p>",
+          description: "<p>These cookies help us improve the site by tracking how visitors move around the site.</p>",
           required: false,
           onAccept: function() {
             gtag('consent', 'update', {
