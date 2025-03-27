@@ -1,7 +1,9 @@
-@import "../../app.scss"; 
+@import "../../app.scss";
 
 .sponsor-content {
   text-align: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
 
   .sponsor-description {
     font-size: 16px;
@@ -30,24 +32,24 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
-    
+
     &:hover {
       transform: translateY(-5px);
       box-shadow: 0 8px 15px rgba($shadow-light, 0.4);
     }
-    
+
     h3 {
       color: $primary-color;
       margin-bottom: 15px;
       font-size: 18px;
     }
-    
+
     ul {
       text-align: left;
       margin: 0 0 20px 0;
       padding-left: 20px;
       flex-grow: 1;
-      
+
       li {
         margin-bottom: 10px;
         font-size: 14px;
@@ -55,7 +57,8 @@
     }
   }
 
-  .donate-button, .coffee-button {
+  .donate-button,
+  .coffee-button {
     background: $secondary-color;
     color: white;
     border: none;
@@ -66,20 +69,20 @@
     cursor: pointer;
     transition: background 0.3s ease;
     width: 100%;
-    
+
     &:hover {
       background: darken($secondary-color, 10%);
     }
   }
-  
+
   .coffee-button {
     background: #FF813F;
-    
+
     &:hover {
       background: darken(#FF813F, 10%);
     }
   }
-  
+
   .sponsor-separator {
     width: 80%;
     margin: 30px auto;
@@ -87,23 +90,55 @@
   }
 }
 
-// Responsive adjustments for sponsor page
+.sponsor-logos {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-top: 30px;
+
+  a {
+    display: inline-block;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  .sponsor-logo {
+    width: 180px;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    background-color: white;
+    padding: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+}
+
 @media (max-width: 768px) {
   .sponsor-content {
     .sponsor-description {
       font-size: 16px;
       padding: 0 15px;
     }
-    
+
     .sponsorship-tiers {
       flex-direction: column;
       align-items: center;
     }
-    
+
     .sponsor-card {
       width: 90%;
       max-width: 300px;
       margin-bottom: 20px;
+    }
+  }
+
+  .sponsor-logos {
+    .sponsor-logo {
+      width: 140px;
     }
   }
 }
