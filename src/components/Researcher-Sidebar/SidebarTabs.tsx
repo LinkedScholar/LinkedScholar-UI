@@ -38,12 +38,8 @@ const SidebarTabs: React.FC<SidebarTabsProps> = ({ activeTab, setActiveTab }) =>
     };
 
     return (
-        <div className="tab-scroll-wrapper">
-            {showLeftArrow && (
-                <button className="scroll-arrow left" onClick={() => scrollTabs("left")}>
-                    <i className="mdi mdi-chevron-left"></i>
-                </button>
-            )}
+        <div className="tab-scroll-wrapper py-1">
+
             <ul className="nav nav-tabs mb-3 sidebar-tabs" ref={scrollRef}>
                 <li className="nav-item">
                     <button className={`nav-link ${activeTab === "author" ? "active" : ""}`} onClick={() => setActiveTab("author")}>
@@ -66,11 +62,7 @@ const SidebarTabs: React.FC<SidebarTabsProps> = ({ activeTab, setActiveTab }) =>
                     </button>
                 </li>
             </ul>
-            {showRightArrow && (
-                <button className="scroll-arrow right" onClick={() => scrollTabs("right")}>
-                    <i className="mdi mdi-chevron-right"></i>
-                </button>
-            )}
+
         </div>
     );
 };
