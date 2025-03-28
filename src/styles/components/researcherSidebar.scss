@@ -2,10 +2,10 @@
 
 .researcher-sidebar {
   position: fixed;
-  top: 160px;
+  top: 112px;
   bottom: 80px;
-  right: -460px;
-  width: 460px; // Increased width for better space
+  right: -520px;           // Updated from -460px
+  width: 520px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   padding: 24px;
@@ -39,7 +39,98 @@
     z-index: 0;
     top: 160px;
   }
+  .sidebar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    user-select: text;
 
+    .metadata-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .metadata-card {
+      background: #f9f9f9;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 12px;
+      padding: 12px 16px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+
+      .metadata-key {
+        font-size: 13px;
+        font-weight: 600;
+        color: $primary-color;
+        margin-bottom: 4px;
+      }
+
+      .metadata-value {
+        font-size: 14px;
+        color: #333;
+        word-break: break-word;
+      }
+    }
+
+    .metadata-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      .metadata-key {
+        font-size: 14px;
+        font-weight: 600;
+        color: $primary-color;
+      }
+
+      .metadata-value {
+        font-size: 14px;
+        color: #333;
+      }
+
+      .tag-container,
+      .interest-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 4px;
+      }
+
+      .url-container {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        a {
+          font-size: 14px;
+          color: $secondary-color;
+          word-break: break-word;
+
+          &:hover {
+            text-decoration: underline;
+            color: darken($secondary-color, 10%);
+          }
+        }
+      }
+    }
+  }
+
+  .tag {
+    background: rgba($primary-color, 0.05);
+    color: $primary-color;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 16px;
+    border: 1px solid rgba($primary-color, 0.15);
+    white-space: nowrap;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: rgba($primary-color, 0.1);
+    }
+  }
   .tab-scroll-wrapper {
     position: relative;
     display: flex;
