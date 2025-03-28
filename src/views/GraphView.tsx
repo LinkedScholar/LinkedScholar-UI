@@ -144,7 +144,8 @@ const GraphView: React.FC = () => {
     const handleExtendNetwork = async () => {
         if (!selectedNode?.s2id) return;
         try {
-            const extendedData = await getNetwork(authenticated, selectedNode.name, "author", 1);
+            const extendedData = await getNetwork(authenticated, "s2id:" + selectedNode.s2id, "author", 1);
+
             const newAuthors = (extendedData.authors || []).map((a: any) => ({ ...a, type: "author" }));
             const newArticles = (extendedData.articles || []).map((a: any) => ({
                 id: a.id,
@@ -152,25 +153,43 @@ const GraphView: React.FC = () => {
                 name: a.title,
                 type: "article",
             }));
-            const newLinks = extendedData.links || [];
+            const newLinks: LinkDatum[] = extendedData.links || [];
 
-            const incomingNodes = newAuthors.concat(newArticles);
             const existingNodes = graphData.nodes;
-
+            const incomingNodes = [...newAuthors, ...newArticles];
             const mergedNodes = [
-                ...existingNodes.map((existingNode) => {
-                    const incoming = incomingNodes.find((n: { id: string; }) => n.id === existingNode.id);
-                    return incoming ? { ...existingNode, ...incoming } : existingNode;
-                }),
-                ...incomingNodes.filter((n: { id: string; }) => !existingNodes.some((e) => e.id === n.id))
+                ...existingNodes,
+                ...incomingNodes.filter((n) => !existingNodes.some((e) => e.id === n.id)),
             ];
 
-            const mergedLinks = [...graphData.links];
-            newLinks.forEach((l: LinkDatum) => {
-                if (!mergedLinks.find((m) => m.source === l.source && m.target === l.target)) mergedLinks.push(l);
-            });
+            const existingLinks = graphData.links;
+            const mergedLinks = [
+                ...existingLinks,
+                ...newLinks.filter(
+                    (l) =>
+                        !existingLinks.some(
+                            (existing) =>
+                                existing.source === l.source && existing.target === l.target
+                        )
+                ),
+            ];
 
             setGraphData({ nodes: mergedNodes, links: mergedLinks });
+
+            const updatedSelected = mergedNodes.find((n) => n.id === selectedNode.id);
+            if (updatedSelected) {
+                setSelectedNode(updatedSelected);
+                selectedNodeRef.current = updatedSelected;
+
+                if (updateHighlightRef.current) {
+                    updateHighlightRef.current(null);
+                    requestAnimationFrame(() => {
+                        updateHighlightRef.current(updatedSelected);
+                    });
+                }
+
+                forceGraphRef.current?.centerOnNode(updatedSelected); // optional
+            }
         } catch (error) {
             console.error("Error extending network:", error);
         }
@@ -298,10 +317,9 @@ const GraphView: React.FC = () => {
         }
     };
 
-    // NEW: Once graph data is loaded, check if a centerId was passed and set that node as selected
     useEffect(() => {
-        if (centerId && graphData.nodes.length > 0) {
-            const centerNode = graphData.nodes.find(
+        if (centerId && computedNetworkData.nodes.length > 0) {
+            const centerNode = computedNetworkData.nodes.find(
                 (node) => node.id.toString() === centerId.toString()
             );
             if (centerNode) {
@@ -313,7 +331,7 @@ const GraphView: React.FC = () => {
                 forceGraphRef.current?.centerOnNode(centerNode);
             }
         }
-    }, [centerId, graphData]);
+    }, []);
 
     if (graphData.nodes.length === 0 && graphData.links.length === 0) {
         return <h2>No network data available</h2>;
