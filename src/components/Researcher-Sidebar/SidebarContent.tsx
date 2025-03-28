@@ -25,6 +25,18 @@ const formatKeyName = (key: string): string =>
 const capitalizeFirstLetter = (text: string): string =>
     text.replace(/\b\w/g, (char) => char.toUpperCase());
 
+const isFlatValue = (key: string, value: any) => {
+    const lowerKey = key.toLowerCase();
+    return (
+        !Array.isArray(value) &&
+        typeof value !== "object" &&
+        !lowerKey.includes("interest") &&
+        lowerKey !== "journals" &&
+        lowerKey !== "affiliation" &&
+        !isURL(String(value))
+    );
+};
+
 interface SidebarContentProps {
     activeTab: "author" | "group" | "publications" | "options";
     selectedNode: NodeDatum;
@@ -55,9 +67,21 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                 return 0;
             });
 
+        const cardItems = sortedEntries.filter(([key, value]) => isFlatValue(key, value));
+        const otherItems = sortedEntries.filter(([key, value]) => !isFlatValue(key, value));
+
         return (
             <div className="sidebar-content">
-                {sortedEntries.map(([key, value]) => {
+                <div className="metadata-grid">
+                    {cardItems.map(([key, value]) => (
+                        <div key={key} className="metadata-card">
+                            <p className="metadata-key">{formatKeyName(key)}</p>
+                            <p className="metadata-value">{capitalizeFirstLetter(String(value))}</p>
+                        </div>
+                    ))}
+                </div>
+
+                {otherItems.map(([key, value]) => {
                     const formattedKey = formatKeyName(key);
 
                     if (key.toLowerCase().includes("interest")) {
@@ -66,8 +90,10 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                             .map((i) => i.trim())
                             .filter((i) => i.length > 0);
                         if (interests.length === 0) return null;
+
                         return (
                             <div key={key} className="metadata-item full-width">
+                                <p className="metadata-key">{formattedKey}:</p>
                                 <div className="interest-tags">
                                     {interests.map((interest, index) => (
                                         <Tag key={index} label={interest} />
@@ -82,8 +108,8 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                             .split(",")
                             .map((item) => item.trim())
                             .filter((item) => item.length > 0);
-
                         if (items.length === 0) return null;
+
                         return (
                             <div key={key} className="metadata-item">
                                 <p className="metadata-key">{formattedKey}:</p>
@@ -96,7 +122,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                         );
                     }
 
-                    if (Array.isArray(value) && value.length > 0 && typeof value[0] === "string" && isURL(value[0])) {
+                    if (Array.isArray(value) && typeof value[0] === "string" && isURL(value[0])) {
                         const urls = value
                             .map((url: string) => url.trim())
                             .filter((url) => url.length > 0);
@@ -153,10 +179,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
             <div className="sidebar-content">
                 <div className="options-section">
                     <div className="extend-network-wrapper">
-                        <button
-                            className="extend-network-btn"
-                            onClick={onExtendNetwork}
-                        >
+                        <button className="extend-network-btn" onClick={onExtendNetwork}>
                             <i className="mdi mdi-google-circles-extended me-2"></i>
                             Get Full Network
                         </button>
