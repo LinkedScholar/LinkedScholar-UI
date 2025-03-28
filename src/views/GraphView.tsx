@@ -8,7 +8,7 @@ import PathWindow from "../components/PathWindow";
 import Filters from "../components/Filter-Sidebar/filters";
 import { LinkDatum, NodeDatum } from "../types/graphTypes";
 import { bfs } from "../utils/bfs";
-import {getNetwork, getPath} from "../services/ApiGatewayService";
+import { getNetwork, getPath } from "../services/ApiGatewayService";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/views/graphView.scss";
 import { RootState } from "../redux/store";
@@ -22,21 +22,10 @@ interface NetworkData {
 const GraphView: React.FC = () => {
     const location = useLocation();
     const rawNetworkData: any = location.state?.networkData;
-    // Retrieve centerId passed from the Searcher view
     const centerId = location.state?.centerId;
 
-    useEffect(() => {
-        setPathWindowOpen(false);
-        setFiltersActive(false);
-        setBfsPath(null);
-        setStartNode(null);
-        setTargetNode(null);
-    }, [rawNetworkData]);
-
     const computedNetworkData: NetworkData = useMemo(() => {
-        if (!rawNetworkData) {
-            return { nodes: [], links: [] };
-        }
+        if (!rawNetworkData) return { nodes: [], links: [] };
         if (rawNetworkData.authors && rawNetworkData.articles) {
             const authors: NodeDatum[] = rawNetworkData.authors.map((author: any) => ({
                 ...author,
@@ -48,15 +37,36 @@ const GraphView: React.FC = () => {
                 title: article.title,
                 name: article.title,
             }));
-            return {
-                nodes: [...authors, ...articles],
-                links: rawNetworkData.links,
-            };
+            return { nodes: [...authors, ...articles], links: rawNetworkData.links };
         }
         return rawNetworkData;
     }, [rawNetworkData]);
 
     const [graphData, setGraphData] = useState<NetworkData>(computedNetworkData);
+    const [selectedNode, setSelectedNode] = useState<NodeDatum | null>(null);
+    const [gridActive, setGridActive] = useState(false);
+    const [filtersActive, setFiltersActive] = useState(false);
+    const [pathWindowOpen, setPathWindowOpen] = useState(false);
+    const [startNode, setStartNode] = useState<{ value: string; label: string; id: string } | null>(null);
+    const [targetNode, setTargetNode] = useState<{ value: string; label: string; id: string } | null>(null);
+    const [bfsPath, setBfsPath] = useState<string[] | null>(null);
+    const [targetType, setTargetType] = useState<"affiliation" | "author">("affiliation");
+    const [selectedAffiliations, setSelectedAffiliations] = useState<string[]>([]);
+
+    const selectedNodeRef = useRef<NodeDatum | null>(null);
+    const forceGraphRef = useRef<ForceGraphHandle | null>(null);
+    const updateHighlightRef = useRef<(selNode: NodeDatum | null) => void>(() => {});
+
+    const { authenticated } = useSelector((state: RootState) => state.auth);
+
+    useEffect(() => {
+        setPathWindowOpen(false);
+        setFiltersActive(false);
+        setBfsPath(null);
+        setStartNode(null);
+        setTargetNode(null);
+    }, [rawNetworkData]);
+
     useEffect(() => {
         setGraphData(computedNetworkData);
     }, [computedNetworkData]);
@@ -67,9 +77,7 @@ const GraphView: React.FC = () => {
             if (node.affiliation) {
                 if (Array.isArray(node.affiliation)) {
                     node.affiliation.forEach((aff) => {
-                        if (typeof aff === "string" && aff.trim() !== "") {
-                            affSet.add(aff.trim());
-                        }
+                        if (typeof aff === "string" && aff.trim() !== "") affSet.add(aff.trim());
                     });
                 } else if (typeof node.affiliation === "string" && node.affiliation.trim() !== "") {
                     affSet.add(node.affiliation.trim());
@@ -99,28 +107,13 @@ const GraphView: React.FC = () => {
         return map;
     }, [uniqueAffiliations]);
 
-    const forceGraphRef = useRef<ForceGraphHandle | null>(null);
-    const [selectedNode, setSelectedNode] = useState<NodeDatum | null>(null);
-    const [gridActive, setGridActive] = useState(false);
-    const [filtersActive, setFiltersActive] = useState(false);
-    const [pathWindowOpen, setPathWindowOpen] = useState(false);
-    const [startNode, setStartNode] = useState<{ value: string; label: string; id: string} | null>(null);
-    const [targetNode, setTargetNode] = useState<{ value: string; label: string; id: string} | null>(null);
-    const [bfsPath, setBfsPath] = useState<string[] | null>(null);
-    const [targetType, setTargetType] = useState<"affiliation" | "author">("affiliation");
-    const [selectedAffiliations, setSelectedAffiliations] = useState<string[]>([]);
-    const selectedNodeRef = useRef<NodeDatum | null>(null);
-    const updateHighlightRef = useRef<(selNode: NodeDatum | null) => void>(() => {});
-
-    const { authenticated } = useSelector((state: RootState) => state.auth);
-
     const handleNodeClick = (node: NodeDatum | null) => {
         setSelectedNode(node);
         if (node) {
             setStartNode({
                 value: node.id.toString(),
                 label: node.name || node.id.toString(),
-                id: node.s2id || node.id.toString()
+                id: node.s2id || node.id.toString(),
             });
         }
     };
@@ -129,23 +122,24 @@ const GraphView: React.FC = () => {
         setSelectedNode(null);
         selectedNodeRef.current = null;
         if (updateHighlightRef.current) {
-            console.log("disabling highlight");
             updateHighlightRef.current(null);
         }
     };
 
     const togglePathWindow = () => {
         setPathWindowOpen((prev) => !prev);
-        if (!pathWindowOpen && filtersActive) {
-            setFiltersActive(false);
-        }
+        if (!pathWindowOpen && filtersActive) setFiltersActive(false);
+    };
+
+    const toggleFilters = () => {
+        setFiltersActive((prev) => !prev);
+        if (!filtersActive && pathWindowOpen) setPathWindowOpen(false);
     };
 
     const handleExtendNetwork = async () => {
         if (!selectedNode?.s2id) return;
         try {
             const extendedData = await getNetwork(authenticated, "s2id:" + selectedNode.s2id, "author", 1);
-
             const newAuthors = (extendedData.authors || []).map((a: any) => ({ ...a, type: "author" }));
             const newArticles = (extendedData.articles || []).map((a: any) => ({
                 id: a.id,
@@ -166,11 +160,7 @@ const GraphView: React.FC = () => {
             const mergedLinks = [
                 ...existingLinks,
                 ...newLinks.filter(
-                    (l) =>
-                        !existingLinks.some(
-                            (existing) =>
-                                existing.source === l.source && existing.target === l.target
-                        )
+                    (l) => !existingLinks.some((existing) => existing.source === l.source && existing.target === l.target)
                 ),
             ];
 
@@ -180,15 +170,11 @@ const GraphView: React.FC = () => {
             if (updatedSelected) {
                 setSelectedNode(updatedSelected);
                 selectedNodeRef.current = updatedSelected;
-
                 if (updateHighlightRef.current) {
                     updateHighlightRef.current(null);
-                    requestAnimationFrame(() => {
-                        updateHighlightRef.current(updatedSelected);
-                    });
+                    requestAnimationFrame(() => updateHighlightRef.current(updatedSelected));
                 }
-
-                forceGraphRef.current?.centerOnNode(updatedSelected); // optional
+                forceGraphRef.current?.centerOnNode(updatedSelected);
             }
         } catch (error) {
             console.error("Error extending network:", error);
@@ -196,9 +182,7 @@ const GraphView: React.FC = () => {
     };
 
     const handleBfsSearch = async () => {
-        if (!startNode || !targetNode) {
-            return;
-        }
+        if (!startNode || !targetNode) return;
 
         let updatedNodes = [...graphData.nodes];
         let updatedLinks = [...graphData.links];
@@ -214,92 +198,65 @@ const GraphView: React.FC = () => {
             );
         }
 
-        if (!startData || (targetType === "author" && !targetData) || (targetType === "affiliation" && !targetData)) {
+        if (!startData || (targetType === "author" && !targetData)) {
             try {
-                const newPathData = await getPath(authenticated, "s2id:"+startNode.id, targetNode.value, targetType);
-                let parsedPathData = newPathData;
-                if (typeof newPathData === "string") {
-                    try {
-                        parsedPathData = JSON.parse(newPathData);
-                    } catch (e) {
-                        console.error("Failed to parse getPath response:", e);
-                        throw e;
-                    }
+                const newPathData = await getPath(authenticated, "s2id:" + startNode.id, targetNode.value, targetType);
+                const parsed = typeof newPathData === "string" ? JSON.parse(newPathData) : newPathData;
+                let newNodes: NodeDatum[] = [];
+
+                if (parsed.articles) {
+                    newNodes.push(
+                        ...parsed.articles.map((article: any) => ({
+                            id: article.id,
+                            type: "article",
+                            title: article.title,
+                            name: article.title,
+                        }))
+                    );
                 }
-                let newNodes: any[] = [];
-                if (parsedPathData.articles || parsedPathData.authors) {
-                    if (parsedPathData.articles) {
-                        newNodes = newNodes.concat(
-                            parsedPathData.articles.map((article: any) => ({
-                                id: article.id,
-                                type: "article",
-                                title: article.title,
-                                name: article.title,
-                            }))
-                        );
-                    }
-                    if (parsedPathData.authors) {
-                        newNodes = newNodes.concat(
-                            parsedPathData.authors.map((author: any) => ({
-                                ...author,
-                                type: "author",
-                            }))
-                        );
-                    }
-                } else if (parsedPathData.nodes) {
-                    newNodes = parsedPathData.nodes;
+                if (parsed.authors) {
+                    newNodes.push(...parsed.authors.map((author: any) => ({ ...author, type: "author" })));
                 }
-                const newLinks = parsedPathData.links || [];
-                newNodes.forEach((node: any) => {
+                if (parsed.nodes) {
+                    newNodes.push(...parsed.nodes);
+                }
+
+                const newLinks = parsed.links || [];
+
+                newNodes.forEach((node) => {
                     if (!updatedNodes.find((n) => n.id === node.id)) {
                         updatedNodes.push(node);
                     }
                 });
-                newLinks.forEach((link: any) => {
-                    updatedLinks.push(link);
-                });
+                newLinks.forEach((link: LinkDatum) => updatedLinks.push(link));
+
                 setGraphData({ nodes: updatedNodes, links: updatedLinks });
-            } catch (error) {
-                console.error("Error fetching path:", error);
+            } catch (e) {
+                console.error("Error fetching path:", e);
                 return;
             }
         }
 
-        const finalStartData = updatedNodes.find(
-            (n) => n.name === startNode.value || n.id.toString() === startNode.value
-        );
-        const startId = finalStartData ? finalStartData.id : startNode.value;
+        const startId = (graphData.nodes.find((n) => n.name === startNode.value || n.id.toString() === startNode.value)
+            ?.id || startNode.value) as string;
 
         let targetValue: string;
         if (targetType === "author") {
-            const finalTargetData = updatedNodes.find(
-                (n) => n.name === targetNode.value || n.id.toString() === targetNode.value
-            );
-            if (!finalTargetData) {
-                return;
-            }
-            targetValue = finalTargetData.id;
+            const t = updatedNodes.find((n) => n.name === targetNode.value || n.id.toString() === targetNode.value);
+            if (!t) return;
+            targetValue = t.id;
         } else {
             targetValue = targetNode.value;
         }
 
         const path = bfs(startId, targetValue, updatedNodes, updatedLinks, targetType);
-        if (path) {
-            setBfsPath(path);
-        } else {
-            setBfsPath(null);
-        }
+        setBfsPath(path ?? null);
 
-        // Mark and center the searched researcher node
-        const researcherNode = updatedNodes.find(
-            (node) => node.id.toString() === startId.toString()
-        );
+        const researcherNode = updatedNodes.find((node) => node.id.toString() === startId.toString());
         if (researcherNode) {
             setSelectedNode(researcherNode);
             selectedNodeRef.current = researcherNode;
-            if (updateHighlightRef.current) {
-                updateHighlightRef.current(researcherNode);
-            }
+            if (updateHighlightRef.current) updateHighlightRef.current(researcherNode);
             forceGraphRef.current?.centerOnNode(researcherNode);
         }
     };
@@ -310,24 +267,13 @@ const GraphView: React.FC = () => {
         setBfsPath(null);
     };
 
-    const toggleFilters = () => {
-        setFiltersActive((prev) => !prev);
-        if (!filtersActive && pathWindowOpen) {
-            setPathWindowOpen(false);
-        }
-    };
-
     useEffect(() => {
         if (centerId && computedNetworkData.nodes.length > 0) {
-            const centerNode = computedNetworkData.nodes.find(
-                (node) => node.id.toString() === centerId.toString()
-            );
+            const centerNode = computedNetworkData.nodes.find((node) => node.id.toString() === centerId.toString());
             if (centerNode) {
                 setSelectedNode(centerNode);
                 selectedNodeRef.current = centerNode;
-                if (updateHighlightRef.current) {
-                    updateHighlightRef.current(centerNode);
-                }
+                if (updateHighlightRef.current) updateHighlightRef.current(centerNode);
                 forceGraphRef.current?.centerOnNode(centerNode);
             }
         }
@@ -340,7 +286,7 @@ const GraphView: React.FC = () => {
     return (
         <div className="graph-view-container">
             {/* Toolbar */}
-            <div className="position-absolute" style={{ top: "100px", left: "80px", zIndex: 1000 }}>
+            <div className="toolbar-container">
                 <Toolbar
                     gridActive={gridActive}
                     filtersActive={filtersActive}
@@ -352,9 +298,9 @@ const GraphView: React.FC = () => {
                 />
             </div>
 
-            {/* Filters Sidebar */}
+            {/* Sidebars */}
             {filtersActive && (
-                <div className="position-absolute" style={{ top: "180px", left: "80px", zIndex: 1000 }}>
+                <div className="sidebar-container">
                     <Filters
                         affiliations={uniqueAffiliations}
                         selectedAffiliations={selectedAffiliations}
@@ -364,16 +310,13 @@ const GraphView: React.FC = () => {
                 </div>
             )}
 
-            {/* Path Window */}
             {pathWindowOpen && (
-                <div className="position-absolute" style={{ top: "180px", left: "80px", zIndex: 1000 }}>
+                <div className="sidebar-container">
                     <PathWindow
                         bfsPath={bfsPath}
                         nodes={graphData.nodes}
                         expanded={true}
-                        setExpanded={(expanded) => {
-                            if (!expanded) setPathWindowOpen(false);
-                        }}
+                        setExpanded={(expanded) => !expanded && setPathWindowOpen(false)}
                         startNode={startNode}
                         setStartNode={setStartNode}
                         targetType={targetType}
@@ -402,11 +345,18 @@ const GraphView: React.FC = () => {
                 />
             </div>
 
+            {/* Sidebar */}
             <ResearcherSidebar
                 selectedNode={selectedNode}
                 onClose={handleCloseSidebar}
                 onExtendNetwork={handleExtendNetwork}
             />
+
+            {/* Footer Note */}
+            <div className="graph-note">
+                This alpha version includes only authors with relevant publications (i.e., more than 10 citations) up to the year 2018.
+                The final release will include all research data up to date.
+            </div>
         </div>
     );
 };
