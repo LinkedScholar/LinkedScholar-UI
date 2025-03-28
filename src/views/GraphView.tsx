@@ -8,7 +8,7 @@ import PathWindow from "../components/PathWindow";
 import Filters from "../components/Filter-Sidebar/filters";
 import { LinkDatum, NodeDatum } from "../types/graphTypes";
 import { bfs } from "../utils/bfs";
-import { getPath } from "../services/ApiGatewayService";
+import {getNetwork, getPath} from "../services/ApiGatewayService";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/views/graphView.scss";
 import { RootState } from "../redux/store";
@@ -141,6 +141,60 @@ const GraphView: React.FC = () => {
         }
     };
 
+    const handleExtendNetwork = async () => {
+        if (!selectedNode?.s2id) return;
+        try {
+            const extendedData = await getNetwork(authenticated, "s2id:" + selectedNode.s2id, "author", 1);
+
+            const newAuthors = (extendedData.authors || []).map((a: any) => ({ ...a, type: "author" }));
+            const newArticles = (extendedData.articles || []).map((a: any) => ({
+                id: a.id,
+                title: a.title,
+                name: a.title,
+                type: "article",
+            }));
+            const newLinks: LinkDatum[] = extendedData.links || [];
+
+            const existingNodes = graphData.nodes;
+            const incomingNodes = [...newAuthors, ...newArticles];
+            const mergedNodes = [
+                ...existingNodes,
+                ...incomingNodes.filter((n) => !existingNodes.some((e) => e.id === n.id)),
+            ];
+
+            const existingLinks = graphData.links;
+            const mergedLinks = [
+                ...existingLinks,
+                ...newLinks.filter(
+                    (l) =>
+                        !existingLinks.some(
+                            (existing) =>
+                                existing.source === l.source && existing.target === l.target
+                        )
+                ),
+            ];
+
+            setGraphData({ nodes: mergedNodes, links: mergedLinks });
+
+            const updatedSelected = mergedNodes.find((n) => n.id === selectedNode.id);
+            if (updatedSelected) {
+                setSelectedNode(updatedSelected);
+                selectedNodeRef.current = updatedSelected;
+
+                if (updateHighlightRef.current) {
+                    updateHighlightRef.current(null);
+                    requestAnimationFrame(() => {
+                        updateHighlightRef.current(updatedSelected);
+                    });
+                }
+
+                forceGraphRef.current?.centerOnNode(updatedSelected); // optional
+            }
+        } catch (error) {
+            console.error("Error extending network:", error);
+        }
+    };
+
     const handleBfsSearch = async () => {
         if (!startNode || !targetNode) {
             return;
@@ -263,10 +317,9 @@ const GraphView: React.FC = () => {
         }
     };
 
-    // NEW: Once graph data is loaded, check if a centerId was passed and set that node as selected
     useEffect(() => {
-        if (centerId && graphData.nodes.length > 0) {
-            const centerNode = graphData.nodes.find(
+        if (centerId && computedNetworkData.nodes.length > 0) {
+            const centerNode = computedNetworkData.nodes.find(
                 (node) => node.id.toString() === centerId.toString()
             );
             if (centerNode) {
@@ -278,7 +331,7 @@ const GraphView: React.FC = () => {
                 forceGraphRef.current?.centerOnNode(centerNode);
             }
         }
-    }, [centerId, graphData]);
+    }, []);
 
     if (graphData.nodes.length === 0 && graphData.links.length === 0) {
         return <h2>No network data available</h2>;
@@ -349,7 +402,11 @@ const GraphView: React.FC = () => {
                 />
             </div>
 
-            <ResearcherSidebar selectedNode={selectedNode} onClose={handleCloseSidebar} />
+            <ResearcherSidebar
+                selectedNode={selectedNode}
+                onClose={handleCloseSidebar}
+                onExtendNetwork={handleExtendNetwork}
+            />
         </div>
     );
 };
