@@ -28,23 +28,21 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({
     }
 
     return (
-        <div className="sidebar-header p-3">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                <button
-                    className="btn btn-link p-0 border-0 shadow-none mx-2"
-                    onClick={toggleCompressed}
-                >
-                    <i className="mdi mdi-chevron-right fs-3"></i>
+        <div className="sidebar-header mb-3">
+            <div className="header-top">
+                <button className="icon-button" onClick={toggleCompressed}>
+                    <i className="mdi mdi-chevron-right"></i>
                 </button>
-                <h4 className="mb-0 text-secondary-color">{title}</h4>
-                <button
-                    className="btn btn-link p-0 border-0 shadow-none mx-2"
-                    onClick={onClose}
-                >
-                    <i className="mdi mdi-close fs-3"></i>
+
+                <h5 className="header-title">{title}</h5>
+
+                <button className="icon-button" onClick={onClose}>
+                    <i className="mdi mdi-close"></i>
                 </button>
             </div>
         </div>
+
+
     );
 };
 

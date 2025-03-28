@@ -26,7 +26,7 @@ const capitalizeFirstLetter = (text: string): string =>
     text.replace(/\b\w/g, (char) => char.toUpperCase());
 
 interface SidebarContentProps {
-    activeTab: "author" | "group" | "publications";
+    activeTab: "author" | "group" | "publications" | "options";
     selectedNode: NodeDatum;
     onAddInterest?: (interest: string) => void;
 }
