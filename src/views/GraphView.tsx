@@ -144,7 +144,7 @@ const GraphView: React.FC = () => {
     const handleExtendNetwork = async () => {
         if (!selectedNode?.s2id) return;
         try {
-            const extendedData = await getNetwork(authenticated, selectedNode.s2id, "author", 1);
+            const extendedData = await getNetwork(authenticated, selectedNode.name, "author", 1);
             const newAuthors = (extendedData.authors || []).map((a: any) => ({ ...a, type: "author" }));
             const newArticles = (extendedData.articles || []).map((a: any) => ({
                 id: a.id,
@@ -154,10 +154,16 @@ const GraphView: React.FC = () => {
             }));
             const newLinks = extendedData.links || [];
 
-            const mergedNodes = [...graphData.nodes];
-            newAuthors.concat(newArticles).forEach((n: NodeDatum) => {
-                if (!mergedNodes.find((m) => m.id === n.id)) mergedNodes.push(n);
-            });
+            const incomingNodes = newAuthors.concat(newArticles);
+            const existingNodes = graphData.nodes;
+
+            const mergedNodes = [
+                ...existingNodes.map((existingNode) => {
+                    const incoming = incomingNodes.find((n: { id: string; }) => n.id === existingNode.id);
+                    return incoming ? { ...existingNode, ...incoming } : existingNode;
+                }),
+                ...incomingNodes.filter((n: { id: string; }) => !existingNodes.some((e) => e.id === n.id))
+            ];
 
             const mergedLinks = [...graphData.links];
             newLinks.forEach((l: LinkDatum) => {
