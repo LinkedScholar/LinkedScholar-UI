@@ -8,7 +8,7 @@ import PathWindow from "../components/PathWindow";
 import Filters from "../components/Filter-Sidebar/filters";
 import { LinkDatum, NodeDatum } from "../types/graphTypes";
 import { bfs } from "../utils/bfs";
-import { getPath } from "../services/ApiGatewayService";
+import {getNetwork, getPath} from "../services/ApiGatewayService";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/views/graphView.scss";
 import { RootState } from "../redux/store";
@@ -138,6 +138,35 @@ const GraphView: React.FC = () => {
         setPathWindowOpen((prev) => !prev);
         if (!pathWindowOpen && filtersActive) {
             setFiltersActive(false);
+        }
+    };
+
+    const handleExtendNetwork = async () => {
+        if (!selectedNode?.s2id) return;
+        try {
+            const extendedData = await getNetwork(authenticated, selectedNode.s2id, "author", 1);
+            const newAuthors = (extendedData.authors || []).map((a: any) => ({ ...a, type: "author" }));
+            const newArticles = (extendedData.articles || []).map((a: any) => ({
+                id: a.id,
+                title: a.title,
+                name: a.title,
+                type: "article",
+            }));
+            const newLinks = extendedData.links || [];
+
+            const mergedNodes = [...graphData.nodes];
+            newAuthors.concat(newArticles).forEach((n: NodeDatum) => {
+                if (!mergedNodes.find((m) => m.id === n.id)) mergedNodes.push(n);
+            });
+
+            const mergedLinks = [...graphData.links];
+            newLinks.forEach((l: LinkDatum) => {
+                if (!mergedLinks.find((m) => m.source === l.source && m.target === l.target)) mergedLinks.push(l);
+            });
+
+            setGraphData({ nodes: mergedNodes, links: mergedLinks });
+        } catch (error) {
+            console.error("Error extending network:", error);
         }
     };
 
@@ -349,7 +378,11 @@ const GraphView: React.FC = () => {
                 />
             </div>
 
-            <ResearcherSidebar selectedNode={selectedNode} onClose={handleCloseSidebar} />
+            <ResearcherSidebar
+                selectedNode={selectedNode}
+                onClose={handleCloseSidebar}
+                onExtendNetwork={handleExtendNetwork}
+            />
         </div>
     );
 };

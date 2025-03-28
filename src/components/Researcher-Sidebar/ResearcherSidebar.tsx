@@ -12,6 +12,7 @@ interface ResearcherSidebarProps {
     nodes?: NodeDatum[];
     links?: LinkDatum[];
     bfsPath?: string[] | null;
+    onExtendNetwork?: () => void;
     onBFSRequest?: (
         startId: string,
         connectionType: "affiliation" | "author",
@@ -27,6 +28,7 @@ const ResearcherSidebar: React.FC<ResearcherSidebarProps> = ({
                                                                  links = [],
                                                                  bfsPath = null,
                                                                  onBFSRequest,
+                                                                 onExtendNetwork
                                                              }) => {
     const sidebarRef = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
@@ -91,7 +93,12 @@ const ResearcherSidebar: React.FC<ResearcherSidebarProps> = ({
                 <>
                     <SidebarTabs activeTab={activeTab} setActiveTab={setActiveTab} />
                     {selectedNode && (
-                        <SidebarContent activeTab={activeTab} selectedNode={selectedNode} onAddInterest={onAddInterest} />
+                        <SidebarContent
+                            activeTab={activeTab}
+                            selectedNode={selectedNode}
+                            onAddInterest={onAddInterest}
+                            onExtendNetwork={onExtendNetwork}
+                        />
                     )}
                 </>
             )}
