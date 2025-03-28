@@ -12,6 +12,7 @@ interface ResearcherSidebarProps {
     nodes?: NodeDatum[];
     links?: LinkDatum[];
     bfsPath?: string[] | null;
+    onExtendNetwork?: () => void;
     onBFSRequest?: (
         startId: string,
         connectionType: "affiliation" | "author",
@@ -27,11 +28,12 @@ const ResearcherSidebar: React.FC<ResearcherSidebarProps> = ({
                                                                  links = [],
                                                                  bfsPath = null,
                                                                  onBFSRequest,
+                                                                 onExtendNetwork
                                                              }) => {
     const sidebarRef = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
     const [compressed, setCompressed] = useState(false);
-    const [activeTab, setActiveTab] = useState<"author" | "group" | "publications">("author");
+    const [activeTab, setActiveTab] = useState<"author" | "group" | "publications" | "options">("author");
     const [selectedConnection, setSelectedConnection] = useState<{ value: string; label: string } | null>(null);
     const [connectionType, setConnectionType] = useState<"affiliation" | "author">("affiliation");
     const [connectionExpanded, setConnectionExpanded] = useState(false);
@@ -91,7 +93,12 @@ const ResearcherSidebar: React.FC<ResearcherSidebarProps> = ({
                 <>
                     <SidebarTabs activeTab={activeTab} setActiveTab={setActiveTab} />
                     {selectedNode && (
-                        <SidebarContent activeTab={activeTab} selectedNode={selectedNode} onAddInterest={onAddInterest} />
+                        <SidebarContent
+                            activeTab={activeTab}
+                            selectedNode={selectedNode}
+                            onAddInterest={onAddInterest}
+                            onExtendNetwork={onExtendNetwork}
+                        />
                     )}
                 </>
             )}

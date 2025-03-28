@@ -4,8 +4,15 @@ import '../../styles/views/footer/sponsor.scss';
 const Sponsor: React.FC = () => {
     return (
         <div className="page-container">
-
-            <main className="content sponsor-content" style={{ minHeight: 'calc(100vh - 160px)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <main
+                className="content sponsor-content"
+                style={{
+                    minHeight: 'calc(100vh - 160px)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center'
+                }}
+            >
                 <h1 className="footer-page-title">Become a Sponsor</h1>
                 <p className="sponsor-description">
                     Support <strong>LinkedScholar</strong> and help researchers connect, collaborate, and innovate.
@@ -51,10 +58,27 @@ const Sponsor: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Current Sponsors */}
+                <div className="sponsor-logos">
+                    <h2
+                        style={{
+                            width: '100%',
+                            textAlign: 'center',
+                            marginTop: '30px',
+                            marginBottom: '10px',
+                            fontSize: '22px'
+                        }}
+                    >
+                        Our Current Partners:
+                    </h2>
+                    <a href="https://eudita.es/" target="_blank" rel="noopener noreferrer">
+                        <img src="/sponsors/eudita_logo.jpg" alt="Eudita" className="sponsor-logo" />
+                    </a>
+                </div>
+
                 {/* Separator */}
                 <hr className="sponsor-separator" />
-                
-                
+
                 {/* DISABLED FOR NOW - Buy Me a Coffee and Custom Donation */}
                 {/*
                 <div className="sponsorship-tiers">
@@ -81,7 +105,6 @@ const Sponsor: React.FC = () => {
                 </div>
                 */}
             </main>
-
         </div>
     );
 };

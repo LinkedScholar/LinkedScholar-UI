@@ -4,8 +4,8 @@
   position: fixed;
   top: 160px;
   bottom: 80px;
-  right: -400px;
-  width: 400px;
+  right: -460px;
+  width: 460px; // Increased width for better space
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   padding: 24px;
@@ -37,118 +37,241 @@
     border-radius: 16px 0 0 16px;
     right: 0;
     z-index: 0;
-    // Ensure the researcher compressed sidebar stays at the top
     top: 160px;
   }
 
-  .sidebar-header {
-    .header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
+  .tab-scroll-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
 
-      .bold-title {
-        font-size: 18px;
-        font-weight: 700;
-        color: $primary-color;
-        margin: 0;
+    .sidebar-tabs {
+      display: flex;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      padding-bottom: 4px;
+
+      &::-webkit-scrollbar {
+        display: none;
       }
 
-      .header-buttons {
-        background: none;
-        border: none;
-        padding: 0;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: $secondary-color;
-        transition: color 0.2s ease;
+      .nav-item {
+        flex: 0 0 auto;
 
-        // Ensure the compress button is behind the close button
-        .compress-button {
-          width: 40px;
-          height: 40px;
+        .nav-link {
           display: flex;
           align-items: center;
-          justify-content: center;
-          z-index: 1;
-        }
-        .close-button {
-          width: 40px;
-          height: 40px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 2;
-        }
+          gap: 6px;
+          font-size: 14px;
+          font-weight: 500;
+          padding: 8px 14px;
+          border: none;
+          border-radius: 8px;
+          color: $primary-color;
+          background: none;
+          transition: background 0.2s ease, color 0.2s ease;
 
-        &:hover {
-          color: darken($secondary-color, 10%);
+          i {
+            font-size: 18px;
+          }
+
+          &.active {
+            background-color: rgba($primary-color, 0.1);
+            color: $secondary-color;
+            font-weight: 600;
+          }
+
+          &:hover {
+            background-color: rgba($primary-color, 0.07);
+          }
         }
       }
     }
 
-    .tabs {
+    .scroll-arrow {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 28px;
       display: flex;
-      justify-content: space-around;
-      margin-top: 8px;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(to right, rgba(255, 255, 255, 0.95), transparent);
+      border: none;
+      cursor: pointer;
+      font-size: 20px;
+      color: $primary-color;
+      z-index: 3;
+      padding: 0;
 
-      .tab-button {
-        background: transparent;
-        border: none;
-        font-size: 20px;
-        cursor: pointer;
+      &.left {
+        left: 0;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0.95), transparent);
+      }
+
+      &.right {
+        right: 0;
+        background: linear-gradient(to left, rgba(255, 255, 255, 0.95), transparent);
+      }
+
+      &:hover {
+        color: darken($primary-color, 10%);
+      }
+    }
+  }
+
+  .sidebar-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .header-title {
+        flex-grow: 1;
+        font-size: 16px;
+        font-weight: 600;
         color: $primary-color;
-        transition: color 0.3s ease;
+        margin: 0 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
 
-        &.active {
-          color: $secondary-color;
+      .icon-button {
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        font-size: 20px;
+        color: $secondary-color;
+        cursor: pointer;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: darken($secondary-color, 10%);
+        }
+
+        &:focus {
+          outline: none;
+        }
+
+        i {
+          pointer-events: none;
         }
       }
     }
   }
 
-  .sidebar-content {
-    .metadata-item {
-      display: flex;
-      flex-direction: column;
+  .options-section {
+    margin-top: 16px;
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: $primary-color;
       margin-bottom: 12px;
-      padding: 8px 12px;
-      transition: background 0.3s ease;
+    }
+    .extend-network-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      position: relative;
+
+      .tooltip-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        .info-icon {
+          font-size: 18px;
+          color: $secondary-color;
+          cursor: help;
+          transition: color 0.2s ease;
+
+          &:hover {
+            color: darken($secondary-color, 10%);
+          }
+        }
+
+        .tooltip-box {
+          position: absolute;
+          bottom: 125%;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #fff;
+          color: $primary-color;
+          padding: 10px 16px;
+          border-radius: 8px;
+          font-size: 13px;
+          font-weight: 500;
+          line-height: 1.5;
+          white-space: normal;
+          word-break: normal; // avoid breaking between words
+
+          text-align: center;
+          max-width: 5555px; // wider to avoid jumpy lines
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease, transform 0.3s ease;
+          z-index: 10;
+
+          &::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: #fff transparent transparent transparent;
+          }
+        }
+        &:hover .tooltip-box {
+          opacity: 1;
+          transform: translateX(-50%) translateY(-4px);
+        }
+      }
+    }
+
+    .extend-network-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: $secondary-color;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+
+      i {
+        font-size: 18px;
+      }
 
       &:hover {
-        background: rgba($primary-color, 0.1);
-        border-radius: 6px;
+        background: darken($primary-color, 10%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba($primary-color, 0.25);
       }
 
-      .metadata-key {
-        color: $primary-color;
-        font-size: 15px;
-        font-weight: 600;
-        margin: 0;
-      }
-
-      .metadata-value {
-        color: #333;
-        font-size: 15px;
-        margin-top: 4px;
-        margin-bottom: 4px;
-        user-select: text;
-      }
-
-      .metadata-value-link {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        color: $secondary-color;
-        text-decoration: none;
-        transition: color 0.3s ease;
-        display: block  ;
-
-        &:hover {
-          color: darken($secondary-color, 10%);
-          text-decoration: underline;
-        }
+      &:focus {
+        outline: none;
       }
     }
   }

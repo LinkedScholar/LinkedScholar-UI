@@ -26,14 +26,17 @@ const capitalizeFirstLetter = (text: string): string =>
     text.replace(/\b\w/g, (char) => char.toUpperCase());
 
 interface SidebarContentProps {
-    activeTab: "author" | "group" | "publications";
+    activeTab: "author" | "group" | "publications" | "options";
     selectedNode: NodeDatum;
     onAddInterest?: (interest: string) => void;
+    onExtendNetwork?: () => void;
 }
+
 const SidebarContent: React.FC<SidebarContentProps> = ({
                                                            activeTab,
                                                            selectedNode,
                                                            onAddInterest,
+                                                           onExtendNetwork,
                                                        }) => {
     if (activeTab === "author") {
         const ignoreKeys = ["id", "x", "y", "fx", "fy", "vx", "vy", "fixed", "type", "index", "s2id"];
@@ -42,7 +45,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                 !ignoreKeys.includes(key) &&
                 value !== null &&
                 value !== undefined &&
-                String(value).trim() !== "" // Ensure no empty or whitespace-only values
+                String(value).trim() !== ""
             )
             .sort(([keyA], [keyB]) => {
                 if (keyA.toLowerCase() === "name") return -1;
@@ -57,7 +60,6 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                 {sortedEntries.map(([key, value]) => {
                     const formattedKey = formatKeyName(key);
 
-                    // Handling interests as tags
                     if (key.toLowerCase().includes("interest")) {
                         const interests = String(value)
                             .split(",")
@@ -75,7 +77,6 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                         );
                     }
 
-                    // Handling Affiliation & Journals as tags
                     if (key.toLowerCase() === "affiliation" || key.toLowerCase() === "journals") {
                         const items = String(value)
                             .split(",")
@@ -95,8 +96,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                         );
                     }
 
-
-                    if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'string' && isURL(value[0])) {
+                    if (Array.isArray(value) && value.length > 0 && typeof value[0] === "string" && isURL(value[0])) {
                         const urls = value
                             .map((url: string) => url.trim())
                             .filter((url) => url.length > 0);
@@ -121,7 +121,6 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                         );
                     }
 
-                    // Default case for other metadata
                     return (
                         <div key={key} className="metadata-item">
                             <p className="metadata-key">{formattedKey}:</p>
@@ -131,17 +130,49 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                 })}
             </div>
         );
-    } else if (activeTab === "group") {
+    }
+
+    if (activeTab === "group") {
         return (
             <div className="sidebar-content">
                 <div className="metadata-item">
-                    <p className="metadata-value">Group content goes here. Display all researchers from the same affiliation.</p>
+                    <p className="metadata-value">
+                        Group content goes here. Display all researchers from the same affiliation.
+                    </p>
                 </div>
             </div>
         );
-    } else if (activeTab === "publications") {
+    }
+
+    if (activeTab === "publications") {
         return <PublicationsContent selectedNode={selectedNode} />;
     }
+
+    if (activeTab === "options") {
+        return (
+            <div className="sidebar-content">
+                <div className="options-section">
+                    <div className="extend-network-wrapper">
+                        <button
+                            className="extend-network-btn"
+                            onClick={onExtendNetwork}
+                        >
+                            <i className="mdi mdi-google-circles-extended me-2"></i>
+                            Get Full Network
+                        </button>
+
+                        <div className="tooltip-container">
+                            <i className="mdi mdi-information-outline info-icon"></i>
+                            <div className="tooltip-box">
+                                Show the author’s full network of connections and collaborators.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return null;
 };
 
