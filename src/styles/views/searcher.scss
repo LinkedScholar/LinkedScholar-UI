@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
 
-/* Colors */
 $primary-color: #003366;
 $secondary-color: #0066cc;
 $text-color: #202124;
@@ -18,9 +17,9 @@ $shadow-light: rgba(0, 0, 0, 0.15);
   text-align: center;
   font-family: 'Inter', sans-serif;
   background-color: $background-grey;
+  padding-bottom: 40px;
 }
 
-/* Header */
 .search-header {
   margin-bottom: 20px;
 }
@@ -30,12 +29,14 @@ $shadow-light: rgba(0, 0, 0, 0.15);
   align-items: baseline;
   justify-content: center;
   gap: 8px;
+  margin-bottom: 10px;
+  line-height: 1;
 }
 
 .title {
-  font-size: 82px;
+  font-size: 50px;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin: 0;
 }
 
 .title-linked {
@@ -47,27 +48,28 @@ $shadow-light: rgba(0, 0, 0, 0.15);
 }
 
 .version-text {
-  font-size: 20px; // Increased from 14px
+  font-size: 20px; 
   font-weight: 300;
   font-family: fangsong;
   font-style: italic;
   color: #888;
   position: relative;
+  margin: 0;
 }
 
 .search-info {
-  font-size: 16px; // Increased from 14px
+  font-size: 16px; 
   font-weight: 300;
   color: #5f6368;
-  margin-bottom: 20px; // More space below the info text
+  margin-top: 5px;
+  margin-bottom: 15px;
 }
 
-/* Full-width search bar */
 .search-container {
   width: 100%;
-  max-width: 750px; // Increased max width for a larger container
+  max-width: 750px;
   padding: 0 20px;
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 .search-bar {
@@ -76,8 +78,8 @@ $shadow-light: rgba(0, 0, 0, 0.15);
 
 .search-input {
   width: 100%;
-  padding: 16px 24px; // Increased padding for a larger input
-  font-size: 18px; // Increased font size
+  padding: 14px 20px;
+  font-size: 16px;
   font-family: 'Inter', sans-serif;
   border: 1px solid $border-grey;
   border-radius: 50px;
@@ -92,16 +94,15 @@ $shadow-light: rgba(0, 0, 0, 0.15);
   }
 }
 
-/* Search Buttons */
 .search-buttons {
   display: flex;
-  gap: 12px; // Increased gap between buttons
-  margin-top: 20px;
+  gap: 12px;
+  margin-top: 15px;
 }
 
 .search-button {
-  padding: 12px 24px; // Increased padding for larger clickable area
-  font-size: 16px; // Increased font size
+  padding: 10px 20px;
+  font-size: 15px;
   font-weight: 500;
   color: white;
   background-color: $primary-color;
@@ -117,8 +118,8 @@ $shadow-light: rgba(0, 0, 0, 0.15);
 }
 
 .search-button-secondary {
-  padding: 12px 24px; // Increased padding
-  font-size: 16px; // Increased font size
+  padding: 10px 20px;
+  font-size: 15px;
   font-weight: 500;
   background-color: #f1f3f4;
   border: 1px solid $border-grey;
@@ -131,19 +132,17 @@ $shadow-light: rgba(0, 0, 0, 0.15);
   }
 }
 
-/* Error Message */
 .error-message {
   color: #d93025;
-  font-size: 16px; // Increased font size for better readability
-  margin-top: 12px;
+  font-size: 16px;
+  margin-top: 10px;
   text-align: center;
   font-style: italic;
 }
 
-/* Delay Message */
 .delay-message {
-  margin-top: 24px; // More spacing above the delay message
-  padding: 18px 28px; // Increased padding
+  margin-top: 20px;
+  padding: 15px 25px;
   background-color: rgba($secondary-color, 0.1);
   border-left: 4px solid $secondary-color;
   border-radius: 8px;
@@ -152,9 +151,9 @@ $shadow-light: rgba(0, 0, 0, 0.15);
   animation: pulse 2s infinite;
 
   p {
-    margin: 6px 0;
+    margin: 5px 0;
     color: $secondary-color;
-    font-size: 17px; // Slightly larger text
+    font-size: 16px;
     font-weight: 500;
 
     &:first-child {
@@ -183,36 +182,36 @@ $shadow-light: rgba(0, 0, 0, 0.15);
   }
 }
 
-/* Ellipsis animation */
 @keyframes ellipsis {
   0% { content: "."; }
   33% { content: ".."; }
   66% { content: "..."; }
 }
 
-/* Responsive Adjustments */
 @media (max-width: 768px) {
   .title {
-    font-size: 42px;
+    font-size: 38px;
+    margin-bottom: 10px;
   }
 
   .version-text {
-    font-size: 14px;
-    top: 3px;
+    font-size: 13px;
+    top: 2px;
   }
 
   .search-info {
-    font-size: 16px;
-    margin-bottom: 16px;
+    font-size: 15px;
+    margin-bottom: 20px;
+    margin-top: 3px;
   }
 
   .search-input {
-    font-size: 16px;
-    padding: 14px 20px;
+    font-size: 15px;
+    padding: 12px 18px;
   }
 
   .search-button, .search-button-secondary {
-    font-size: 16px;
-    padding: 12px 20px;
+    font-size: 14px;
+    padding: 10px 18px;
   }
 }
