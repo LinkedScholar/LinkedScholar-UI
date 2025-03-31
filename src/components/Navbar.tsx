@@ -64,51 +64,35 @@ const Navbar: React.FC = () => {
       
             {/* Right: Authentication */}
             <div className="navbar-nav-container">
-              <button
-                className="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarNav"
-                aria-controls="navbarNav"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-              >
-                <span className="navbar-toggler-icon"></span>
-              </button>
-              {
-              <div className="collapse navbar-collapse d-none" id="navbarNav">
-                {status === "loading" ? (
-                  <p className="loading-text">Loading...</p>
-                ) : authenticated ? (
-                  <div className="dropdown">
-                    <button
-                      className="btn profile-btn dropdown-toggle d-flex align-items-center"
-                      onClick={() => setDropdownOpen(!dropdownOpen)}
-                    >
-                      {firstName && lastName ? `${firstName} ${lastName}` : "Profile"}
-                    </button>
-      
-                    {dropdownOpen && (
-                      <ul className="dropdown-menu show">
-                        <li className="dropdown-item text-muted">{email}</li>
-                        <li>
-                          <button className="dropdown-item text-danger" onClick={handleLogout}>
-                            Logout
-                          </button>
-                        </li>
-                      </ul>
-                    )}
-                  </div>
-                ) : (
-                  <button className="btn login-btn" onClick={handleLogin}>
-                    Sign In
+              {status === "loading" ? (
+                <p className="loading-text">Loading...</p>
+              ) : authenticated ? (
+                <div className="dropdown">
+                  <button
+                    className="btn profile-btn dropdown-toggle d-flex align-items-center"
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                  >
+                    {firstName && lastName ? `${firstName} ${lastName}` : "Profile"}
                   </button>
-                )}
-              </div>
-               }
-
+                  
+                  {dropdownOpen && (
+                    <ul className="dropdown-menu show">
+                      <li className="dropdown-item text-muted">{email}</li>
+                      <li>
+                        <button className="dropdown-item text-danger" onClick={handleLogout}>
+                          Logout
+                        </button>
+                      </li>
+                    </ul>
+                  )}
+                </div>
+              ) : (
+                <button className="btn login-btn" onClick={handleLogin}>
+                  Sign In
+                </button>
+              )}
             </div>
-            
+                        
             {/* Mobile Search Bar - shown below navbar on small screens */}
             {isNetworkPage && (
               <div className="navbar-search-mobile d-md-none w-100 mt-2">

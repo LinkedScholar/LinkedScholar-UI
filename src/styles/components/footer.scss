@@ -20,13 +20,13 @@
 
 .footer-brand p {
     text-align: center;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: bold;
-    color: $primary-color 
+    color: $primary-color;
 }
 
 .footer-brand span {
-    color: $secondary-color
+    color: $secondary-color;
 }
 
 /* Footer Links */
@@ -36,7 +36,7 @@
 }
 
 .footer-links .nav-link {
-    font-size: 14px;
+    font-size: 12px;
     color: $primary-color; 
     text-decoration: none;
     transition: color 0.3s ease-in-out;
@@ -54,7 +54,7 @@
 }
 
 .sponsor-link {
-    font-size: 14px;
+    font-size: 12px !important;
     padding: 6px 12px;
     border-radius: 8px;
     transition: all 0.3s ease-in-out;
@@ -67,17 +67,67 @@
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
-    .glass-footer {
-        flex-direction: column;
-        text-align: center;
+    .mobile-footer {
+        padding: 0;
+        max-height: 50px;
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+        
+        &.expanded {
+            max-height: 200px;
+            background: rgba(255, 255, 255, 0.5);
+        }
     }
-
-    .footer-links {
-        flex-direction: column;
-        gap: 10px;
+    
+    .mobile-footer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 15px;
+        cursor: pointer;
+        
+        .footer-brand {
+            margin: 0;
+        }
+        
+        .mobile-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            
+            i {
+                color: $primary-color;
+                font-size: 20px;
+            }
+        }
     }
-
-    .footer-sponsor {
-        margin-top: 10px;
+    
+    .mobile-footer-content {
+        padding: 5px 15px 15px;
+        
+        .footer-links {
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 10px;
+            gap: 2px;
+            
+            .nav-link {
+                padding: 5px 8px;
+                font-size: 12px;
+            }
+        }
+        
+        .footer-sponsor {
+            justify-content: center;
+            margin-top: 5px;
+            
+            .sponsor-link {
+                font-size: 12px;
+                padding: 4px 10px;
+            }
+        }
     }
 }
