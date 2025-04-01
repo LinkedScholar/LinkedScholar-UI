@@ -48,7 +48,7 @@
     .metadata-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
+      gap: 8px;
       margin-top: 12px;
     }
 
@@ -70,6 +70,7 @@
         font-size: 14px;
         color: #333;
         word-break: break-word;
+        margin: 0px;
       }
     }
 
