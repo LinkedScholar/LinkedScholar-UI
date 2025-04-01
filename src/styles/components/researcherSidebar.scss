@@ -93,7 +93,7 @@
       .interest-tags {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 4px;
         margin-top: 4px;
       }
 
@@ -124,9 +124,10 @@
     font-weight: 500;
     border-radius: 16px;
     border: 1px solid rgba($primary-color, 0.15);
-    white-space: nowrap;
+    white-space: break-spaces;
     transition: background 0.2s ease;
-
+    margin: 0px;
+    
     &:hover {
       background: rgba($primary-color, 0.1);
     }
