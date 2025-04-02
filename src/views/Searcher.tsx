@@ -3,10 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../redux/store";
 import { fetchSession } from "../redux/authSlice";
-import axios from "axios";
 import RegistrationModal from "../components/modals/RegistrationModal";
 import PricingModal from "../components/modals/PricingModal";
-import { toast } from "react-toastify";
 import { useResearcherSearch } from "../utils/searchUtility";
 
 import "bootstrap/dist/css/bootstrap.min.css";
