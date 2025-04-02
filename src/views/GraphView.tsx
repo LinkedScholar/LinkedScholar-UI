@@ -55,6 +55,8 @@ const GraphView: React.FC = () => {
     const [bfsPath, setBfsPath] = useState<string[] | null>(null);
     const [targetType, setTargetType] = useState<"affiliation" | "author">("affiliation");
     const [selectedAffiliations, setSelectedAffiliations] = useState<string[]>([]);
+    // Flag to ensure auto-centering happens only once per search.
+    const [initialCenterDone, setInitialCenterDone] = useState(false);
 
     const selectedNodeRef = useRef<NodeDatum | null>(null);
     const forceGraphRef = useRef<ForceGraphHandle | null>(null);
@@ -62,18 +64,23 @@ const GraphView: React.FC = () => {
 
     const { authenticated } = useSelector((state: RootState) => state.auth);
 
+    // Reset search-specific states when new network data is provided.
     useEffect(() => {
         setPathWindowOpen(false);
         setFiltersActive(false);
         setBfsPath(null);
         setStartNode(null);
         setTargetNode(null);
+        // When raw network data changes, we want to auto-center once.
+        setInitialCenterDone(false);
     }, [rawNetworkData]);
 
+    // Update graph data whenever computed network data changes.
     useEffect(() => {
         setGraphData(computedNetworkData);
     }, [computedNetworkData]);
 
+    // Show toast notifications based on the status from navigation state.
     useEffect(() => {
         if (location.state?.status === 206) {
             toast(
@@ -86,6 +93,7 @@ const GraphView: React.FC = () => {
                     <div style={{ marginTop: "0.75rem" }}>
                         <a
                             target="_blank"
+                            rel="noreferrer"
                             href="/contact"
                             style={{
                                 color: "var(--primary-color)",
@@ -106,6 +114,7 @@ const GraphView: React.FC = () => {
                 }
             );
         }
+
         if (location.state?.status === 204) {
             toast(
                 <div>
@@ -116,6 +125,7 @@ const GraphView: React.FC = () => {
                     <div style={{ marginTop: "0.75rem" }}>
                         <a
                             target="_blank"
+                            rel="noreferrer"
                             href="/contact"
                             style={{
                                 color: "var(--primary-color)",
@@ -136,8 +146,7 @@ const GraphView: React.FC = () => {
                 }
             );
         }
-    }, [location.state?.status]);
-
+    }, [location.key]);
     const affiliations = useMemo(() => {
         const affSet = new Set<string>();
         graphData.nodes.forEach((node) => {
@@ -227,7 +236,10 @@ const GraphView: React.FC = () => {
             const mergedLinks = [
                 ...existingLinks,
                 ...newLinks.filter(
-                    (l) => !existingLinks.some((existing) => existing.source === l.source && existing.target === l.target)
+                    (l) =>
+                        !existingLinks.some(
+                            (existing) => existing.source === l.source && existing.target === l.target
+                        )
                 ),
             ];
 
@@ -335,16 +347,19 @@ const GraphView: React.FC = () => {
     };
 
     useEffect(() => {
-        if (centerId && computedNetworkData.nodes.length > 0) {
-            const centerNode = computedNetworkData.nodes.find((node) => node.id.toString() === centerId.toString());
+        if (!initialCenterDone && centerId && computedNetworkData.nodes.length > 0) {
+            const centerNode = computedNetworkData.nodes.find(
+                (node) => node.id.toString() === centerId.toString()
+            );
             if (centerNode) {
                 setSelectedNode(centerNode);
                 selectedNodeRef.current = centerNode;
                 if (updateHighlightRef.current) updateHighlightRef.current(centerNode);
                 forceGraphRef.current?.centerOnNode(centerNode);
+                setInitialCenterDone(true);
             }
         }
-    }, []);
+    }, [centerId, computedNetworkData, initialCenterDone]);
 
     if (graphData.nodes.length === 0 && graphData.links.length === 0) {
         return <h2>No network data available</h2>;
