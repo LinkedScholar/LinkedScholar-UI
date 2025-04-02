@@ -69,7 +69,7 @@ const MiniSearcher: React.FC = () => {
         clearTimeout(delayTimer);
         setShowDelayMessage(false);
         setSearchTerm("");
-        const centerId = response.center_id || profileData.author_id;
+        const centerId = response.data.center_id || profileData.author_id;
         navigate("/network", { state: { networkData: response, centerId } });
       } catch (error) {
         clearTimeout(delayTimer);

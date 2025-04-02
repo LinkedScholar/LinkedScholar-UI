@@ -13,6 +13,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/views/graphView.scss";
 import { RootState } from "../redux/store";
 import * as d3 from "d3";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 interface NetworkData {
     nodes: NodeDatum[];
@@ -70,6 +73,40 @@ const GraphView: React.FC = () => {
     useEffect(() => {
         setGraphData(computedNetworkData);
     }, [computedNetworkData]);
+
+    useEffect(() => {
+        if (location.state?.status === 206) {
+            toast(
+                <div>
+                    <strong>Heads up! 🔍</strong>
+                    <div style={{ marginTop: "0.5rem" }}>
+                        We couldn’t find the exact person you were looking for.
+                        Here's the closest match we found.
+                    </div>
+                    <div style={{ marginTop: "0.75rem" }}>
+                        <a
+                            target="_blank"
+                            href="/contact"
+                            style={{
+                                color: "var(--primary-color)",
+                                textDecoration: "underline",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            Not who you were looking for?
+                        </a>
+                    </div>
+                </div>,
+                {
+                    position: "top-center",
+                    autoClose: 8000,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    className: "blue-toast",
+                }
+            );
+        }
+    }, [location.state?.status]);
 
     const affiliations = useMemo(() => {
         const affSet = new Set<string>();
@@ -140,14 +177,14 @@ const GraphView: React.FC = () => {
         if (!selectedNode?.s2id) return;
         try {
             const extendedData = await getNetwork(authenticated, "s2id:" + selectedNode.s2id, "author", 1);
-            const newAuthors = (extendedData.authors || []).map((a: any) => ({ ...a, type: "author" }));
-            const newArticles = (extendedData.articles || []).map((a: any) => ({
+            const newAuthors = (extendedData.data.authors || []).map((a: any) => ({ ...a, type: "author" }));
+            const newArticles = (extendedData.data.articles || []).map((a: any) => ({
                 id: a.id,
                 title: a.title,
                 name: a.title,
                 type: "article",
             }));
-            const newLinks: LinkDatum[] = extendedData.links || [];
+            const newLinks: LinkDatum[] = extendedData.data.links || [];
 
             const existingNodes = graphData.nodes;
             const incomingNodes = [...newAuthors, ...newArticles];
@@ -285,6 +322,8 @@ const GraphView: React.FC = () => {
 
     return (
         <div className="graph-view-container">
+            {/* ToastContainer to render toast notifications */}
+            <ToastContainer />
             {/* Toolbar */}
             <div className="toolbar-container">
                 <Toolbar

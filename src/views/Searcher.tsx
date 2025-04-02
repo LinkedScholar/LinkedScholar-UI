@@ -7,6 +7,7 @@ import axios from "axios";
 import { getNetwork } from "../services/ApiGatewayService";
 import RegistrationModal from "../components/modals/RegistrationModal";
 import PricingModal from "../components/modals/PricingModal";
+import { toast } from "react-toastify";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/views/searcher.scss";
@@ -71,7 +72,7 @@ const Searcher: React.FC = () => {
                     if (!localResponse.ok) {
                         throw new Error("Failed to fetch local data");
                     }
-                    response = await localResponse.json();
+                    response = { data: await localResponse.json(), status: 200 };
                 } else {
                     response = await getNetwork(
                         authenticated,
@@ -84,9 +85,10 @@ const Searcher: React.FC = () => {
                 clearTimeout(delayTimer);
                 setShowDelayMessage(false);
 
-                const centerId = response.center_id || profileData.author_id;
+                const centerId = response.data.center_id || profileData.author_id;
+                const status = response.status;
 
-                navigate("/network", { state: { networkData: response, centerId } });
+                navigate("/network", { state: { networkData: response.data, centerId, status } });
             } catch (error) {
                 clearTimeout(delayTimer);
                 setShowDelayMessage(false);

@@ -9,7 +9,7 @@ export const getNetwork = async (
     author_id: string,
     kind: string,
     recursivity: number = 1
-): Promise<any> => {
+): Promise<{ status: number; data: any }> => {
     try {
         const url = logged ? `${API_BASE_URL}/network` : `${API_PUBLIC_BASE_URL}/network`;
         const response = await axios.post(
@@ -18,9 +18,13 @@ export const getNetwork = async (
             {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
+                validateStatus: (status) => status < 500,
             }
         );
-        return response.data;
+
+        const status = response.status;
+
+        return { status, data: response.data };
     } catch (error) {
         console.error("Error fetching network:", error);
         throw error;
