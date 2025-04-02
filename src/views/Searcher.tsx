@@ -88,6 +88,37 @@ const Searcher: React.FC = () => {
                 const centerId = response.data.center_id || profileData.author_id;
                 const status = response.status;
 
+                if (status === 404) {
+                    toast(
+                        <div>
+                            <strong>Researcher not found</strong>
+                            <div style={{ marginTop: "0.5rem" }}>
+                                We couldn't find the person you searched for, and no close matches were available.
+                            </div>
+                            <div style={{ marginTop: "0.75rem" }}>
+                                <a
+                                    href="/contact"
+                                    style={{
+                                        color: "var(--primary-color)",
+                                        textDecoration: "underline",
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    Think this is a mistake? Contact us →
+                                </a>
+                            </div>
+                        </div>,
+                        {
+                            position: "top-center",
+                            autoClose: 8000,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            className: "blue-toast",
+                        }
+                    );
+                    return;
+                }
+
                 navigate("/network", { state: { networkData: response.data, centerId, status } });
             } catch (error) {
                 clearTimeout(delayTimer);

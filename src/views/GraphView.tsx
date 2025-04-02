@@ -106,6 +106,36 @@ const GraphView: React.FC = () => {
                 }
             );
         }
+        if (location.state?.status === 204) {
+            toast(
+                <div>
+                    <strong>Heads up! 🔍</strong>
+                    <div style={{ marginTop: "0.5rem" }}>
+                        The person you searched does not have any connections.
+                    </div>
+                    <div style={{ marginTop: "0.75rem" }}>
+                        <a
+                            target="_blank"
+                            href="/contact"
+                            style={{
+                                color: "var(--primary-color)",
+                                textDecoration: "underline",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            Think this is a mistake? Contact us →
+                        </a>
+                    </div>
+                </div>,
+                {
+                    position: "top-center",
+                    autoClose: 8000,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    className: "blue-toast",
+                }
+            );
+        }
     }, [location.state?.status]);
 
     const affiliations = useMemo(() => {
