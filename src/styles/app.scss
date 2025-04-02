@@ -3,6 +3,14 @@ $primary-color: #003366;
 $secondary-color: #0066cc;
 $background-grey: #ffffff;  // Matching greyish background
 $shadow-light: rgba(0, 0, 0, 0.15);
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; // ✅ prevent horizontal scroll
+  height: 100%;
+}
 
 /* Global Styles */
 body {
