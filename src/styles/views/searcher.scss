@@ -48,7 +48,7 @@ $shadow-light: rgba(0, 0, 0, 0.15);
 }
 
 .version-text {
-  font-size: 20px; 
+  font-size: 20px;
   font-weight: 300;
   font-family: fangsong;
   font-style: italic;
@@ -58,7 +58,7 @@ $shadow-light: rgba(0, 0, 0, 0.15);
 }
 
 .search-info {
-  font-size: 16px; 
+  font-size: 16px;
   font-weight: 300;
   color: #5f6368;
   margin-top: 5px;
@@ -74,6 +74,7 @@ $shadow-light: rgba(0, 0, 0, 0.15);
 
 .search-bar {
   width: 100%;
+  position: relative;
 }
 
 .search-input {
@@ -91,6 +92,40 @@ $shadow-light: rgba(0, 0, 0, 0.15);
     border-color: $primary-color;
     box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.15);
     outline: none;
+  }
+}
+
+.suggestions-list {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid $border-grey;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px $shadow-light;
+  z-index: 1000;
+  max-height: 260px;
+  overflow-y: auto;
+  font-family: 'Inter', sans-serif;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.suggestion-item {
+  padding: 12px 20px;
+  font-size: 15px;
+  color: $text-color;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease, padding-left 0.2s ease;
+
+  &:hover {
+    background-color: #f1f3f4;
+    padding-left: 24px;
+  }
+
+  & + .suggestion-item {
+    border-top: 1px solid #eee;
   }
 }
 
@@ -182,10 +217,27 @@ $shadow-light: rgba(0, 0, 0, 0.15);
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes ellipsis {
-  0% { content: "."; }
-  33% { content: ".."; }
-  66% { content: "..."; }
+  0% {
+    content: ".";
+  }
+  33% {
+    content: "..";
+  }
+  66% {
+    content: "...";
+  }
 }
 
 @media (max-width: 768px) {
@@ -210,8 +262,18 @@ $shadow-light: rgba(0, 0, 0, 0.15);
     padding: 12px 18px;
   }
 
-  .search-button, .search-button-secondary {
+  .search-button,
+  .search-button-secondary {
     font-size: 14px;
     padding: 10px 18px;
+  }
+
+  .suggestions-list {
+    max-height: 200px;
+  }
+
+  .suggestion-item {
+    font-size: 14px;
+    padding: 10px 16px;
   }
 }

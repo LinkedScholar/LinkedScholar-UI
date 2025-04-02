@@ -13,6 +13,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/views/graphView.scss";
 import { RootState } from "../redux/store";
 import * as d3 from "d3";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 interface NetworkData {
     nodes: NodeDatum[];
@@ -52,6 +55,8 @@ const GraphView: React.FC = () => {
     const [bfsPath, setBfsPath] = useState<string[] | null>(null);
     const [targetType, setTargetType] = useState<"affiliation" | "author">("affiliation");
     const [selectedAffiliations, setSelectedAffiliations] = useState<string[]>([]);
+    // Flag to ensure auto-centering happens only once per search.
+    const [initialCenterDone, setInitialCenterDone] = useState(false);
 
     const selectedNodeRef = useRef<NodeDatum | null>(null);
     const forceGraphRef = useRef<ForceGraphHandle | null>(null);
@@ -59,18 +64,89 @@ const GraphView: React.FC = () => {
 
     const { authenticated } = useSelector((state: RootState) => state.auth);
 
+    // Reset search-specific states when new network data is provided.
     useEffect(() => {
         setPathWindowOpen(false);
         setFiltersActive(false);
         setBfsPath(null);
         setStartNode(null);
         setTargetNode(null);
+        // When raw network data changes, we want to auto-center once.
+        setInitialCenterDone(false);
     }, [rawNetworkData]);
 
+    // Update graph data whenever computed network data changes.
     useEffect(() => {
         setGraphData(computedNetworkData);
     }, [computedNetworkData]);
 
+    // Show toast notifications based on the status from navigation state.
+    useEffect(() => {
+        if (location.state?.status === 206) {
+            toast(
+                <div>
+                    <strong>Heads up! 🔍</strong>
+                    <div style={{ marginTop: "0.5rem" }}>
+                        We couldn’t find the exact person you were looking for.
+                        Here's the closest match we found.
+                    </div>
+                    <div style={{ marginTop: "0.75rem" }}>
+                        <a
+                            target="_blank"
+                            rel="noreferrer"
+                            href="/contact"
+                            style={{
+                                color: "var(--primary-color)",
+                                textDecoration: "underline",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            Not who you were looking for?
+                        </a>
+                    </div>
+                </div>,
+                {
+                    position: "top-center",
+                    autoClose: 8000,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    className: "blue-toast",
+                }
+            );
+        }
+
+        if (location.state?.status === 204) {
+            toast(
+                <div>
+                    <strong>Heads up! 🔍</strong>
+                    <div style={{ marginTop: "0.5rem" }}>
+                        The person you searched does not have any connections.
+                    </div>
+                    <div style={{ marginTop: "0.75rem" }}>
+                        <a
+                            target="_blank"
+                            rel="noreferrer"
+                            href="/contact"
+                            style={{
+                                color: "var(--primary-color)",
+                                textDecoration: "underline",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            Think this is a mistake? Contact us →
+                        </a>
+                    </div>
+                </div>,
+                {
+                    position: "top-center",
+                    autoClose: 8000,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    className: "blue-toast",
+                }
+            );
+        }
+    }, [location.key]);
     const affiliations = useMemo(() => {
         const affSet = new Set<string>();
         graphData.nodes.forEach((node) => {
@@ -140,14 +216,14 @@ const GraphView: React.FC = () => {
         if (!selectedNode?.s2id) return;
         try {
             const extendedData = await getNetwork(authenticated, "s2id:" + selectedNode.s2id, "author", 1);
-            const newAuthors = (extendedData.authors || []).map((a: any) => ({ ...a, type: "author" }));
-            const newArticles = (extendedData.articles || []).map((a: any) => ({
+            const newAuthors = (extendedData.data.authors || []).map((a: any) => ({ ...a, type: "author" }));
+            const newArticles = (extendedData.data.articles || []).map((a: any) => ({
                 id: a.id,
                 title: a.title,
                 name: a.title,
                 type: "article",
             }));
-            const newLinks: LinkDatum[] = extendedData.links || [];
+            const newLinks: LinkDatum[] = extendedData.data.links || [];
 
             const existingNodes = graphData.nodes;
             const incomingNodes = [...newAuthors, ...newArticles];
@@ -160,7 +236,10 @@ const GraphView: React.FC = () => {
             const mergedLinks = [
                 ...existingLinks,
                 ...newLinks.filter(
-                    (l) => !existingLinks.some((existing) => existing.source === l.source && existing.target === l.target)
+                    (l) =>
+                        !existingLinks.some(
+                            (existing) => existing.source === l.source && existing.target === l.target
+                        )
                 ),
             ];
 
@@ -268,16 +347,19 @@ const GraphView: React.FC = () => {
     };
 
     useEffect(() => {
-        if (centerId && computedNetworkData.nodes.length > 0) {
-            const centerNode = computedNetworkData.nodes.find((node) => node.id.toString() === centerId.toString());
+        if (!initialCenterDone && centerId && computedNetworkData.nodes.length > 0) {
+            const centerNode = computedNetworkData.nodes.find(
+                (node) => node.id.toString() === centerId.toString()
+            );
             if (centerNode) {
                 setSelectedNode(centerNode);
                 selectedNodeRef.current = centerNode;
                 if (updateHighlightRef.current) updateHighlightRef.current(centerNode);
                 forceGraphRef.current?.centerOnNode(centerNode);
+                setInitialCenterDone(true);
             }
         }
-    }, []);
+    }, [centerId, computedNetworkData, initialCenterDone]);
 
     if (graphData.nodes.length === 0 && graphData.links.length === 0) {
         return <h2>No network data available</h2>;
@@ -285,6 +367,7 @@ const GraphView: React.FC = () => {
 
     return (
         <div className="graph-view-container">
+
             {/* Toolbar */}
             <div className="toolbar-container">
                 <Toolbar

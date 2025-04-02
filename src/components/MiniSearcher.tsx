@@ -2,10 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../redux/store";
-import { getNetwork } from "../services/ApiGatewayService";
-import axios from "axios";
 import RegistrationModal from "./modals/RegistrationModal";
 import PricingModal from "./modals/PricingModal";
+import { useResearcherSearch } from "../utils/searchUtility";
 import "../styles/components/miniSearcher.scss";
 
 const MiniSearcher: React.FC = () => {
@@ -13,81 +12,60 @@ const MiniSearcher: React.FC = () => {
   const { authenticated } = useSelector((state: RootState) => state.auth);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [error, setError] = useState("");
-  const [showDelayMessage, setShowDelayMessage] = useState(false);
+  const [localError, setLocalError] = useState("");
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showDelayMessage, setShowDelayMessage] = useState(false);
+
+  const inputWrapperRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Focus input when the component mounts (or when needed)
   useEffect(() => {
-    if (searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
+    searchInputRef.current?.focus();
   }, []);
 
-  const extractProfileData = (url: string) => {
-    if (url.match(/scholar\.google\.[a-z.]+/)) {
-      const match = url.match(/[?&]user=([^&]+)/);
-      if (match && match[1]) {
-        return { author_id: match[1], source: "google" };
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (inputWrapperRef.current && !inputWrapperRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
       }
-    } else if (url.includes("researchgate.net/profile")) {
-      const match = url.match(/profile\/([^/]+)/);
-      if (match && match[1]) {
-        return { author_id: match[1], source: "research_gate" };
-      }
-    } else {
-      return { author_id: url, source: "dblp" };
-    }
-    return null;
-  };
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const { search, error, loading, suggestions, fetchSuggestions } = useResearcherSearch(authenticated);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setShowDelayMessage(false);
+    setShowSuggestions(false);
+    setLocalError("");
+    const delayTimer = setTimeout(() => {
+      setShowDelayMessage(true);
+    }, 300);
 
-    if (searchTerm.trim()) {
-      const profileData = extractProfileData(searchTerm);
-      if (!profileData) {
-        setError("Invalid researcher profile URL.");
-        return;
-      }
+    try {
+      const result = await search(searchTerm);
+      clearTimeout(delayTimer);
+      setShowDelayMessage(false);
+      if (!result) return;
 
-      const delayTimer = setTimeout(() => {
-        setShowDelayMessage(true);
-      }, 1000);
+      if (result.status === 204) return;
 
-      try {
-        const response = await getNetwork(
-            authenticated,
-            profileData.author_id,
-            profileData.source,
-            1
-        );
-        clearTimeout(delayTimer);
-        setShowDelayMessage(false);
+      if (result.data) {
         setSearchTerm("");
-        const centerId = response.center_id || profileData.author_id;
-        navigate("/network", { state: { networkData: response, centerId } });
-      } catch (error) {
-        clearTimeout(delayTimer);
-        setShowDelayMessage(false);
-        if (axios.isAxiosError(error) && error.response) {
-          if (error.response.status === 429 && !authenticated) {
-            setIsRegistrationModalOpen(true);
-            return;
-          }
-          if (error.response.status === 409 && authenticated) {
-            setIsPricingModalOpen(true);
-            return;
-          }
-        }
-        setError("The service is unavailable. Please try later");
+        navigate("/network", {
+          state: { networkData: result.data, centerId: result.centerId, status: result.status },
+        });
       }
-    } else {
-      setError("Enter a valid researcher name or profile URL.");
+    } catch (err: any) {
+      clearTimeout(delayTimer);
+      setShowDelayMessage(false);
+
+      if (err.code === 429) return setIsRegistrationModalOpen(true);
+      if (err.code === 409) return setIsPricingModalOpen(true);
+      setLocalError(error);
     }
   };
 
@@ -95,7 +73,7 @@ const MiniSearcher: React.FC = () => {
       <>
         <div className="mini-searcher-container">
           <form onSubmit={handleSearch} className="mini-search-form">
-            <div className="search-input-wrapper">
+            <div className="search-input-wrapper" ref={inputWrapperRef}>
               <i className="mdi mdi-magnify search-icon"></i>
               <input
                   ref={searchInputRef}
@@ -103,7 +81,12 @@ const MiniSearcher: React.FC = () => {
                   className="mini-search-input"
                   placeholder="Search researchers..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSearchTerm(value);
+                    fetchSuggestions(value);
+                    setShowSuggestions(true);
+                  }}
               />
               {searchTerm && (
                   <button
@@ -117,10 +100,28 @@ const MiniSearcher: React.FC = () => {
               <button type="submit" className="mini-search-button">
                 Search
               </button>
+
+              {showSuggestions && suggestions.length > 0 && (
+                  <div className="mini-suggestions-list">
+                    {suggestions.map((name, i) => (
+                        <div
+                            key={i}
+                            className="mini-suggestion-item"
+                            onClick={() => {
+                              setSearchTerm(name);
+                              setShowSuggestions(false);
+                            }}
+                        >
+                          {name}
+                        </div>
+                    ))}
+                  </div>
+              )}
             </div>
           </form>
-          {error && <p className="mini-search-error">{error}</p>}
-          {showDelayMessage && (
+
+          {localError && <p className="mini-search-error">{localError}</p>}
+          {loading && (
               <div className="mini-search-delay-message">
                 <p>We are building the network, please wait...</p>
               </div>

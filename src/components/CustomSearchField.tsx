@@ -34,14 +34,18 @@ const CustomSearchField: React.FC<CustomSearchFieldProps> = ({
         setInputValue(value?.label || "");
     }, [value]);
 
-    const normalizeText = (text: string) => text.normalize("NFC").trim();
+    const normalizeText = (text: string) =>
+        text
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .trim();
 
     const isInvalidInput = (text: string) => {
         const urlPattern = /^(https?:\/\/)/i;
-        const invalidChars = /[^\x20-\x7E]/g;
         const xssPattern = /<script.*?>.*?<\/script>/gi;
 
-        return urlPattern.test(text) || invalidChars.test(text) || xssPattern.test(text);
+        return urlPattern.test(text) || xssPattern.test(text);
     };
 
     useEffect(() => {
