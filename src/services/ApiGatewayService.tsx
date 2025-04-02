@@ -33,23 +33,26 @@ export const getNetwork = async (
 
 export const getBestMatchings = async (
     logged: boolean,
-    author_id: string
-): Promise<any> => {
+    partialName: string
+): Promise<string[]> => {
     try {
-        const url = logged ? `${API_BASE_URL}/best_matches` : `${API_PUBLIC_BASE_URL}/best_matches`;
-        // Send JSON body instead of form data.
+        const url = logged
+            ? `${API_BASE_URL}/best_matches`
+            : `${API_PUBLIC_BASE_URL}/best_matches`;
+
         const response = await axios.post(
             url,
-            { author_id },
+            { partial_name: partialName, kind: "author" },
             {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
             }
         );
-        return response.data;
+
+        return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
         console.error("Error fetching best matchings:", error);
-        throw error;
+        return [];
     }
 };
 

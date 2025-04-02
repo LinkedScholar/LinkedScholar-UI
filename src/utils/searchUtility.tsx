@@ -1,7 +1,7 @@
-import { useState } from "react";
+import {useRef, useState} from "react";
 import axios from "axios";
-import { getNetwork } from "../services/ApiGatewayService";
-import { toast } from "react-toastify";
+import {getBestMatchings, getNetwork} from "../services/ApiGatewayService";
+import {Id, toast} from "react-toastify";
 
 const REACT_APP_LOCAL_MODE = process.env.REACT_APP_LOCAL_MODE === "true";
 
@@ -18,8 +18,23 @@ export interface SearchError extends Error {
 export const useResearcherSearch = (authenticated: boolean) => {
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
+    const [suggestions, setSuggestions] = useState<string[]>([]);
+    const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    let activeToastId: Id | null = null;
 
-    // Common utility to extract profile data from a URL or string.
+    const fetchSuggestions = (input: string) => {
+        if (input.length < 4) {
+            setSuggestions([]);
+            return;
+        }
+
+        if (debounceTimer.current) clearTimeout(debounceTimer.current);
+        debounceTimer.current = setTimeout(async () => {
+            const results = await getBestMatchings(authenticated, input);
+            setSuggestions(results);
+        }, 500); // debounce delay: 0.3
+    };
+
     const extractProfileData = (url: string) => {
         if (url.match(/scholar\.google\.[a-z.]+/)) {
             const match = url.match(/[?&]user=([^&]+)/);
@@ -81,37 +96,39 @@ export const useResearcherSearch = (authenticated: boolean) => {
             const centerId = response.data.center_id || profileData.author_id;
             const status = response.status;
 
-            // Show a toast if the status is 404.
-            if (status === 404) {
-                toast(
+            if (status === 204) {
+                if (activeToastId) {
+                    toast.dismiss(activeToastId);
+                }
+
+                activeToastId = toast(
                     <div>
                         <strong>Researcher not found</strong>
-                <div style={{ marginTop: "0.5rem" }}>
-                We couldn't find the person you searched for, and no close matches were available.
-                </div>
-                <div style={{ marginTop: "0.75rem" }}>
-                <a
-                    href="/contact"
-                style={{
-                    color: "var(--primary-color)",
-                        textDecoration: "underline",
-                        fontWeight: "bold",
-                }}
-            >
-                Think this is a mistake? Contact us →
-              </a>
-              </div>
-              </div>,
-                {
-                    position: "top-center",
+                        <div style={{ marginTop: "0.5rem" }}>
+                            We couldn't find the person you searched for, and no close matches were available.
+                        </div>
+                        <div style={{ marginTop: "0.75rem" }}>
+                            <a
+                                href="/contact"
+                                style={{
+                                    color: "var(--primary-color)",
+                                    textDecoration: "underline",
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                Think this is a mistake? Contact us →
+                            </a>
+                        </div>
+                    </div>,
+                    {
+                        position: "top-center",
                         autoClose: 8000,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    className: "blue-toast",
-                }
-            );
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        className: "blue-toast",
+                    }
+                );
             }
-
             return { status, data: response.data, centerId };
         } catch (err: any) {
             clearTimeout(delayTimer);
@@ -133,5 +150,12 @@ export const useResearcherSearch = (authenticated: boolean) => {
         }
     };
 
-    return { search, error, loading, extractProfileData };
+    return {
+        search,
+        error,
+        loading,
+        suggestions,
+        fetchSuggestions,
+        extractProfileData
+    };
 };

@@ -367,8 +367,7 @@ const GraphView: React.FC = () => {
 
     return (
         <div className="graph-view-container">
-            {/* ToastContainer to render toast notifications */}
-            <ToastContainer />
+
             {/* Toolbar */}
             <div className="toolbar-container">
                 <Toolbar

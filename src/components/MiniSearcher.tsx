@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../redux/store";
-import axios from "axios";
 import RegistrationModal from "./modals/RegistrationModal";
 import PricingModal from "./modals/PricingModal";
 import { useResearcherSearch } from "../utils/searchUtility";
@@ -14,38 +13,58 @@ const MiniSearcher: React.FC = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [localError, setLocalError] = useState("");
-
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showDelayMessage, setShowDelayMessage] = useState(false);
 
+  const inputWrapperRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     searchInputRef.current?.focus();
   }, []);
 
-  const { search, error, loading } = useResearcherSearch(authenticated);
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (inputWrapperRef.current && !inputWrapperRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const { search, error, loading, suggestions, fetchSuggestions } = useResearcherSearch(authenticated);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
+    setShowSuggestions(false);
     setLocalError("");
+    const delayTimer = setTimeout(() => {
+      setShowDelayMessage(true);
+    }, 300);
+
     try {
       const result = await search(searchTerm);
-      if (result && result.data) {
+      clearTimeout(delayTimer);
+      setShowDelayMessage(false);
+      if (!result) return;
+
+      if (result.status === 204) return;
+
+      if (result.data) {
         setSearchTerm("");
-        // Pass same structure as in Searcher: networkData, centerId and status.
         navigate("/network", {
           state: { networkData: result.data, centerId: result.centerId, status: result.status },
         });
       }
     } catch (err: any) {
-      if (err.code === 429) {
-        setIsRegistrationModalOpen(true);
-        return;
-      }
-      if (err.code === 409) {
-        setIsPricingModalOpen(true);
-        return;
-      }
+      clearTimeout(delayTimer);
+      setShowDelayMessage(false);
+
+      if (err.code === 429) return setIsRegistrationModalOpen(true);
+      if (err.code === 409) return setIsPricingModalOpen(true);
       setLocalError(error);
     }
   };
@@ -54,7 +73,7 @@ const MiniSearcher: React.FC = () => {
       <>
         <div className="mini-searcher-container">
           <form onSubmit={handleSearch} className="mini-search-form">
-            <div className="search-input-wrapper">
+            <div className="search-input-wrapper" ref={inputWrapperRef}>
               <i className="mdi mdi-magnify search-icon"></i>
               <input
                   ref={searchInputRef}
@@ -62,7 +81,12 @@ const MiniSearcher: React.FC = () => {
                   className="mini-search-input"
                   placeholder="Search researchers..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSearchTerm(value);
+                    fetchSuggestions(value);
+                    setShowSuggestions(true);
+                  }}
               />
               {searchTerm && (
                   <button
@@ -76,8 +100,26 @@ const MiniSearcher: React.FC = () => {
               <button type="submit" className="mini-search-button">
                 Search
               </button>
+
+              {showSuggestions && suggestions.length > 0 && (
+                  <div className="mini-suggestions-list">
+                    {suggestions.map((name, i) => (
+                        <div
+                            key={i}
+                            className="mini-suggestion-item"
+                            onClick={() => {
+                              setSearchTerm(name);
+                              setShowSuggestions(false);
+                            }}
+                        >
+                          {name}
+                        </div>
+                    ))}
+                  </div>
+              )}
             </div>
           </form>
+
           {localError && <p className="mini-search-error">{localError}</p>}
           {loading && (
               <div className="mini-search-delay-message">

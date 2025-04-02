@@ -14,6 +14,7 @@ import LoginPage from "./views/LoginPage";
 import "bootstrap/dist/css/bootstrap.min.css";
 import GraphView from "./views/GraphView";
 import ProtectedRoute from "./components/ProtectedRoute";
+import {ToastContainer} from "react-toastify";
 
 function Api() {
     return null;
@@ -26,7 +27,8 @@ const App: React.FC = () => {
                 <header>
                     <Navbar />
                 </header>
-
+                {/* ToastContainer to render toast notifications */}
+                <ToastContainer />
                 {/* Main Content Area (Grows to Fill Space) */}
                 <main className="main-content flex-grow-1 d-flex justify-content-center align-items-center">
                     <Routes>
