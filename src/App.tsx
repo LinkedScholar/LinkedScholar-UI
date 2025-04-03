@@ -27,7 +27,7 @@ const App: React.FC = () => {
                     <Navbar />
                 </header>
                 {/* ToastContainer to render toast notifications */}
-                <Toaster position="top-right" richColors />
+                <Toaster position="top-right" richColors closeButton />
                 {/* Main Content Area (Grows to Fill Space) */}
                 <main className="main-content flex-grow-1 d-flex justify-content-center align-items-center">
                     <Routes>
