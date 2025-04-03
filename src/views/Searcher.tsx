@@ -44,7 +44,7 @@ const Searcher: React.FC = () => {
         e.preventDefault();
         setLocalError("");
         setShowSuggestions(false);
-        setShowDelayMessage(false); // reset before starting
+        setShowDelayMessage(false);
 
         const delayTimer = setTimeout(() => {
             setShowDelayMessage(true);
@@ -56,7 +56,6 @@ const Searcher: React.FC = () => {
             setShowDelayMessage(false);
 
             if (!result) return;
-
             if (result.status === 204) return;
 
             if (result.data) {
@@ -77,6 +76,7 @@ const Searcher: React.FC = () => {
             setLocalError(error);
         }
     };
+
     return (
         <div className="search-page">
             <header className="search-header">
@@ -124,13 +124,26 @@ const Searcher: React.FC = () => {
             </form>
 
             <div className="search-buttons">
-                <button type="submit" className="search-button" onClick={handleSearch}>
-                    Search
+                <button
+                    type="submit"
+                    className={`search-button${loading ? " loading" : ""}`}
+                    onClick={handleSearch}
+                    disabled={loading || searchTerm.trim() === ""}
+                >
+                    {loading ? (
+                        <>
+                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Searching...
+                        </>
+                    ) : (
+                        "Search"
+                    )}
                 </button>
                 <button
                     type="button"
                     className="search-button-secondary"
                     onClick={() => setSearchTerm("")}
+                    disabled={loading}
                 >
                     Clear
                 </button>
