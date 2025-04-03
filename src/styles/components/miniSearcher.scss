@@ -20,7 +20,7 @@ $shadow-light: rgba(0, 0, 0, 0.15);
 /* Base styling for the searcher form */
 .mini-search-form {
   width: 100%;
-  max-width: 400px;
+  max-width: 440px;
   display: flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.85);
@@ -86,10 +86,39 @@ $shadow-light: rgba(0, 0, 0, 0.15);
   cursor: pointer;
   margin-left: 8px;
   transition: background 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 94px; // enough space to fit spinner + "Loading..."
+
+  &:hover {
+    background: darken($secondary-color, 10%);
+  }
+
+  &:disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+  }
+
+  &.loading {
+    background: $secondary-color;
+
+    &:hover {
+      background: $secondary-color;
+    }
+  }
+
+  .spinner-icon {
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+  }
 }
 
-.mini-search-button:hover {
-  background: darken($secondary-color, 10%);
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Suggestions dropdown styling */
@@ -194,6 +223,7 @@ $shadow-light: rgba(0, 0, 0, 0.15);
   .mini-search-button {
     padding: 6px 12px;
     font-size: 13px;
+    min-width: 88px;
   }
 
   .mini-suggestion-item {

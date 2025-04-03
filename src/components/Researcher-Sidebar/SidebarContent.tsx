@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { NodeDatum } from "../../types/graphTypes";
 import PublicationsContent from "./PublicationsContent";
 import Tag from "./Tag";
@@ -50,6 +50,19 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
                                                            onAddInterest,
                                                            onExtendNetwork,
                                                        }) => {
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleExtendNetwork = async () => {
+        if (onExtendNetwork && !isLoading) {
+            setIsLoading(true);
+            try {
+                await onExtendNetwork();
+            } catch (error) {
+                console.error("Error extending network:", error);
+            }
+            setIsLoading(false);
+        }
+    };
     if (activeTab === "author") {
         const ignoreKeys = ["id", "x", "y", "fx", "fy", "vx", "vy", "fixed", "type", "index", "s2id"];
         const sortedEntries = Object.entries(selectedNode)
@@ -179,9 +192,41 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
             <div className="sidebar-content">
                 <div className="options-section">
                     <div className="extend-network-wrapper">
-                        <button className="extend-network-btn" onClick={onExtendNetwork}>
-                            <i className="mdi mdi-google-circles-extended me-2"></i>
-                            Get Full Network
+                        <button
+                            className={`extend-network-btn ${isLoading ? "loading" : ""}`}
+                            onClick={handleExtendNetwork}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <>
+                                    <svg
+                                        className="animate-spin h-5 w-5 mr-2"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <circle
+                                            className="opacity-25"
+                                            cx="12"
+                                            cy="12"
+                                            r="10"
+                                            stroke="currentColor"
+                                            strokeWidth="4"
+                                        />
+                                        <path
+                                            className="opacity-75"
+                                            fill="currentColor"
+                                            d="M4 12a8 8 0 018-8v8H4z"
+                                        />
+                                    </svg>
+                                    Loading...
+                                </>
+                            ) : (
+                                <>
+                                    <i className="mdi mdi-google-circles-extended me-2"></i>
+                                    Get Full Network
+                                </>
+                            )}
                         </button>
 
                         <div className="tooltip-container">
@@ -195,7 +240,6 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
             </div>
         );
     }
-
     return null;
 };
 

@@ -13,9 +13,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/views/graphView.scss";
 import { RootState } from "../redux/store";
 import * as d3 from "d3";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
+import {toast} from "sonner";
 
 interface NetworkData {
     nodes: NodeDatum[];
@@ -55,7 +53,6 @@ const GraphView: React.FC = () => {
     const [bfsPath, setBfsPath] = useState<string[] | null>(null);
     const [targetType, setTargetType] = useState<"affiliation" | "author">("affiliation");
     const [selectedAffiliations, setSelectedAffiliations] = useState<string[]>([]);
-    // Flag to ensure auto-centering happens only once per search.
     const [initialCenterDone, setInitialCenterDone] = useState(false);
 
     const selectedNodeRef = useRef<NodeDatum | null>(null);
@@ -64,89 +61,27 @@ const GraphView: React.FC = () => {
 
     const { authenticated } = useSelector((state: RootState) => state.auth);
 
-    // Reset search-specific states when new network data is provided.
     useEffect(() => {
         setPathWindowOpen(false);
         setFiltersActive(false);
         setBfsPath(null);
         setStartNode(null);
         setTargetNode(null);
-        // When raw network data changes, we want to auto-center once.
         setInitialCenterDone(false);
     }, [rawNetworkData]);
-
-    // Update graph data whenever computed network data changes.
+    useEffect(() => {
+        if (pathWindowOpen && selectedNode) {
+            setStartNode({
+                value: selectedNode.id.toString(),
+                label: selectedNode.name || selectedNode.id.toString(),
+                id: selectedNode.s2id || selectedNode.id.toString(),
+            });
+        }
+    }, [pathWindowOpen, selectedNode]);
     useEffect(() => {
         setGraphData(computedNetworkData);
     }, [computedNetworkData]);
 
-    // Show toast notifications based on the status from navigation state.
-    useEffect(() => {
-        if (location.state?.status === 206) {
-            toast(
-                <div>
-                    <strong>Heads up! 🔍</strong>
-                    <div style={{ marginTop: "0.5rem" }}>
-                        We couldn’t find the exact person you were looking for.
-                        Here's the closest match we found.
-                    </div>
-                    <div style={{ marginTop: "0.75rem" }}>
-                        <a
-                            target="_blank"
-                            rel="noreferrer"
-                            href="/contact"
-                            style={{
-                                color: "var(--primary-color)",
-                                textDecoration: "underline",
-                                fontWeight: "bold",
-                            }}
-                        >
-                            Not who you were looking for?
-                        </a>
-                    </div>
-                </div>,
-                {
-                    position: "top-center",
-                    autoClose: 8000,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    className: "blue-toast",
-                }
-            );
-        }
-
-        if (location.state?.status === 204) {
-            toast(
-                <div>
-                    <strong>Heads up! 🔍</strong>
-                    <div style={{ marginTop: "0.5rem" }}>
-                        The person you searched does not have any connections.
-                    </div>
-                    <div style={{ marginTop: "0.75rem" }}>
-                        <a
-                            target="_blank"
-                            rel="noreferrer"
-                            href="/contact"
-                            style={{
-                                color: "var(--primary-color)",
-                                textDecoration: "underline",
-                                fontWeight: "bold",
-                            }}
-                        >
-                            Think this is a mistake? Contact us →
-                        </a>
-                    </div>
-                </div>,
-                {
-                    position: "top-center",
-                    autoClose: 8000,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    className: "blue-toast",
-                }
-            );
-        }
-    }, [location.key]);
     const affiliations = useMemo(() => {
         const affSet = new Set<string>();
         graphData.nodes.forEach((node) => {
@@ -277,9 +212,61 @@ const GraphView: React.FC = () => {
             );
         }
 
-        if (!startData || (targetType === "author" && !targetData)) {
+        if (!targetData || (targetType === "author" && !targetData)) {
             try {
-                const newPathData = await getPath(authenticated, "s2id:" + startNode.id, targetNode.value, targetType);
+                const { data: newPathData, status } = await getPath(
+                    authenticated,
+                    "s2id:" + startNode.id,
+                    targetNode.value,
+                    targetType
+                );
+
+                if (status === 204) {
+                    const isAffiliationSearch = targetType === "affiliation";
+                    const targetLabel = targetNode?.label || targetNode?.value;
+
+                    toast(
+                        <div>
+                            <strong>Heads up!</strong>
+                            <div style={{ marginTop: "0.5rem" }}>
+                                {isAffiliationSearch ? (
+                                    <>
+                                        We couldn't find a path from{" "}
+                                        <strong>{startNode?.label}</strong> to the{" "}
+                                        <strong>{targetLabel}</strong> affiliation.
+                                    </>
+                                ) : (
+                                    <>
+                                        No visible connection found between{" "}
+                                        <strong>{startNode?.label}</strong> and{" "}
+                                        <strong>{targetLabel}</strong>.
+                                    </>
+                                )}
+                            </div>
+                            <div style={{ marginTop: "0.75rem" }}>
+                                Try changing your selection, or{" "}
+                                <a
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    href="/contact"
+                                    style={{
+                                        color: "var(--primary-color)",
+                                        textDecoration: "underline",
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    contact us →
+                                </a>
+                            </div>
+                        </div>,
+                        {
+                            position: "top-center",
+                            className: "blue-toast",
+                        }
+                    );
+                    return;
+                }
+
                 const parsed = typeof newPathData === "string" ? JSON.parse(newPathData) : newPathData;
                 let newNodes: NodeDatum[] = [];
 
@@ -367,8 +354,6 @@ const GraphView: React.FC = () => {
 
     return (
         <div className="graph-view-container">
-
-            {/* Toolbar */}
             <div className="toolbar-container">
                 <Toolbar
                     gridActive={gridActive}
@@ -381,7 +366,6 @@ const GraphView: React.FC = () => {
                 />
             </div>
 
-            {/* Sidebars */}
             {filtersActive && (
                 <div className="sidebar-container">
                     <Filters
@@ -412,7 +396,6 @@ const GraphView: React.FC = () => {
                 </div>
             )}
 
-            {/* Main Graph */}
             <div className="graph-container">
                 <ForceGraph
                     ref={forceGraphRef}
@@ -428,14 +411,12 @@ const GraphView: React.FC = () => {
                 />
             </div>
 
-            {/* Sidebar */}
             <ResearcherSidebar
                 selectedNode={selectedNode}
                 onClose={handleCloseSidebar}
                 onExtendNetwork={handleExtendNetwork}
             />
 
-            {/* Footer Note */}
             <div className="graph-note">
                 This alpha version includes only authors with relevant publications (i.e., more than 10 citations) up to the year 2018.
                 The final release will include all research data up to date.
