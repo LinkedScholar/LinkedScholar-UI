@@ -13,6 +13,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/views/graphView.scss";
 import { RootState } from "../redux/store";
 import * as d3 from "d3";
+import {toast} from "sonner";
 
 interface NetworkData {
     nodes: NodeDatum[];
@@ -68,7 +69,15 @@ const GraphView: React.FC = () => {
         setTargetNode(null);
         setInitialCenterDone(false);
     }, [rawNetworkData]);
-
+    useEffect(() => {
+        if (pathWindowOpen && selectedNode) {
+            setStartNode({
+                value: selectedNode.id.toString(),
+                label: selectedNode.name || selectedNode.id.toString(),
+                id: selectedNode.s2id || selectedNode.id.toString(),
+            });
+        }
+    }, [pathWindowOpen, selectedNode]);
     useEffect(() => {
         setGraphData(computedNetworkData);
     }, [computedNetworkData]);
@@ -205,7 +214,59 @@ const GraphView: React.FC = () => {
 
         if (!targetData || (targetType === "author" && !targetData)) {
             try {
-                const newPathData = await getPath(authenticated, "s2id:" + startNode.id, targetNode.value, targetType);
+                const { data: newPathData, status } = await getPath(
+                    authenticated,
+                    "s2id:" + startNode.id,
+                    targetNode.value,
+                    targetType
+                );
+
+                if (status === 204) {
+                    const isAffiliationSearch = targetType === "affiliation";
+                    const targetLabel = targetNode?.label || targetNode?.value;
+
+                    toast(
+                        <div>
+                            <strong>Heads up!</strong>
+                            <div style={{ marginTop: "0.5rem" }}>
+                                {isAffiliationSearch ? (
+                                    <>
+                                        We couldn't find a path from{" "}
+                                        <strong>{startNode?.label}</strong> to the{" "}
+                                        <strong>{targetLabel}</strong> affiliation.
+                                    </>
+                                ) : (
+                                    <>
+                                        No visible connection found between{" "}
+                                        <strong>{startNode?.label}</strong> and{" "}
+                                        <strong>{targetLabel}</strong>.
+                                    </>
+                                )}
+                            </div>
+                            <div style={{ marginTop: "0.75rem" }}>
+                                Try changing your selection, or{" "}
+                                <a
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    href="/contact"
+                                    style={{
+                                        color: "var(--primary-color)",
+                                        textDecoration: "underline",
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    contact us →
+                                </a>
+                            </div>
+                        </div>,
+                        {
+                            position: "top-center",
+                            className: "blue-toast",
+                        }
+                    );
+                    return;
+                }
+
                 const parsed = typeof newPathData === "string" ? JSON.parse(newPathData) : newPathData;
                 let newNodes: NodeDatum[] = [];
 
