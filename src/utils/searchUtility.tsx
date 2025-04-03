@@ -1,7 +1,7 @@
-import {useRef, useState} from "react";
+import { useRef, useState } from "react";
 import axios from "axios";
-import {getBestMatchings, getNetwork} from "../services/ApiGatewayService";
-import {Id, toast} from "react-toastify";
+import { getBestMatchings, getNetwork } from "../services/ApiGatewayService";
+import { toast } from "sonner";
 
 const REACT_APP_LOCAL_MODE = process.env.REACT_APP_LOCAL_MODE === "true";
 
@@ -20,7 +20,7 @@ export const useResearcherSearch = (authenticated: boolean) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [suggestions, setSuggestions] = useState<string[]>([]);
     const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-    let activeToastId: Id | null = null;
+    let activeToastId: string | number | null = null;
 
     const fetchSuggestions = (input: string) => {
         if (input.length < 4) {
@@ -32,7 +32,7 @@ export const useResearcherSearch = (authenticated: boolean) => {
         debounceTimer.current = setTimeout(async () => {
             const results = await getBestMatchings(authenticated, input);
             setSuggestions(results);
-        }, 500); // debounce delay: 0.3
+        }, 500);
     };
 
     const extractProfileData = (url: string) => {
@@ -54,20 +54,18 @@ export const useResearcherSearch = (authenticated: boolean) => {
 
     const search = async (searchTerm: string): Promise<SearchResult | null> => {
         if (!searchTerm.trim()) {
-            setError("Enter a valid researcher name or profile URL.");
+            toast.error("Enter a valid researcher name or profile URL.");
             return null;
         }
 
         setError("");
         setLoading(true);
 
-        // Set up a delay timer to potentially show a “building network” message.
-        const delayTimer = setTimeout(() => {
-        }, 1000);
-
+        const delayTimer = setTimeout(() => {}, 1000);
         const profileData = extractProfileData(searchTerm);
+
         if (!profileData) {
-            setError("Invalid researcher profile URL.");
+            toast.error("Invalid researcher profile URL.");
             setLoading(false);
             clearTimeout(delayTimer);
             return null;
@@ -97,18 +95,18 @@ export const useResearcherSearch = (authenticated: boolean) => {
             const status = response.status;
 
             if (status === 204) {
-                if (activeToastId) {
-                    toast.dismiss(activeToastId);
-                }
+                if (activeToastId) toast.dismiss(activeToastId);
 
                 activeToastId = toast(
                     <div>
-                        <strong>Researcher not found</strong>
+                        <strong>Heads up! 🔍</strong>
                         <div style={{ marginTop: "0.5rem" }}>
-                            We couldn't find the person you searched for, and no close matches were available.
+                            The person you searched does not have any connections.
                         </div>
                         <div style={{ marginTop: "0.75rem" }}>
                             <a
+                                target="_blank"
+                                rel="noreferrer"
                                 href="/contact"
                                 style={{
                                     color: "var(--primary-color)",
@@ -122,30 +120,65 @@ export const useResearcherSearch = (authenticated: boolean) => {
                     </div>,
                     {
                         position: "top-center",
-                        autoClose: 8000,
-                        closeOnClick: true,
-                        pauseOnHover: true,
                         className: "blue-toast",
                     }
                 );
             }
+
+            if (status === 206) {
+                if (activeToastId) toast.dismiss(activeToastId);
+
+                activeToastId = toast(
+                    <div>
+                        <strong>Heads up! 🔍</strong>
+                        <div style={{ marginTop: "0.5rem" }}>
+                            We couldn’t find the exact person you were looking for. Here's the closest match.
+                        </div>
+                        <div style={{ marginTop: "0.75rem" }}>
+                            <a
+                                target="_blank"
+                                rel="noreferrer"
+                                href="/contact"
+                                style={{
+                                    color: "var(--primary-color)",
+                                    textDecoration: "underline",
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                Not who you were looking for?
+                            </a>
+                        </div>
+                    </div>,
+                    {
+                        position: "top-center",
+                        className: "blue-toast",
+                    }
+                );
+            }
+
             return { status, data: response.data, centerId };
         } catch (err: any) {
             clearTimeout(delayTimer);
             setLoading(false);
+
             if (axios.isAxiosError(err) && err.response) {
                 if (err.response.status === 429 && !authenticated) {
+                    toast.error("Too many requests. Please slow down.");
                     const error429: SearchError = new Error("Too many requests");
                     error429.code = 429;
                     throw error429;
                 }
                 if (err.response.status === 409 && authenticated) {
+                    toast("Upgrade required to continue searching.", {
+                        description: "You’ve hit your limit. Please upgrade your plan.",
+                    });
                     const error409: SearchError = new Error("Pricing required");
                     error409.code = 409;
                     throw error409;
                 }
             }
-            setError("The service is unavailable. Please try later");
+
+            toast.error("The service is currently unavailable. Please try again later.");
             throw err;
         }
     };
