@@ -84,7 +84,7 @@ export const getPath = async (
     fromId: string,
     toId: string,
     kind: string = "author"
-): Promise<any> => {
+): Promise<{ data: any; status: number }> => {
     try {
         const url = logged ? `${API_BASE_URL}/path` : `${API_PUBLIC_BASE_URL}/path`;
         const payload = {
@@ -95,10 +95,12 @@ export const getPath = async (
         const response = await axios.post(url, payload, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
+            validateStatus: () => true, // prevents axios from throwing on 204
         });
-        return response.data;
+        return { data: response.data, status: response.status };
     } catch (error) {
         console.error("Error fetching path:", error);
         throw error;
     }
 };
+
