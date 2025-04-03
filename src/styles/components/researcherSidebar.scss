@@ -358,13 +358,25 @@
       }
 
       &:hover {
-        background: darken($primary-color, 10%);
+        background: darken($secondary-color, 10%); // Use secondary, not primary
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba($primary-color, 0.25);
+        box-shadow: 0 4px 12px rgba($secondary-color, 0.25);
       }
 
       &:focus {
         outline: none;
+      }
+
+      &.loading {
+        background: $secondary-color;
+        cursor: not-allowed;
+        opacity: 0.8;
+
+        &:hover {
+          background: $secondary-color; // Stay the same
+          transform: none;
+          box-shadow: none;
+        }
       }
     }
   }
