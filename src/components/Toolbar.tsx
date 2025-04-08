@@ -50,10 +50,10 @@ const Toolbar: React.FC<ToolbarProps> = ({
             <button
                 className="toolbar-button"
                 onClick={resetSimulation}
-                title="Reset Simulation"
+                title="Reset View"
             >
                 <i className="mdi mdi-refresh"></i>
-                <span>Reset Simulation</span>
+                <span>Reset View</span>
             </button>
         </div>
     );
