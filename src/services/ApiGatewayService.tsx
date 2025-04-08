@@ -9,7 +9,7 @@ export const getNetwork = async (
     author_id: string,
     kind: string,
     recursivity: number = 1
-): Promise<any> => {
+): Promise<{ status: number; data: any }> => {
     try {
         const url = logged ? `${API_BASE_URL}/network` : `${API_PUBLIC_BASE_URL}/network`;
         const response = await axios.post(
@@ -18,9 +18,13 @@ export const getNetwork = async (
             {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
+                validateStatus: (status) => status < 500,
             }
         );
-        return response.data;
+
+        const status = response.status;
+
+        return { status, data: response.data };
     } catch (error) {
         console.error("Error fetching network:", error);
         throw error;
@@ -29,23 +33,26 @@ export const getNetwork = async (
 
 export const getBestMatchings = async (
     logged: boolean,
-    author_id: string
-): Promise<any> => {
+    partialName: string
+): Promise<string[]> => {
     try {
-        const url = logged ? `${API_BASE_URL}/best_matches` : `${API_PUBLIC_BASE_URL}/best_matches`;
-        // Send JSON body instead of form data.
+        const url = logged
+            ? `${API_BASE_URL}/best_matches`
+            : `${API_PUBLIC_BASE_URL}/best_matches`;
+
         const response = await axios.post(
             url,
-            { author_id },
+            { partial_name: partialName, kind: "author" },
             {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
             }
         );
-        return response.data;
+
+        return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
         console.error("Error fetching best matchings:", error);
-        throw error;
+        return [];
     }
 };
 
@@ -77,7 +84,7 @@ export const getPath = async (
     fromId: string,
     toId: string,
     kind: string = "author"
-): Promise<any> => {
+): Promise<{ data: any; status: number }> => {
     try {
         const url = logged ? `${API_BASE_URL}/path` : `${API_PUBLIC_BASE_URL}/path`;
         const payload = {
@@ -88,10 +95,12 @@ export const getPath = async (
         const response = await axios.post(url, payload, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
+            validateStatus: () => true, // prevents axios from throwing on 204
         });
-        return response.data;
+        return { data: response.data, status: response.status };
     } catch (error) {
         console.error("Error fetching path:", error);
         throw error;
     }
 };
+

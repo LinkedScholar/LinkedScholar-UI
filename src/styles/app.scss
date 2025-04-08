@@ -3,6 +3,14 @@ $primary-color: #003366;
 $secondary-color: #0066cc;
 $background-grey: #ffffff;  // Matching greyish background
 $shadow-light: rgba(0, 0, 0, 0.15);
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; // ✅ prevent horizontal scroll
+  height: 100%;
+}
 
 /* Global Styles */
 body {
@@ -13,6 +21,20 @@ body {
 input:focus {
   outline: none;
   box-shadow: none;
+}
+.Toastify__progress-bar {
+  background: $primary-color !important;
+}
+
+.blue-toast {
+  margin-top: 80px !important;
+  background-color: #ffffff !important;
+  color: $primary-color !important;
+  border: 1px solid rgba($primary-color, 0.2);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  padding: 12px 16px;
+  box-shadow: 0 4px 12px rgba(0, 122, 204, 0.1);
 }
 
 /* Heading Styles */

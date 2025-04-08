@@ -8,7 +8,6 @@
   width: 320px;
   font-family: 'Inter', sans-serif;
 
-  /* The toggle button (using btn-link) */
   .btn-link {
     color: $primary-color;
     font-size: 1.1rem;
@@ -31,16 +30,17 @@
   }
 }
 
-/* React-select overrides for node-select */
 .node-select {
   .react-select__control {
     border: 1px solid #dfe1e5;
     border-radius: 6px;
     min-height: 38px;
   }
+
   .react-select__value-container {
     padding: 0 8px;
   }
+
   .react-select__menu {
     z-index: 9999;
   }
@@ -70,10 +70,9 @@
   }
 }
 
-/* New clear button style */
 .btn-clear {
-  background: rgba(255, 255, 255, 0.8); // white with a bit of transparency
-  border: 1px solid $secondary-color;     // using secondary color from app.scss
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid $secondary-color;
   color: $secondary-color;
   padding: 0.375rem 0.75rem;
   border-radius: 0.25rem;
@@ -81,5 +80,18 @@
 
   &:hover {
     background: rgba(255, 255, 255, 1);
+  }
+}
+
+.mdi-spin {
+  animation: mdi-spin 1s infinite linear;
+}
+
+@keyframes mdi-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }

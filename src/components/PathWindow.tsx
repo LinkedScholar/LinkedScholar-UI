@@ -9,12 +9,12 @@ interface PathWindowProps {
     expanded: boolean;
     setExpanded: (expanded: boolean) => void;
     startNode: { value: string; label: string } | null;
-    setStartNode: (option: { value: string; label: string, id: string } | null) => void;
+    setStartNode: (option: { value: string; label: string; id: string } | null) => void;
     targetType: "affiliation" | "author";
     setTargetType: (type: "affiliation" | "author") => void;
     targetNode: { value: string; label: string } | null;
-    setTargetNode: (option: { value: string; label: string, id: string} | null) => void;
-    handleSearch: () => void;
+    setTargetNode: (option: { value: string; label: string; id: string } | null) => void;
+    handleSearch: () => Promise<void>;
     handleClearSearch: () => void;
 }
 
@@ -34,21 +34,27 @@ const PathWindow: React.FC<PathWindowProps> = ({
                                                }) => {
     const [startMenuIsOpen, setStartMenuIsOpen] = useState<boolean>(false);
     const [targetMenuIsOpen, setTargetMenuIsOpen] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
-    // Researcher options loaded from all nodes - excluding nodes of type "article"
+    const onSearch = async () => {
+        if (!startNode || !targetNode) return;
+        setLoading(true);
+        await handleSearch();
+        setLoading(false);
+    };
+
     const researcherOptions = nodes
-        .filter(nd => nd.type !== "article")
+        .filter((nd) => nd.type !== "article")
         .map((nd) => {
             const display = nd.name ? nd.name : nd.id.toString();
             const id = nd.s2id ? nd.s2id : nd.id.toString();
             return {
                 value: display,
                 label: display,
-                id: id
+                id: id,
             };
         });
 
-    // Load all affiliations, handling both arrays and single string values
     const allAffiliations = nodes.flatMap((nd) => {
         if (Array.isArray(nd.affiliation)) {
             return nd.affiliation;
@@ -82,7 +88,13 @@ const PathWindow: React.FC<PathWindowProps> = ({
                         <CustomSearchField
                             value={startNode}
                             onChange={(option) => setStartNode(option)}
-                            onCreateOption={(inputValue) => setStartNode({ value: inputValue, label: inputValue, id: inputValue})}
+                            onCreateOption={(inputValue) =>
+                                setStartNode({
+                                    value: inputValue,
+                                    label: inputValue,
+                                    id: inputValue,
+                                })
+                            }
                             options={researcherOptions}
                             placeholder="Select researcher..."
                             allowCustomValue={false}
@@ -92,7 +104,6 @@ const PathWindow: React.FC<PathWindowProps> = ({
                         />
                     </div>
 
-                    {/* Target Type selection */}
                     <div className="mb-3">
                         <label className="form-label">Target Type:</label>
                         <div className="btn-group" role="group">
@@ -127,7 +138,6 @@ const PathWindow: React.FC<PathWindowProps> = ({
                         </div>
                     </div>
 
-                    {/* Target Selection */}
                     <div className="mb-3">
                         <label className="form-label">
                             {targetType === "affiliation"
@@ -137,10 +147,14 @@ const PathWindow: React.FC<PathWindowProps> = ({
                         <CustomSearchField
                             value={targetNode}
                             onChange={(option) => setTargetNode(option)}
-                            onCreateOption={(inputValue) => setTargetNode({ value: inputValue, label: inputValue, id: inputValue})}
-                            options={
-                                targetType === "affiliation" ? affiliationOptions : researcherOptions
+                            onCreateOption={(inputValue) =>
+                                setTargetNode({
+                                    value: inputValue,
+                                    label: inputValue,
+                                    id: inputValue,
+                                })
                             }
+                            options={targetType === "affiliation" ? affiliationOptions : researcherOptions}
                             placeholder={
                                 targetType === "affiliation"
                                     ? "Select an affiliation..."
@@ -154,11 +168,29 @@ const PathWindow: React.FC<PathWindowProps> = ({
                     </div>
 
                     <div className="d-flex justify-content-end">
-                        <button className="btn btn-primary me-2" onClick={handleSearch}>
-                            <i className="mdi mdi-magnify"></i> Search
+                        <button
+                            className="btn btn-primary me-2 d-flex align-items-center gap-2"
+                            onClick={onSearch}
+                            disabled={!startNode || !targetNode || loading}
+                        >
+                            {loading ? (
+                                <>
+                                    <i className="mdi mdi-loading mdi-spin" />
+                                    Loading...
+                                </>
+                            ) : (
+                                <>
+                                    <i className="mdi mdi-magnify" />
+                                    Search
+                                </>
+                            )}
                         </button>
-                        <button className="btn btn-clear" onClick={handleClearSearch}>
-                            <i className="mdi mdi-close"></i> Clear Search
+                        <button
+                            className="btn btn-clear"
+                            onClick={handleClearSearch}
+                            disabled={loading}
+                        >
+                            <i className="mdi mdi-close" /> Clear Search
                         </button>
                     </div>
                 </div>

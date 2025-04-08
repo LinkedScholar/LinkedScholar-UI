@@ -13,6 +13,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/views/graphView.scss";
 import { RootState } from "../redux/store";
 import * as d3 from "d3";
+import {toast} from "sonner";
 
 interface NetworkData {
     nodes: NodeDatum[];
@@ -52,6 +53,7 @@ const GraphView: React.FC = () => {
     const [bfsPath, setBfsPath] = useState<string[] | null>(null);
     const [targetType, setTargetType] = useState<"affiliation" | "author">("affiliation");
     const [selectedAffiliations, setSelectedAffiliations] = useState<string[]>([]);
+    const [initialCenterDone, setInitialCenterDone] = useState(false);
 
     const selectedNodeRef = useRef<NodeDatum | null>(null);
     const forceGraphRef = useRef<ForceGraphHandle | null>(null);
@@ -65,8 +67,17 @@ const GraphView: React.FC = () => {
         setBfsPath(null);
         setStartNode(null);
         setTargetNode(null);
+        setInitialCenterDone(false);
     }, [rawNetworkData]);
-
+    useEffect(() => {
+        if (pathWindowOpen && selectedNode) {
+            setStartNode({
+                value: selectedNode.id.toString(),
+                label: selectedNode.name || selectedNode.id.toString(),
+                id: selectedNode.s2id || selectedNode.id.toString(),
+            });
+        }
+    }, [pathWindowOpen, selectedNode]);
     useEffect(() => {
         setGraphData(computedNetworkData);
     }, [computedNetworkData]);
@@ -140,14 +151,14 @@ const GraphView: React.FC = () => {
         if (!selectedNode?.s2id) return;
         try {
             const extendedData = await getNetwork(authenticated, "s2id:" + selectedNode.s2id, "author", 1);
-            const newAuthors = (extendedData.authors || []).map((a: any) => ({ ...a, type: "author" }));
-            const newArticles = (extendedData.articles || []).map((a: any) => ({
+            const newAuthors = (extendedData.data.authors || []).map((a: any) => ({ ...a, type: "author" }));
+            const newArticles = (extendedData.data.articles || []).map((a: any) => ({
                 id: a.id,
                 title: a.title,
                 name: a.title,
                 type: "article",
             }));
-            const newLinks: LinkDatum[] = extendedData.links || [];
+            const newLinks: LinkDatum[] = extendedData.data.links || [];
 
             const existingNodes = graphData.nodes;
             const incomingNodes = [...newAuthors, ...newArticles];
@@ -160,7 +171,10 @@ const GraphView: React.FC = () => {
             const mergedLinks = [
                 ...existingLinks,
                 ...newLinks.filter(
-                    (l) => !existingLinks.some((existing) => existing.source === l.source && existing.target === l.target)
+                    (l) =>
+                        !existingLinks.some(
+                            (existing) => existing.source === l.source && existing.target === l.target
+                        )
                 ),
             ];
 
@@ -198,9 +212,61 @@ const GraphView: React.FC = () => {
             );
         }
 
-        if (!startData || (targetType === "author" && !targetData)) {
+        if (!targetData || (targetType === "author" && !targetData)) {
             try {
-                const newPathData = await getPath(authenticated, "s2id:" + startNode.id, targetNode.value, targetType);
+                const { data: newPathData, status } = await getPath(
+                    authenticated,
+                    "s2id:" + startNode.id,
+                    targetNode.value,
+                    targetType
+                );
+
+                if (status === 204) {
+                    const isAffiliationSearch = targetType === "affiliation";
+                    const targetLabel = targetNode?.label || targetNode?.value;
+
+                    toast(
+                        <div>
+                            <strong>Heads up!</strong>
+                            <div style={{ marginTop: "0.5rem" }}>
+                                {isAffiliationSearch ? (
+                                    <>
+                                        We couldn't find a path from{" "}
+                                        <strong>{startNode?.label}</strong> to the{" "}
+                                        <strong>{targetLabel}</strong> affiliation.
+                                    </>
+                                ) : (
+                                    <>
+                                        No visible connection found between{" "}
+                                        <strong>{startNode?.label}</strong> and{" "}
+                                        <strong>{targetLabel}</strong>.
+                                    </>
+                                )}
+                            </div>
+                            <div style={{ marginTop: "0.75rem" }}>
+                                Try changing your selection, or{" "}
+                                <a
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    href="/contact"
+                                    style={{
+                                        color: "var(--primary-color)",
+                                        textDecoration: "underline",
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    contact us →
+                                </a>
+                            </div>
+                        </div>,
+                        {
+                            position: "top-center",
+                            className: "blue-toast",
+                        }
+                    );
+                    return;
+                }
+
                 const parsed = typeof newPathData === "string" ? JSON.parse(newPathData) : newPathData;
                 let newNodes: NodeDatum[] = [];
 
@@ -268,16 +334,19 @@ const GraphView: React.FC = () => {
     };
 
     useEffect(() => {
-        if (centerId && computedNetworkData.nodes.length > 0) {
-            const centerNode = computedNetworkData.nodes.find((node) => node.id.toString() === centerId.toString());
+        if (!initialCenterDone && centerId && computedNetworkData.nodes.length > 0) {
+            const centerNode = computedNetworkData.nodes.find(
+                (node) => node.id.toString() === centerId.toString()
+            );
             if (centerNode) {
                 setSelectedNode(centerNode);
                 selectedNodeRef.current = centerNode;
                 if (updateHighlightRef.current) updateHighlightRef.current(centerNode);
                 forceGraphRef.current?.centerOnNode(centerNode);
+                setInitialCenterDone(true);
             }
         }
-    }, []);
+    }, [centerId, computedNetworkData, initialCenterDone]);
 
     if (graphData.nodes.length === 0 && graphData.links.length === 0) {
         return <h2>No network data available</h2>;
@@ -285,7 +354,6 @@ const GraphView: React.FC = () => {
 
     return (
         <div className="graph-view-container">
-            {/* Toolbar */}
             <div className="toolbar-container">
                 <Toolbar
                     gridActive={gridActive}
@@ -298,7 +366,6 @@ const GraphView: React.FC = () => {
                 />
             </div>
 
-            {/* Sidebars */}
             {filtersActive && (
                 <div className="sidebar-container">
                     <Filters
@@ -329,7 +396,6 @@ const GraphView: React.FC = () => {
                 </div>
             )}
 
-            {/* Main Graph */}
             <div className="graph-container">
                 <ForceGraph
                     ref={forceGraphRef}
@@ -345,14 +411,12 @@ const GraphView: React.FC = () => {
                 />
             </div>
 
-            {/* Sidebar */}
             <ResearcherSidebar
                 selectedNode={selectedNode}
                 onClose={handleCloseSidebar}
                 onExtendNetwork={handleExtendNetwork}
             />
 
-            {/* Footer Note */}
             <div className="graph-note">
                 This alpha version includes only authors with relevant publications (i.e., more than 10 citations) up to the year 2018.
                 The final release will include all research data up to date.

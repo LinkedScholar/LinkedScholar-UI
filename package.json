@@ -25,6 +25,7 @@
     "react-select": "^5.10.1",
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
+    "sonner": "^2.0.3",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
