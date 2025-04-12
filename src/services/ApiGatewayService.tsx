@@ -1,8 +1,52 @@
 import axios from "axios";
+import { handleApiError } from "../utils/errorHandler";
+
+type ApiError = {
+    code: number;
+    message: string;
+    details?: any;
+};
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080/api";
 const API_PUBLIC_BASE_URL = process.env.REACT_APP_API_PUBLIC_URL || "http://localhost:8080/public";
 
+const apiRequest = async (
+    url: string,
+    method: "get" | "post" | "put" | "delete",
+    data?: any,
+    options?: any
+) => {
+    try {
+        const response = await axios({
+            url,
+            method,
+            data,
+            withCredentials: true,
+            validateStatus: () => true, // Handle all status codes
+            ...options
+        });
+
+        // Handle success (2xx) and redirect (3xx) codes
+        if (response.status >= 200 && response.status < 400) {
+            return response;
+        }
+
+        // Handle error codes
+        throw {
+            isAxiosError: true,
+            response: {
+                status: response.status,
+                data: response.data,
+                headers: response.headers,
+                config: response.config
+            },
+            config: response.config
+        };
+    } catch (error) {
+        const apiError = handleApiError(error);
+        throw apiError; // Re-throw to allow catch in calling functions
+    }
+};
 
 export const getNetwork = async (
     logged: boolean,
@@ -12,22 +56,15 @@ export const getNetwork = async (
 ): Promise<{ status: number; data: any }> => {
     try {
         const url = logged ? `${API_BASE_URL}/network` : `${API_PUBLIC_BASE_URL}/network`;
-        const response = await axios.post(
-            url,
-            { author_id, source: kind, recursivity },
-            {
-                headers: { "Content-Type": "application/json" },
-                withCredentials: true,
-                validateStatus: (status) => status < 500,
-            }
-        );
+        const response = await apiRequest(url, "post", { author_id, source: kind, recursivity }, {
+            headers: { "Content-Type": "application/json" }
+        });
 
-        const status = response.status;
-
-        return { status, data: response.data };
+        return { status: response.status, data: response.data };
     } catch (error) {
-        console.error("Error fetching network:", error);
-        throw error;
+        // TypeScript safe error handling
+        const apiError = error as ApiError;
+        return { status: apiError.code || 500, data: null };
     }
 };
 
@@ -36,22 +73,14 @@ export const getBestMatchings = async (
     partialName: string
 ): Promise<string[]> => {
     try {
-        const url = logged
-            ? `${API_BASE_URL}/best_matches`
-            : `${API_PUBLIC_BASE_URL}/best_matches`;
-
-        const response = await axios.post(
-            url,
-            { partial_name: partialName, kind: "author" },
-            {
-                headers: { "Content-Type": "application/json" },
-                withCredentials: true,
-            }
-        );
+        const url = logged ? `${API_BASE_URL}/best_matches` : `${API_PUBLIC_BASE_URL}/best_matches`;
+        const response = await apiRequest(url, "post", { partial_name: partialName, kind: "author" }, {
+            headers: { "Content-Type": "application/json" }
+        });
 
         return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
-        console.error("Error fetching best matchings:", error);
+        // Return empty array on error
         return [];
     }
 };
@@ -61,21 +90,15 @@ export const getArticlesFromAuthor = async (
     author_id: string,
 ): Promise<any> => {
     try {
-        const url = logged
-            ? `${API_BASE_URL}/articles_from_author`
-            : `${API_PUBLIC_BASE_URL}/articles_from_author`;
-        const response = await axios.post(
-            url,
-            { author_id },
-            {
-                headers: { "Content-Type": "application/json" },
-                withCredentials: true,
-            }
-        );
+        const url = logged ? `${API_BASE_URL}/articles_from_author` : `${API_PUBLIC_BASE_URL}/articles_from_author`;
+        const response = await apiRequest(url, "post", { author_id }, {
+            headers: { "Content-Type": "application/json" }
+        });
+
         return response.data;
     } catch (error) {
-        console.error("Error fetching articles from author:", error);
-        throw error;
+        // Return null on error
+        return null;
     }
 };
 
@@ -87,20 +110,18 @@ export const getPath = async (
 ): Promise<{ data: any; status: number }> => {
     try {
         const url = logged ? `${API_BASE_URL}/path` : `${API_PUBLIC_BASE_URL}/path`;
-        const payload = {
+        const response = await apiRequest(url, "post", {
             from_id: fromId,
             to_id: toId,
-            kind: kind,
-        };
-        const response = await axios.post(url, payload, {
-            headers: { "Content-Type": "application/json" },
-            withCredentials: true,
-            validateStatus: () => true, // prevents axios from throwing on 204
+            kind: kind
+        }, {
+            headers: { "Content-Type": "application/json" }
         });
+
         return { data: response.data, status: response.status };
     } catch (error) {
-        console.error("Error fetching path:", error);
-        throw error;
+        // TypeScript safe error handling
+        const apiError = error as ApiError;
+        return { data: null, status: apiError.code || 500 };
     }
 };
-

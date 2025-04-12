@@ -6,6 +6,7 @@ import { fetchSession } from "../redux/authSlice";
 import RegistrationModal from "../components/modals/RegistrationModal";
 import PricingModal from "../components/modals/PricingModal";
 import { useResearcherSearch } from "../utils/searchUtility";
+import { registerErrorHandlers } from "../utils/errorHandler";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/views/searcher.scss";
 
@@ -21,6 +22,12 @@ const Searcher: React.FC = () => {
     const [showSuggestions, setShowSuggestions] = useState(false);
 
     const searchBarRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        registerErrorHandlers(
+            setIsRegistrationModalOpen,
+        );
+    }, []);
 
     useEffect(() => {
         if (status === "idle") {
@@ -71,9 +78,10 @@ const Searcher: React.FC = () => {
             clearTimeout(delayTimer);
             setShowDelayMessage(false);
 
-            if (err.code === 429) return setIsRegistrationModalOpen(true);
-            if (err.code === 409) return setIsPricingModalOpen(true);
-            setLocalError(error);
+
+            if (err.code !== 429 && err.code !== 409) {
+                setLocalError(err.message || error);
+            }
         }
     };
 
@@ -148,8 +156,6 @@ const Searcher: React.FC = () => {
                     Clear
                 </button>
             </div>
-
-            {(localError || error) && <p className="error-message">{localError || error}</p>}
 
             {loading && (
                 <div className="delay-message">
