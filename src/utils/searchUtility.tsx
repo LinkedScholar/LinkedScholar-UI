@@ -15,6 +15,7 @@ export const useResearcherSearch = (authenticated: boolean) => {
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [suggestions, setSuggestions] = useState<string[]>([]);
+    const [isRateLimited, setIsRateLimited] = useState<boolean>(false);
     const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     let activeToastId: string | number | null = null;
 
@@ -29,8 +30,13 @@ export const useResearcherSearch = (authenticated: boolean) => {
             try {
                 const results = await getBestMatchings(authenticated, input);
                 setSuggestions(results);
-            } catch (err) {
-                handleApiError(err);
+            } catch (err: any) {
+                if (err?.response?.status === 429) {
+                    setIsRateLimited(true);
+                }
+                if (err?.response?.status !== 429) {
+                    handleApiError(err);
+                }
             }
         }, 500);
     };
@@ -55,6 +61,11 @@ export const useResearcherSearch = (authenticated: boolean) => {
     const search = async (searchTerm: string): Promise<SearchResult | null> => {
         if (!searchTerm.trim()) {
             toast.error("Enter a valid researcher name or profile URL.");
+            return null;
+        }
+
+        if (isRateLimited) {
+            toast.error("You've made too many requests. Please wait before trying again.");
             return null;
         }
 
@@ -90,9 +101,11 @@ export const useResearcherSearch = (authenticated: boolean) => {
 
             clearTimeout(delayTimer);
             setLoading(false);
+            setIsRateLimited(false);
 
-            const centerId = response.data.center_id || profileData.author_id;
-            const status = response.status;
+            // Fix: Safely access center_id with null/undefined check
+            const centerId = response?.data?.center_id || profileData.author_id;
+            const status = response?.status || 500;
 
             if (status === 204) {
                 if (activeToastId) toast.dismiss(activeToastId);
@@ -156,10 +169,17 @@ export const useResearcherSearch = (authenticated: boolean) => {
                 );
             }
 
-            return { status, data: response.data, centerId };
-        } catch (err) {
+            return { status, data: response?.data || null, centerId };
+        } catch (err: any) {
             clearTimeout(delayTimer);
             setLoading(false);
+
+            if (err?.response?.status === 429) {
+                setIsRateLimited(true);
+                handleApiError(err);
+                return null;
+            }
+
             handleApiError(err);
             throw err;
         }
@@ -170,6 +190,7 @@ export const useResearcherSearch = (authenticated: boolean) => {
         error,
         loading,
         suggestions,
+        isRateLimited,
         fetchSuggestions,
         extractProfileData,
     };

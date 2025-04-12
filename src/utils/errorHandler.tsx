@@ -73,7 +73,6 @@ export const handleApiError = (error: any): ApiError => {
         } else if (error.code === "ERR_NETWORK") {
             apiError = { code: 0, message: "There was a network error - Please check your connection" };
         } else {
-            // Fallback for unknown axios errors
             apiError = {
                 code: -1,
                 message: error.message || "Unknown error occurred",
@@ -81,10 +80,8 @@ export const handleApiError = (error: any): ApiError => {
             };
         }
     } else if (error.code && error.message) {
-        // Custom API error structure
         apiError = error;
     } else {
-        // Fallback for unknown errors
         apiError = {
             code: -1,
             message: error.message || "Unknown error occurred",
@@ -92,9 +89,11 @@ export const handleApiError = (error: any): ApiError => {
         };
     }
 
-    // Handle special error cases with modals
-    if (apiError.code === 429 && ErrorContext.setIsRegistrationModalOpen) {
-        ErrorContext.setIsRegistrationModalOpen(true);
+    if (apiError.code === 429) {
+        if (ErrorContext.setIsRegistrationModalOpen) {
+            ErrorContext.setIsRegistrationModalOpen(true);
+        }
+        return apiError;
     } else {
         showErrorNotification(apiError);
     }

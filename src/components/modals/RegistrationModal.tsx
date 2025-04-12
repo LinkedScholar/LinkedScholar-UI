@@ -47,8 +47,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, onClose }
 
                     <p className="benefits">Sign up for free to continue and get:</p>
                     <ul className="benefits-list">
-                        <li>5 searches per month</li>
-                        <li>Save your search history</li>
+                        <li>Unlimited searches per month</li>
                         <li>Access to all basic features</li>
                     </ul>
 
@@ -56,9 +55,6 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, onClose }
                         Sign Up Now
                     </button>
 
-                    <p className="upgrade-note">
-                        Want unlimited searches? <a href="/">Upgrade to Pro</a>
-                    </p>
                 </div>
             </div>
         </div>,
