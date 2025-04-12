@@ -6,6 +6,7 @@ import { fetchSession } from "../redux/authSlice";
 import RegistrationModal from "../components/modals/RegistrationModal";
 import PricingModal from "../components/modals/PricingModal";
 import { useResearcherSearch } from "../utils/searchUtility";
+import { registerErrorHandlers } from "../utils/errorHandler";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/views/searcher.scss";
 
@@ -23,6 +24,12 @@ const Searcher: React.FC = () => {
     const searchBarRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        registerErrorHandlers(
+            setIsRegistrationModalOpen,
+        );
+    }, []);
+
+    useEffect(() => {
         if (status === "idle") {
             dispatch(fetchSession());
         }
@@ -38,13 +45,17 @@ const Searcher: React.FC = () => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const { search, error, loading, suggestions, fetchSuggestions } = useResearcherSearch(authenticated);
+    const { search, error, loading, suggestions, isRateLimited, fetchSuggestions } = useResearcherSearch(authenticated);
 
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
         setLocalError("");
         setShowSuggestions(false);
         setShowDelayMessage(false);
+
+        if (isRateLimited) {
+            return;
+        }
 
         const delayTimer = setTimeout(() => {
             setShowDelayMessage(true);
@@ -71,9 +82,9 @@ const Searcher: React.FC = () => {
             clearTimeout(delayTimer);
             setShowDelayMessage(false);
 
-            if (err.code === 429) return setIsRegistrationModalOpen(true);
-            if (err.code === 409) return setIsPricingModalOpen(true);
-            setLocalError(error);
+            if (err.code !== 429 && err.code !== 409) {
+                setLocalError(err.message || error);
+            }
         }
     };
 
@@ -128,33 +139,41 @@ const Searcher: React.FC = () => {
                     type="submit"
                     className={`search-button${loading ? " loading" : ""}`}
                     onClick={handleSearch}
-                    disabled={loading || searchTerm.trim() === ""}
+                    disabled={loading || searchTerm.trim() === "" || isRateLimited}
                 >
                     {loading ? (
                         <>
                             <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                             Searching...
                         </>
-                    ) : (
-                        "Search"
-                    )}
+                    ) : isRateLimited ? "Try again later" : "Search"}
                 </button>
                 <button
                     type="button"
                     className="search-button-secondary"
                     onClick={() => setSearchTerm("")}
-                    disabled={loading}
+                    disabled={loading || isRateLimited}
                 >
                     Clear
                 </button>
             </div>
 
-            {(localError || error) && <p className="error-message">{localError || error}</p>}
-
             {loading && (
                 <div className="delay-message">
                     <p>Building Researcher Network</p>
                     <p>Please wait while we analyze the connections</p>
+                </div>
+            )}
+
+            {isRateLimited && (
+                <div className="alert alert-warning mt-3 text-center">
+                    You've made too many requests. Please wait before trying again.
+                </div>
+            )}
+
+            {localError && (
+                <div className="alert alert-danger mt-3 text-center">
+                    {localError}
                 </div>
             )}
 
@@ -168,10 +187,7 @@ const Searcher: React.FC = () => {
                 isOpen={isRegistrationModalOpen}
                 onClose={() => setIsRegistrationModalOpen(false)}
             />
-            <PricingModal
-                isOpen={isPricingModalOpen}
-                onClose={() => setIsPricingModalOpen(false)}
-            />
+
         </div>
     );
 };
