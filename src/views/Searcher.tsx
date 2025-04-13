@@ -80,16 +80,17 @@ const Searcher: React.FC = () => {
 
     return (
         <div className="search-page">
-            <header className="search-header">
-                <div className="title-container">
-                    <h1 className="title">
-                        <span className="title-linked">Linked</span>
-                        <span className="title-scholar">Scholar</span>
-                    </h1>
-                    <span className="version-text">α</span>
-                </div>
-                <p className="search-info">Find and analyze researcher networks with ease.</p>
-            </header>
+            <div className="search-section">
+                <header className="search-header">
+                    <div className="title-container">
+                        <h1 className="title">
+                            <span className="title-linked">Linked</span>
+                            <span className="title-scholar">Scholar</span>
+                        </h1>
+                        <span className="version-text">α</span>
+                    </div>
+                    <p className="search-info">Find and analyze researcher networks with ease.</p>
+                </header>
 
             <form onSubmit={handleSearch} className="mb-3 search-container">
                 <div className="search-bar" ref={searchBarRef}>
@@ -164,6 +165,10 @@ const Searcher: React.FC = () => {
                 <br />
                 You might find unexpected behavior. We are currently working to fix it.
             </div>
+
+        </div>
+        
+            
 
             <LandingPage />
 
