@@ -9,20 +9,19 @@ $shadow-light: rgba(0, 0, 0, 0.15);
 body {
   margin: 0;
   padding: 0;
-  overflow-y: hidden;
+  overflow-y: auto;
 }
 
 .search-page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   width: 100vw;
-  min-height: 100vh;
+  min-height: 100vh; 
   text-align: center;
   font-family: 'Inter', sans-serif;
   background-color: $background-grey;
-  padding-bottom: 40px;
+  padding-bottom: 40px; 
 }
 
 .search-header {

@@ -5,6 +5,7 @@ import { RootState, AppDispatch } from "../redux/store";
 import { fetchSession } from "../redux/authSlice";
 import RegistrationModal from "../components/modals/RegistrationModal";
 import PricingModal from "../components/modals/PricingModal";
+import LandingPage from "../components/LandingPage";
 import { useResearcherSearch } from "../utils/searchUtility";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/views/searcher.scss";
@@ -163,6 +164,8 @@ const Searcher: React.FC = () => {
                 <br />
                 You might find unexpected behavior. We are currently working to fix it.
             </div>
+
+            <LandingPage />
 
             <RegistrationModal
                 isOpen={isRegistrationModalOpen}
