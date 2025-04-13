@@ -134,12 +134,7 @@ const LandingPage: React.FC = () => {
             </p>
             <p>
               By sponsoring LinkedScholar, you directly support the development of open academic infrastructure. 
-              Your contributions help us grow our dataset, enhance our visualizations, and keep the platform freely 
-              available to researchers, students, and institutions worldwide.
-            </p>
-            <p>
-              Whether you're a university, research foundation, company, or individual who believes in open science, 
-              your sponsorship makes a real difference.
+              Your contributions help us grow our dataset and expand our functionalities.
             </p>
             <div className="cta-buttons">
               <a href="/sponsor" className="cta-button primary">Become a Sponsor</a>
