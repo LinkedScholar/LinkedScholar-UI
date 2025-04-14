@@ -82,6 +82,14 @@ const GraphView: React.FC = () => {
         setGraphData(computedNetworkData);
     }, [computedNetworkData]);
 
+    useEffect(() => {
+        document.body.classList.add('network-view-page');
+        
+        return () => {
+            document.body.classList.remove('network-view-page');
+        };
+    }, []);
+
     const affiliations = useMemo(() => {
         const affSet = new Set<string>();
         graphData.nodes.forEach((node) => {

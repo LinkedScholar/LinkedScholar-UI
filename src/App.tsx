@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HelloUser from "./components/HelloUser";
 import Searcher from "./views/Searcher";
@@ -11,24 +11,37 @@ import Contribute from "./views/footer/Contribute";
 import Sponsor from "./views/footer/Sponsor";
 import Contact from "./views/footer/Contact";
 import LoginPage from "./views/LoginPage";
-import "bootstrap/dist/css/bootstrap.min.css";
 import GraphView from "./views/GraphView";
-import { Toaster } from 'sonner'
+import { Toaster } from 'sonner';
+import { registerErrorHandlers } from "./utils/errorHandler";
+import RegistrationModal from "./components/modals/RegistrationModal";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function Api() {
     return null;
 }
 
 const App: React.FC = () => {
+    const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
+
+    useEffect(() => {
+        registerErrorHandlers(setIsRegistrationModalOpen);
+    }, []);
+
     return (
         <Router>
             <div className="app-container d-flex flex-column vh-100">
                 <header>
                     <Navbar />
                 </header>
-                {/* ToastContainer to render toast notifications */}
+
                 <Toaster position="top-right" richColors closeButton />
-                {/* Main Content Area (Grows to Fill Space) */}
+
+                <RegistrationModal
+                    isOpen={isRegistrationModalOpen}
+                    onClose={() => setIsRegistrationModalOpen(false)}
+                />
+
                 <main className="main-content flex-grow-1 d-flex justify-content-center align-items-center">
                     <Routes>
                         <Route path="/" element={<Searcher />} />
@@ -41,12 +54,7 @@ const App: React.FC = () => {
                         <Route path="/sponsor" element={<Sponsor />} />
                         <Route path="/api" element={<Api />} />
                         <Route path="/contact" element={<Contact />} />
-                        <Route 
-                            path="/network" 
-                            element={
-                                    <GraphView />
-                            }
-                        />
+                        <Route path="/network" element={<GraphView />} />
                     </Routes>
                 </main>
 

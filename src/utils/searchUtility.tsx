@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
-import axios from "axios";
 import { getBestMatchings, getNetwork } from "../services/ApiGatewayService";
 import { toast } from "sonner";
+import { handleApiError } from "../utils/errorHandler";
 
 const REACT_APP_LOCAL_MODE = process.env.REACT_APP_LOCAL_MODE === "true";
 
@@ -11,14 +11,11 @@ export interface SearchResult {
     centerId: string;
 }
 
-export interface SearchError extends Error {
-    code?: number;
-}
-
 export const useResearcherSearch = (authenticated: boolean) => {
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [suggestions, setSuggestions] = useState<string[]>([]);
+    const [isRateLimited, setIsRateLimited] = useState<boolean>(false);
     const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     let activeToastId: string | number | null = null;
 
@@ -30,8 +27,17 @@ export const useResearcherSearch = (authenticated: boolean) => {
 
         if (debounceTimer.current) clearTimeout(debounceTimer.current);
         debounceTimer.current = setTimeout(async () => {
-            const results = await getBestMatchings(authenticated, input);
-            setSuggestions(results);
+            try {
+                const results = await getBestMatchings(authenticated, input);
+                setSuggestions(results);
+            } catch (err: any) {
+                if (err?.response?.status === 429) {
+                    setIsRateLimited(true);
+                }
+                if (err?.response?.status !== 429) {
+                    handleApiError(err);
+                }
+            }
         }, 500);
     };
 
@@ -55,6 +61,11 @@ export const useResearcherSearch = (authenticated: boolean) => {
     const search = async (searchTerm: string): Promise<SearchResult | null> => {
         if (!searchTerm.trim()) {
             toast.error("Enter a valid researcher name or profile URL.");
+            return null;
+        }
+
+        if (isRateLimited) {
+            toast.error("You've made too many requests. Please wait before trying again.");
             return null;
         }
 
@@ -90,9 +101,11 @@ export const useResearcherSearch = (authenticated: boolean) => {
 
             clearTimeout(delayTimer);
             setLoading(false);
+            setIsRateLimited(false);
 
-            const centerId = response.data.center_id || profileData.author_id;
-            const status = response.status;
+            // Fix: Safely access center_id with null/undefined check
+            const centerId = response?.data?.center_id || profileData.author_id;
+            const status = response?.status || 500;
 
             if (status === 204) {
                 if (activeToastId) toast.dismiss(activeToastId);
@@ -132,7 +145,7 @@ export const useResearcherSearch = (authenticated: boolean) => {
                     <div>
                         <strong>Heads up! 🔍</strong>
                         <div style={{ marginTop: "0.5rem" }}>
-                            We couldn’t find the exact person you were looking for. Here's the closest match.
+                            We couldn't find the exact person you were looking for. Here's the closest match.
                         </div>
                         <div style={{ marginTop: "0.75rem" }}>
                             <a
@@ -156,29 +169,18 @@ export const useResearcherSearch = (authenticated: boolean) => {
                 );
             }
 
-            return { status, data: response.data, centerId };
+            return { status, data: response?.data || null, centerId };
         } catch (err: any) {
             clearTimeout(delayTimer);
             setLoading(false);
 
-            if (axios.isAxiosError(err) && err.response) {
-                if (err.response.status === 429 && !authenticated) {
-                    toast.error("Too many requests. Please slow down.");
-                    const error429: SearchError = new Error("Too many requests");
-                    error429.code = 429;
-                    throw error429;
-                }
-                if (err.response.status === 409 && authenticated) {
-                    toast("Upgrade required to continue searching.", {
-                        description: "You’ve hit your limit. Please upgrade your plan.",
-                    });
-                    const error409: SearchError = new Error("Pricing required");
-                    error409.code = 409;
-                    throw error409;
-                }
+            if (err?.response?.status === 429) {
+                setIsRateLimited(true);
+                handleApiError(err);
+                return null;
             }
 
-            toast.error("The service is currently unavailable. Please try again later.");
+            handleApiError(err);
             throw err;
         }
     };
@@ -188,7 +190,8 @@ export const useResearcherSearch = (authenticated: boolean) => {
         error,
         loading,
         suggestions,
+        isRateLimited,
         fetchSuggestions,
-        extractProfileData
+        extractProfileData,
     };
 };
