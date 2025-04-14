@@ -9,11 +9,12 @@
 
 .graph-container {
   flex: 1;
-  overflow: auto;
+  overflow: hidden;
   position: relative;
 }
 
 .graph-note {
+  overflow: hidden;
   position: absolute;
   bottom: 85px;
   left: 0;

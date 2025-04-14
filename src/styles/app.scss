@@ -19,6 +19,11 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+.network-view-page {
+  overflow-y: hidden !important; 
+  height: 100vh;                 
+}
+
 input:focus {
   outline: none;
   box-shadow: none;
