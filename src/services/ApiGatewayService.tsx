@@ -104,3 +104,21 @@ export const getPath = async (
     }
 };
 
+export const getStatistics = async (): Promise<{
+    affiliation_count: number;
+    article_count: number;
+    author_count: number;
+}> => {
+    try {
+        const url = `${API_PUBLIC_BASE_URL}/statistics`;
+        const response = await axios.get(url);
+        return {
+            affiliation_count: response.data.affiliation_count,
+            article_count: response.data.article_count,
+            author_count: response.data.author_count,
+        };
+    } catch (error) {
+        console.error("Error fetching statistics:", error);
+        throw error;
+    }
+};
