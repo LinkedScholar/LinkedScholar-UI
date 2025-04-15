@@ -7,7 +7,7 @@ const timelineData = [
     date: { month: 'April', year: '2025' },
     version: 'α Alpha Release',
     description: 'Initial alpha release',
-    features: 'Database consisting of 3M Authors & 7M Papers.',
+    features: 'Database consisting of 3M Authors & 7M Papers. Shortest Path between researchers and affiliations',
     position: 'right',
     isFuture: false,
   },
@@ -15,7 +15,15 @@ const timelineData = [
     date: { month: 'July', year: '2025' },
     version: 'β Beta Release',
     description: 'Beta release',
-    features: 'Expanding the Database to 10M Authors & 200M Papers.',
+    features: 'Expanding the Database to 10M Authors & 200M Papers. Knowledge graph data ingestion. Research synergy and recommendation. ',
+    position: 'right',
+    isFuture: true,
+  },
+  {
+    date: { month: 'Q2-3', year: '2026' },
+    version: 'Stable Release',
+    description: 'Complete implementation of base use cases',
+    features: 'TBD',
     position: 'right',
     isFuture: true,
   },
@@ -83,7 +91,7 @@ const LandingPage: React.FC = () => {
             <h2 className="h2-heading">What is Linked<span className="highlight-secondary">Scholar</span>?</h2>
             <p className="intro-description">
               LinkedScholar is a powerful research tool designed <span className="highlight-secondary">to help academics, students, and research institutions </span>
-              visualize and explore academic collaboration networks. <br></br> Our platform makes it easy  <span className="highlight-secondary">to discover connections
+              visualize and explore academic networks. <br></br> Our platform makes it easy  <span className="highlight-secondary">to discover connections
               between researchers and their work</span>, providing valuable insights into the scholarly landscape.
             </p>
 
@@ -99,17 +107,17 @@ const LandingPage: React.FC = () => {
                   {
                     icon: 'mdi-book-open-page-variant',
                     title: 'Publication Explorer',
-                    description: 'Access detailed information about researchers\' <span class="highlight-secondary">publications</span>, <span class="highlight-secondary">citations</span>, and <span class="highlight-secondary">academic influence</span>.'
+                    description: 'Access detailed information about researcher\'s <span class="highlight-secondary">publications</span>, <span class="highlight-secondary">journals</span>, and <span class="highlight-secondary">affiliations</span>.'
                   },
                   {
                     icon: 'mdi-source-branch',
                     title: 'Connection Finder',
-                    description: 'Identify paths and connections between researchers, institutions, and <span class="highlight-secondary">academic disciplines</span>.'
+                    description: 'Identify paths and connections between researchers and <span class="highlight-secondary">institutions</span>.'
                   },
                   {
                     icon: 'mdi-filter-variant',
-                    title: 'Advanced Filtering Tools',
-                    description: 'Focus on specific institutions, research areas, or time periods with powerful <span class="highlight-secondary">filtering capabilities</span>.'
+                    title: 'Filtering Tools',
+                    description: 'Focus on specific institutions with the help of our <span class="highlight-secondary">filtering capabilities</span>.'
                   }
                 ].map((feature, index) => (
                   <div

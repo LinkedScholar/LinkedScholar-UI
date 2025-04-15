@@ -127,7 +127,9 @@
   line-height: 1.7;
   color: #444;
   margin-bottom: 40px;
-  text-align: center;
+  text-align: justify;
+  padding-left: 2em;
+  padding-right: 2em;
 }
 
 // Features section with cleaner layout
@@ -401,6 +403,9 @@
       line-height: 1.7;
       color: #444;
       margin-bottom: 20px;
+      text-align: justify;
+      padding-left: 2em;
+      padding-right: 2em;
     }
   }
 
