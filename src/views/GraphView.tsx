@@ -20,7 +20,11 @@ interface NetworkData {
     links: LinkDatum[];
 }
 
-const GraphView: React.FC = () => {
+interface GraphViewProps {
+    clientId: string;
+}
+
+const GraphView: React.FC<GraphViewProps> = ({ clientId }) => {
     const location = useLocation();
     const rawNetworkData: any = location.state?.networkData;
     const centerId = location.state?.centerId;
@@ -158,7 +162,7 @@ const GraphView: React.FC = () => {
     const handleExtendNetwork = async () => {
         if (!selectedNode?.s2id) return;
         try {
-            const extendedData = await getNetwork(authenticated, "s2id:" + selectedNode.s2id, "author", 1);
+            const extendedData = await getNetwork(authenticated, "s2id:" + selectedNode.s2id, "author", 1, clientId);
             const newAuthors = (extendedData.data.authors || []).map((a: any) => ({ ...a, type: "author" }));
             const newArticles = (extendedData.data.articles || []).map((a: any) => ({
                 id: a.id,
@@ -226,7 +230,8 @@ const GraphView: React.FC = () => {
                     authenticated,
                     "s2id:" + startNode.id,
                     targetNode.value,
-                    targetType
+                    targetType,
+                    clientId
                 );
 
                 if (status === 204) {

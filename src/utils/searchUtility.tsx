@@ -58,7 +58,7 @@ export const useResearcherSearch = (authenticated: boolean) => {
         return null;
     };
 
-    const search = async (searchTerm: string): Promise<SearchResult | null> => {
+    const search = async (searchTerm: string, clientId: string): Promise<SearchResult | null> => {
         if (!searchTerm.trim()) {
             toast.error("Enter a valid researcher name or profile URL.");
             return null;
@@ -95,7 +95,8 @@ export const useResearcherSearch = (authenticated: boolean) => {
                     authenticated,
                     profileData.author_id,
                     profileData.source,
-                    1
+                    1,
+                    clientId
                 );
             }
 
@@ -103,7 +104,6 @@ export const useResearcherSearch = (authenticated: boolean) => {
             setLoading(false);
             setIsRateLimited(false);
 
-            // Fix: Safely access center_id with null/undefined check
             const centerId = response?.data?.center_id || profileData.author_id;
             const status = response?.status || 500;
 
