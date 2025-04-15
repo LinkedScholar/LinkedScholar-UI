@@ -1,221 +1,193 @@
-// landingPage.scss
+// Updated landingPage.scss with cleaner, minimalist design
 @import "../../app.scss";
 
+// Base container
 .page-container {
-  /* This will ensure the scroll indicator and content are positioned correctly */
   position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
+
+// Common heading styles
 .h2-heading {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   color: $primary-color;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Inter', sans-serif;
 }
+
+// Section styling - simplified with less shadow
 .section-box {
-  padding: 30px 20px;
-  margin-top: 70px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border-radius: 10px;
-  margin-bottom: 20px; /* Spacing between sections */
+  padding: 40px 0;
+  margin: 40px auto;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
-
-/* .landing-container {
-  margin-top: 20px;
-  background: white;
-} */
-
+// Scroll indicators - more subtle
 .scroll-indicator {
   display: flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: -180px;
+  transition: all 0.2s ease;
+  margin-top: -155px;
   position: relative;
   z-index: 10;
 
   .scroll-text {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     color: $secondary-color;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     opacity: 0.8;
-    transition: opacity 0.3s ease;
   }
 
   .scroll-arrow {
-    width: 40px;
-    height: 40px;
-    background: rgba($secondary-color, 0.1);
+    width: 32px;
+    height: 32px;
+    background: rgba($secondary-color, 0.08);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     animation: bounce 2s infinite;
-    transition: all 0.3s ease;
 
     i {
-      font-size: 24px;
+      font-size: 20px;
       color: $secondary-color;
-      transition: all 0.3s ease;
     }
   }
 
   &:hover {
-    transform: translateY(5px);
-
-    .scroll-text {
-      opacity: 1;
-    }
-
+    transform: translateY(3px);
+    
     .scroll-arrow {
-      background: rgba($secondary-color, 0.2);
-
-      i {
-        transform: translateY(3px);
-      }
+      background: rgba($secondary-color, 0.15);
     }
   }
 }
 
 .scroll-up-indicator {
   position: fixed;
-  bottom: 30px;
-  right: 30px;
+  bottom: 24px;
+  right: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  background: rgba(white, 0.9);
-  border-radius: 50px;
-  padding: 10px 15px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: white;
+  border-radius: 30px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 100;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-    background: white;
-
-    .scroll-arrow i {
-      color: $primary-color;
-    }
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
   .scroll-text {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
     color: $primary-color;
-    margin-top: 5px;
+    margin-top: 4px;
   }
 
   .scroll-arrow {
-    width: 36px;
-    height: 36px;
-    background: rgba($primary-color, 0.1);
+    width: 30px;
+    height: 30px;
+    background: rgba($primary-color, 0.08);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
 
     i {
-      font-size: 24px;
+      font-size: 20px;
       color: $primary-color;
     }
   }
 }
 
-
-.intro-section {
-  text-align: center;
-  /* background: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border-radius: 10px; */
-}
-
+// Introduction content
 .intro-content {
-
-  max-width: 900px;
-  margin: 10px auto;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .intro-description {
-  font-size: 18px;
-  line-height: 1.8;
+  font-size: 16px;
+  line-height: 1.7;
   color: #444;
-  margin-bottom: 60px;
-  text-align: center;
+  margin-bottom: 40px;
+  text-align: justify;
+  padding-left: 2em;
+  padding-right: 2em;
 }
 
-
+// Features section with cleaner layout
 .features-list {
-  text-align: left;
-  margin: 60px auto;
+  margin: 50px auto;
   max-width: 800px;
 
   h3 {
-    font-size: 26px;
+    font-size: 20px;
     font-weight: 600;
     color: $primary-color;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     text-align: center;
   }
 
   .feature-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
+    gap: 24px;
   }
 
   .feature-item {
     display: flex;
     align-items: flex-start;
-    padding: 25px;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    cursor: default;
+    padding: 20px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
     background: white;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.05);
 
-    &:hover {
-      background: rgba($secondary-color, 0.05);
-      transform: translateY(-5px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-    }
-
-    &.active-feature {
-      background: rgba($secondary-color, 0.08);
-      transform: translateY(-5px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-
-      i {
-        transform: scale(1.1);
-        color: $primary-color;
-      }
+    &:hover, &.active-feature {
+      background: rgba($secondary-color, 0.03);
+      transform: translateY(-3px);
+      border-color: rgba($secondary-color, 0.1);
     }
 
     i {
-      font-size: 30px;
+      font-size: 24px;
       color: $secondary-color;
-      margin-right: 25px;
+      margin-right: 20px;
       flex-shrink: 0;
-      transition: all 0.3s ease;
     }
 
     .feature-text {
-      font-size: 18px;
-      line-height: 1.7;
+      font-size: 15px;
+      line-height: 1.6;
       color: #333;
 
       strong {
         color: $primary-color;
         font-weight: 600;
         display: block;
-        margin-bottom: 8px;
-        font-size: 19px;
+        margin-bottom: 6px;
+        font-size: 16px;
+      }
+      
+      p {
+        margin: 0;
       }
     }
   }
@@ -223,21 +195,19 @@
 
 .highlight-secondary {
   color: $secondary-color;
-  font-weight: 600;
+  font-weight: 700;
 }
+
+// Timeline section - simplified
 .timeline-section {
-  padding: 30px 20px;
   position: relative;
-  background: white;
-  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border-radius: 10px; */
 }
 
 .timeline-container {
   position: relative;
-  max-width: 1000px;
+  max-width: 800px;
   margin: 0 auto;
-  padding: 60px 0;
+  padding: 30px 0;
 }
 
 .timeline-line {
@@ -245,29 +215,19 @@
   left: 50%;
   top: 0;
   bottom: 0;
-  width: 3px;
+  width: 2px;
   background: linear-gradient(to bottom, $primary-color, $secondary-color);
   transform: translateX(-50%);
 }
 
 .timeline-entry {
   display: flex;
-  margin-bottom: 80px;
+  margin-bottom: 50px;
   position: relative;
-  min-height: 120px;
-  transition: all 0.5s ease;
+  min-height: 100px;
 
   &:last-child {
     margin-bottom: 0;
-  }
-
-  &.left {
-    justify-content: flex-end;
-
-    .timeline-content {
-      text-align: right;
-      padding-right: 40px;
-    }
   }
 
   &.right {
@@ -275,7 +235,7 @@
 
     .timeline-content {
       text-align: left;
-      padding-left: 40px;
+      padding-left: 30px;
     }
   }
 }
@@ -285,265 +245,240 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 10px;
-  transition: all 0.3s ease;
+  padding: 8px;
 
   .month {
     font-weight: 600;
-    font-size: 18px;
+    font-size: 16px;
     color: $primary-color;
   }
 
   .year {
-    font-size: 16px;
+    font-size: 14px;
     color: #666;
   }
 }
 
 .timeline-dot {
   position: absolute;
-  top: 20px;
+  top: 15px;
   left: 50%;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   background-color: white;
-  border: 4px solid $secondary-color;
+  border: 3px solid $secondary-color;
   border-radius: 50%;
   transform: translateX(-50%);
   z-index: 2;
-  transition: all 0.3s ease;
 }
 
 .timeline-content {
   width: 50%;
-  padding: 20px;
+  padding: 15px;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    transform: translateY(-3px);
+    border-color: rgba($secondary-color, 0.1);
   }
 
   .version {
-    font-size: 22px;
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: 600;
     color: $primary-color;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .description {
-    font-size: 17px;
+    font-size: 15px;
     color: #555;
-    line-height: 1.7;
-    margin-bottom: 15px;
+    line-height: 1.5;
+    margin-bottom: 10px;
   }
 
-  .features {
-    font-size: 16px;
-    color: #666;
-    line-height: 1.6;
+  .features-list {
+    margin: 0;
+    padding-left: 18px;
+    
+    li {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 4px;
+      padding-left: 2px;
+    }
   }
 
   &.future {
-    background: rgba($secondary-color, 0.05);
+    background: rgba($secondary-color, 0.03);
 
     .version {
       color: $secondary-color;
-    }
-
-    .timeline-dot {
-      border-color: $primary-color;
     }
   }
 }
 
 .timeline-feedback {
-  margin-top: 80px;
+  margin-top: 50px;
   display: flex;
   justify-content: center;
-  transition: all 0.6s ease;
 
   .feedback-content {
-    max-width: 700px;
+    max-width: 600px;
     text-align: center;
-    padding: 40px;
+    padding: 30px;
     background: white;
-    border-radius: 16px;
-    border: 1px solid rgba($secondary-color, 0.15);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-
-    &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
-    }
+    border-radius: 8px;
+    border: 1px solid rgba($secondary-color, 0.1);
 
     h3 {
       color: $primary-color;
-      font-size: 26px;
-      margin-bottom: 20px;
+      font-size: 20px;
+      margin-bottom: 15px;
     }
 
     p {
       color: #555;
-      margin-bottom: 25px;
-      line-height: 1.7;
-      font-size: 17px;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      font-size: 15px;
     }
 
     .feedback-button {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      background: $primary-color; /* Solid color */
+      gap: 8px;
+      background: $primary-color;
       color: white;
       border: none;
-      padding: 12px 28px;
-      border-radius: 50px;
-      font-size: 17px;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 15px;
       font-weight: 500;
       text-decoration: none;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba($primary-color, 0.3); /* Adjusted shadow */
+      transition: all 0.2s ease;
 
       i {
-        font-size: 22px;
+        font-size: 18px;
       }
 
       &:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba($primary-color, 0.4); /* Adjusted shadow */
+        background: darken($primary-color, 5%);
+        transform: translateY(-2px);
       }
     }
   }
 }
 
+// Support section - redesigned
 .support-section {
-  padding: 12px 40px;
-  border-radius: 20px;
-  background: white;
-  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); */
-  transition: all 0.6s ease;
+  padding: 20px 0;
 
   .support-content {
-    max-width: 900px;
+    max-width: 800px;
     margin: 0 auto;
     text-align: center;
 
-    .highlight-primary {
-      color: $primary-color;
-      position: relative;
-
-      &:after {
-        content: '';
-        position: absolute;
-        bottom: -5px;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        background: $primary-color;
-      }
-    }
-
-    .highlight-secondary {
-      color: $secondary-color;
-      position: relative;
-
-      &:after {
-        content: '';
-        position: absolute;
-        bottom: -5px;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        background: $secondary-color;
-      }
-    }
-
     h2 {
-      font-size: 36px;
-      margin-bottom: 40px;
+      font-size: 24px;
+      margin-bottom: 30px;
+      display: inline-block;
+      
+      .highlight-primary {
+        color: $primary-color;
+        font-weight: 600;
+      }
+      
+      .highlight-secondary {
+        color: $secondary-color;
+        font-weight: 600;
+      }
     }
 
     p {
-      font-size: 18px;
-      line-height: 1.8;
+      font-size: 15px;
+      line-height: 1.7;
       color: #444;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
+      text-align: justify;
+      padding-left: 2em;
+      padding-right: 2em;
     }
   }
 
   .cta-buttons {
     display: flex;
     justify-content: center;
-    gap: 25px;
-    margin-top: 40px;
+    gap: 16px;
+    margin: 35px 0 25px;
 
     @media (max-width: 576px) {
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      gap: 12px;
     }
   }
 
   .cta-button {
-    padding: 15px 32px;
-    border-radius: 50px;
-    font-size: 17px;
+    align-items: center;
+    gap: 8px;
+    background: $primary-color;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 15px;
     font-weight: 500;
     text-decoration: none;
-    transition: all 0.3s ease;
-    min-width: 220px;
-    text-align: center;
+    transition: all 0.2s ease;
 
     &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
     }
 
     &.primary {
       background: $primary-color;
       color: white;
-      box-shadow: 0 5px 20px rgba($secondary-color, 0.3);
-
+      
       &:hover {
         background: darken($primary-color, 5%);
-        box-shadow: 0 8px 25px rgba($secondary-color, 0.4);
       }
     }
 
     &.secondary {
       background: white;
       color: $primary-color;
-      border: 2px solid $primary-color;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-
+      border: 1px solid rgba($primary-color, 0.3);
+      
       &:hover {
-        background: rgba($primary-color, 0.05);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        border-color: $primary-color;
+        background: rgba($primary-color, 0.02);
       }
     }
   }
 
   .sponsors-section {
-    margin-top: 100px;
+    margin-top: 50px;
     text-align: center;
-    transition: all 0.6s ease;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding-top: 40px;
 
     h3 {
-      font-size: 28px;
-      margin-bottom: 15px;
+      font-size: 18px;
+      margin-bottom: 8px;
       color: $primary-color;
+      font-weight: 600;
     }
 
     p {
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       color: #666;
-      font-size: 17px;
-      max-width: 700px;
+      font-size: 14px;
+      max-width: 500px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -553,229 +488,104 @@
       justify-content: center;
       align-items: center;
       flex-wrap: wrap;
-      gap: 60px; /* Increased gap */
-      padding: 30px; /* Increased padding */
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+      gap: 30px;
+      padding: 10px 0;
 
       img {
-        height: 120px; /* Increased height */
-        max-width: 300px; /* Increased max-width */
+        height: 120px;
+        max-width: 180px;
         object-fit: contain;
-        filter: grayscale(100%);
-        opacity: 0.8;
-        transition: all 0.4s ease;
+        filter: grayscale(90%);
+        opacity: 0.75;
+        transition: all 0.2s ease;
 
         &:hover {
           filter: none;
           opacity: 1;
-          transform: scale(1.05);
+          transform: scale(1.02);
         }
-      }
-    }
-  }
-
-  @media (max-width: 768px) {
-    .sponsors-section {
-      .sponsor-logos {
-        img {
-          height: 60px; /* Smaller on mobile */
-          max-width: 150px;
-        }
-        gap: 20px; /* Smaller gap on mobile */
-        padding: 15px; /* Smaller padding on mobile */
       }
     }
   }
 }
 
+// Animation for scroll indicator
 @keyframes bounce {
   0%, 20%, 50%, 80%, 100% {
     transform: translateY(0);
   }
   40% {
-    transform: translateY(-10px);
+    transform: translateY(-6px);
   }
   60% {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
   }
 }
 
-@media (max-width: 1200px) {
-  .landing-content {
-    padding: 60px 30px;
-  }
-}
-
-@media (max-width: 992px) {
-  .features-list {
-    ul li {
-      padding: 22px;
-
-      i {
-        font-size: 26px;
-      }
-
-      span {
-        font-size: 17px;
-
-        strong {
-          font-size: 18px;
-        }
-      }
-    }
-  }
-
-  .timeline-content {
-    .version {
-      font-size: 20px;
-    }
-
-    .description {
-      font-size: 16px;
-    }
-
-    .features {
-      font-size: 15px;
-    }
-  }
-}
-
+// Responsive tweaks
 @media (max-width: 768px) {
-  .landing-content {
-    padding: 40px 20px;
-
-    h2 {
-      font-size: 28px;
-      margin-bottom: 40px;
-    }
-  }
-
-  .intro-description {
-    font-size: 17px;
-  }
-
   .timeline-line {
-    left: 40px;
+    left: 30px;
   }
 
   .timeline-entry {
     flex-direction: column;
 
-    &.left, &.right {
-      justify-content: flex-start;
-
+    &.right {
       .timeline-content {
         text-align: left;
-        padding-left: 70px;
-        padding-right: 20px;
+        padding-left: 50px;
       }
     }
   }
 
   .timeline-date {
     width: 100%;
-    padding-left: 70px;
-    margin-bottom: 15px;
+    padding-left: 50px;
+    margin-bottom: 10px;
   }
 
   .timeline-dot {
-    left: 40px;
-    width: 18px;
-    height: 18px;
+    left: 30px;
+    width: 14px;
+    height: 14px;
   }
 
   .timeline-content {
     width: 100%;
-  }
-
-  .support-section {
-    padding: 60px 30px;
-
-    .support-content {
-      h2 {
-        font-size: 32px;
-      }
-
-      p {
-        font-size: 17px;
+    
+    .features-list {
+      padding-left: 16px;
+      
+      li {
+        font-size: 13px;
       }
     }
   }
 }
 
 @media (max-width: 576px) {
-  .landing-content {
-    padding: 30px 15px;
-
-    section {
-      margin-bottom: 70px;
-    }
-
-    h2 {
-      font-size: 26px;
-    }
+  .section-box {
+    padding: 30px 0;
+    margin: 30px auto;
   }
-
-  .intro-description {
-    font-size: 16px;
-  }
-
-  .features-list {
-    h3 {
-      font-size: 22px;
-    }
-
-    ul li {
-      padding: 18px;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-
-      i {
-        margin-right: 0;
-        margin-bottom: 15px;
-      }
-    }
-  }
-
-  .timeline-content {
+  
+  .feature-item {
     padding: 15px;
-
-    .version {
-      font-size: 18px;
+    
+    i {
+      font-size: 20px;
+      margin-right: 15px;
+    }
+    
+    .feature-text strong {
+      font-size: 15px;
     }
   }
-
-  .support-section {
-    padding: 50px 20px;
-
-    .support-content {
-      h2 {
-        font-size: 28px;
-      }
-    }
-
-    .cta-button {
-      min-width: 200px;
-      padding: 12px 24px;
-      font-size: 16px;
-    }
-  }
-
+  
   .scroll-up-indicator {
-    bottom: 20px;
-    right: 20px;
-    padding: 8px 12px;
-
-    .scroll-arrow {
-      width: 30px;
-      height: 30px;
-
-      i {
-        font-size: 20px;
-      }
-    }
+    bottom: 15px;
+    right: 15px;
+    padding: 6px 10px;
   }
 }
