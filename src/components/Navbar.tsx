@@ -7,7 +7,11 @@ import MiniSearcher from "./MiniSearcher";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/components/navbar.scss";
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+    clientId: string;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ clientId }) => {
     const {
         authenticated,
         firstName,
@@ -64,7 +68,7 @@ const Navbar: React.FC = () => {
                 {/* Center: Search Bar - only on network page */}
                 {isNetworkPage && (
                     <div className="navbar-search-wrapper d-none d-md-flex">
-                        <MiniSearcher />
+                        <MiniSearcher clientId={clientId} />
                     </div>
                 )}
 
@@ -104,7 +108,7 @@ const Navbar: React.FC = () => {
                 {/* Mobile Search Bar */}
                 {isNetworkPage && (
                     <div className="navbar-search-mobile d-md-none w-100 mt-2">
-                        <MiniSearcher />
+                        <MiniSearcher clientId={clientId} />
                     </div>
                 )}
             </div>

@@ -4,14 +4,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../redux/store";
 import { fetchSession } from "../redux/authSlice";
 import RegistrationModal from "../components/modals/RegistrationModal";
-import PricingModal from "../components/modals/PricingModal";
 import LandingPage from "../components/LandingPage";
 import { useResearcherSearch } from "../utils/searchUtility";
 import { registerErrorHandlers } from "../utils/errorHandler";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/views/searcher.scss";
 
-const Searcher: React.FC = () => {
+interface SearcherProps {
+    clientId: string;
+}
+
+const Searcher: React.FC<SearcherProps> = ({ clientId }) => {
     const navigate = useNavigate();
     const dispatch: AppDispatch = useDispatch();
     const { authenticated, status } = useSelector((state: RootState) => state.auth);
@@ -63,7 +66,7 @@ const Searcher: React.FC = () => {
         }, 1000);
 
         try {
-            const result = await search(searchTerm);
+            const result = await search(searchTerm, clientId);
             clearTimeout(delayTimer);
             setShowDelayMessage(false);
 

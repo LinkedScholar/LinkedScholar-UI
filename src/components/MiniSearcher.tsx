@@ -5,7 +5,11 @@ import { RootState } from "../redux/store";
 import { useResearcherSearch } from "../utils/searchUtility";
 import "../styles/components/miniSearcher.scss";
 
-const MiniSearcher: React.FC = () => {
+interface MiniSearcherProps {
+  clientId: string;
+}
+
+const MiniSearcher: React.FC<MiniSearcherProps> = ({ clientId }) => {
   const navigate = useNavigate();
   const { authenticated } = useSelector((state: RootState) => state.auth);
 
@@ -42,7 +46,7 @@ const MiniSearcher: React.FC = () => {
     }, 300);
 
     try {
-      const result = await search(searchTerm);
+      const result = await search(searchTerm, clientId); // Pass clientId here
       clearTimeout(delayTimer);
       setShowDelayMessage(false);
       if (!result) return;
