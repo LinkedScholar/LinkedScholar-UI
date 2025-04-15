@@ -80,7 +80,7 @@ const LandingPage: React.FC = () => {
 
         <section className="section-box">
           <div className="intro-content">
-            <h2 className="h2-heading">What is LinkedScholar?</h2>
+            <h2 className="h2-heading">What is Linked<span className="highlight-secondary">Scholar</span>?</h2>
             <p className="intro-description">
               LinkedScholar is a powerful research tool designed <span className="highlight-secondary">to help academics, students, and research institutions </span>
               visualize and explore academic collaboration networks. <br></br> Our platform makes it easy  <span className="highlight-secondary">to discover connections
