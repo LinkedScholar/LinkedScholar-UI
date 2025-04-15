@@ -14,6 +14,8 @@ import "../styles/views/graphView.scss";
 import { RootState } from "../redux/store";
 import * as d3 from "d3";
 import {toast} from "sonner";
+import RegistrationModal from "../components/modals/RegistrationModal";
+import {registerErrorHandlers} from "../utils/errorHandler";
 
 interface NetworkData {
     nodes: NodeDatum[];
@@ -28,6 +30,7 @@ const GraphView: React.FC<GraphViewProps> = ({ clientId }) => {
     const location = useLocation();
     const rawNetworkData: any = location.state?.networkData;
     const centerId = location.state?.centerId;
+    const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
 
     const computedNetworkData: NetworkData = useMemo(() => {
         if (!rawNetworkData) return { nodes: [], links: [] };
@@ -64,6 +67,12 @@ const GraphView: React.FC<GraphViewProps> = ({ clientId }) => {
     const updateHighlightRef = useRef<(selNode: NodeDatum | null) => void>(() => {});
 
     const { authenticated } = useSelector((state: RootState) => state.auth);
+
+    useEffect(() => {
+        registerErrorHandlers(
+            setIsRegistrationModalOpen,
+        );
+    }, []);
 
     useEffect(() => {
         setPathWindowOpen(false);
@@ -428,6 +437,11 @@ const GraphView: React.FC<GraphViewProps> = ({ clientId }) => {
                 selectedNode={selectedNode}
                 onClose={handleCloseSidebar}
                 onExtendNetwork={handleExtendNetwork}
+            />
+
+            <RegistrationModal
+                isOpen={isRegistrationModalOpen}
+                onClose={() => setIsRegistrationModalOpen(false)}
             />
 
             <div className="graph-note">
