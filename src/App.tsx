@@ -16,6 +16,18 @@ import { Toaster } from 'sonner';
 import { registerErrorHandlers } from "./utils/errorHandler";
 import RegistrationModal from "./components/modals/RegistrationModal";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { v4 as uuidv4 } from 'uuid';
+
+const CLIENT_ID_KEY = 'clientId';
+
+const getClientId = () => {
+    let clientId = localStorage.getItem(CLIENT_ID_KEY);
+    if (!clientId) {
+        clientId = uuidv4();
+        localStorage.setItem(CLIENT_ID_KEY, clientId);
+    }
+    return clientId;
+};
 
 function Api() {
     return null;
@@ -23,16 +35,19 @@ function Api() {
 
 const App: React.FC = () => {
     const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
+    const [clientId, setClientId] = useState('');
 
     useEffect(() => {
         registerErrorHandlers(setIsRegistrationModalOpen);
+        const id = getClientId();
+        setClientId(id);
     }, []);
 
     return (
         <Router>
             <div className="app-container d-flex flex-column vh-100">
                 <header>
-                    <Navbar />
+                    <Navbar clientId={clientId} />
                 </header>
 
                 <Toaster position="top-right" richColors closeButton />
@@ -44,7 +59,7 @@ const App: React.FC = () => {
 
                 <main className="main-content flex-grow-1 d-flex justify-content-center align-items-center">
                     <Routes>
-                        <Route path="/" element={<Searcher />} />
+                        <Route path="/" element={<Searcher clientId={clientId} />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/profile" element={<HelloUser />} />
                         <Route path="/privacy" element={<PrivacyPolicy />} />
@@ -54,7 +69,7 @@ const App: React.FC = () => {
                         <Route path="/sponsor" element={<Sponsor />} />
                         <Route path="/api" element={<Api />} />
                         <Route path="/contact" element={<Contact />} />
-                        <Route path="/network" element={<GraphView />} />
+                        <Route path="/network" element={<GraphView clientId={clientId} />} />
                     </Routes>
                 </main>
 

@@ -14,37 +14,42 @@ const apiRequest = async (
     url: string,
     method: "get" | "post" | "put" | "delete",
     data?: any,
-    options?: any
+    options?: any,
+    clientId?: string
 ) => {
+    const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        ...options?.headers,
+    };
+
     try {
         const response = await axios({
             url,
             method,
             data,
             withCredentials: true,
-            validateStatus: () => true, // Handle all status codes
-            ...options
+            validateStatus: () => true,
+            headers,
+            ...options,
         });
 
-        // Handle success (2xx) and redirect (3xx) codes
         if (response.status >= 200 && response.status < 400) {
             return response;
         }
 
-        // Handle error codes
         throw {
             isAxiosError: true,
             response: {
                 status: response.status,
                 data: response.data,
                 headers: response.headers,
-                config: response.config
+                config: response.config,
             },
-            config: response.config
+            config: response.config,
         };
     } catch (error) {
         const apiError = handleApiError(error);
-        throw apiError; // Re-throw to allow catch in calling functions
+        throw apiError;
     }
 };
 
@@ -52,17 +57,27 @@ export const getNetwork = async (
     logged: boolean,
     author_id: string,
     kind: string,
-    recursivity: number = 1
+    recursivity: number = 1,
+    clientId?: string
 ): Promise<{ status: number; data: any }> => {
     try {
-        const url = logged ? `${API_BASE_URL}/network` : `${API_PUBLIC_BASE_URL}/network`;
-        const response = await apiRequest(url, "post", { author_id, source: kind, recursivity }, {
-            headers: { "Content-Type": "application/json" }
-        });
+        let url = logged ? `${API_BASE_URL}/network` : `${API_PUBLIC_BASE_URL}/network`;
+
+        if (!logged && clientId) {
+            url += `?clientId=${encodeURIComponent(clientId)}`;
+        }
+
+        const response = await apiRequest(
+            url,
+            "post",
+            { author_id, source: kind, recursivity },
+            {
+                headers: { "Content-Type": "application/json" },
+            }
+        );
 
         return { status: response.status, data: response.data };
     } catch (error) {
-        // TypeScript safe error handling
         const apiError = error as ApiError;
         return { status: apiError.code || 500, data: null };
     }
@@ -74,30 +89,38 @@ export const getBestMatchings = async (
 ): Promise<string[]> => {
     try {
         const url = logged ? `${API_BASE_URL}/best_matches` : `${API_PUBLIC_BASE_URL}/best_matches`;
-        const response = await apiRequest(url, "post", { partial_name: partialName, kind: "author" }, {
-            headers: { "Content-Type": "application/json" }
-        });
+        const response = await apiRequest(
+            url,
+            "post",
+            { partial_name: partialName, kind: "author" },
+            {
+                headers: { "Content-Type": "application/json" },
+            }
+        );
 
         return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
-        // Return empty array on error
         return [];
     }
 };
 
 export const getArticlesFromAuthor = async (
     logged: boolean,
-    author_id: string,
+    author_id: string
 ): Promise<any> => {
     try {
         const url = logged ? `${API_BASE_URL}/articles_from_author` : `${API_PUBLIC_BASE_URL}/articles_from_author`;
-        const response = await apiRequest(url, "post", { author_id }, {
-            headers: { "Content-Type": "application/json" }
-        });
+        const response = await apiRequest(
+            url,
+            "post",
+            { author_id },
+            {
+                headers: { "Content-Type": "application/json" },
+            }
+        );
 
         return response.data;
     } catch (error) {
-        // Return null on error
         return null;
     }
 };
@@ -106,21 +129,31 @@ export const getPath = async (
     logged: boolean,
     fromId: string,
     toId: string,
-    kind: string = "author"
+    kind: string = "author",
+    clientId?: string
 ): Promise<{ data: any; status: number }> => {
     try {
-        const url = logged ? `${API_BASE_URL}/path` : `${API_PUBLIC_BASE_URL}/path`;
-        const response = await apiRequest(url, "post", {
-            from_id: fromId,
-            to_id: toId,
-            kind: kind
-        }, {
-            headers: { "Content-Type": "application/json" }
-        });
+        let url = logged ? `${API_BASE_URL}/path` : `${API_PUBLIC_BASE_URL}/path`;
+
+        if (!logged && clientId) {
+            url += `?clientId=${encodeURIComponent(clientId)}`;
+        }
+
+        const response = await apiRequest(
+            url,
+            "post",
+            {
+                from_id: fromId,
+                to_id: toId,
+                kind: kind,
+            },
+            {
+                headers: { "Content-Type": "application/json" },
+            }
+        );
 
         return { data: response.data, status: response.status };
     } catch (error) {
-        // TypeScript safe error handling
         const apiError = error as ApiError;
         return { data: null, status: apiError.code || 500 };
     }
