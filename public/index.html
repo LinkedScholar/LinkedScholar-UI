@@ -10,6 +10,7 @@
     });
   </script>
 
+  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-CN00SFFKWW"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -18,81 +19,75 @@
 
     gtag('config', 'G-CN00SFFKWW');
   </script>
-
-  <script src="YOUR_SILKTIDE_COOKIE_BANNER_SCRIPT_URL"></script>
-
   <script>
-    // Ensure silktideCookieBannerManager is available before configuration
-    if (typeof silktideCookieBannerManager !== 'undefined') {
-      silktideCookieBannerManager.updateCookieBannerConfig({
-        background: {
-          showBackground: true
-        },
-        cookieIcon: {
-          show: false,
-          enabled: false,
-          position: "none",
-          showOnClose: false
-        },
-        cookieTypes: [
-          {
-            id: "necessary",
-            name: "Necessary",
-            description: "<p>These cookies are necessary for the website to function properly and cannot be switched off. They help with things like logging in and setting your privacy preferences.</p>",
-            required: true,
-            onAccept: function() {
-              console.log('Add logic for the required Necessary here');
-            }
-          },
-          {
-            id: "analytical",
-            name: "Analytical",
-            description: "<p>These cookies help us improve the site by tracking how visitors move around the site.</p>",
-            required: false,
-            onAccept: function() {
-              gtag('consent', 'update', {
-                analytics_storage: 'granted',
-              });
-              dataLayer.push({
-                'event': 'consent_accepted_analytical',
-              });
-            },
-            onReject: function() {
-              gtag('consent', 'update', {
-                analytics_storage: 'denied',
-              });
-            }
-          }
-        ],
-        text: {
-          banner: {
-            description: "<p>We use cookies on our site to enhance your user experience and analyze our traffic. <a href=\"https://linkedscholar.io/privacy\" target=\"_blank\">Cookie Policy.</a></p>",
-            acceptAllButtonText: "Accept all",
-            acceptAllButtonAccessibleLabel: "Accept all cookies",
-            rejectNonEssentialButtonText: "Reject non-essential",
-            rejectNonEssentialButtonAccessibleLabel: "Reject non-essential",
-            preferencesButtonText: "Preferences",
-            preferencesButtonAccessibleLabel: "Toggle preferences"
-          },
-          preferences: {
-            title: "Customize your cookie preferences",
-            description: "<p>We respect your right to privacy. You can choose not to allow some types of cookies. Your cookie preferences will apply across our website.</p>",
-            creditLinkText: "Get this banner for free",
-            creditLinkAccessibleLabel: "Get this banner for free"
+    silktideCookieBannerManager.updateCookieBannerConfig({
+      background: {
+        showBackground: true
+      },
+      cookieIcon: {
+        show: false,
+        enabled: false,
+        position: "none",
+        showOnClose: false
+      },
+      cookieTypes: [
+        {
+          id: "necessary",
+          name: "Necessary",
+          description: "<p>These cookies are necessary for the website to function properly and cannot be switched off. They help with things like logging in and setting your privacy preferences.</p>",
+          required: true,
+          onAccept: function() {
+            console.log('Add logic for the required Necessary here');
           }
         },
-        position: {
-          banner: "bottomCenter"
+        {
+          id: "analytical",
+          name: "Analytical",
+          description: "<p>These cookies help us improve the site by tracking how visitors move around the site.</p>",
+          required: false,
+          onAccept: function() {
+            gtag('consent', 'update', {
+              analytics_storage: 'granted',
+            });
+            dataLayer.push({
+              'event': 'consent_accepted_analytical',
+            });
+          },
+          onReject: function() {
+            gtag('consent', 'update', {
+              analytics_storage: 'denied',
+            });
+          }
         }
-      });
-    } else {
-      console.error('Silktide Cookie Banner Manager was not loaded before configuration.');
-    }
+      ],
+      text: {
+        banner: {
+          description: "<p>We use cookies on our site to enhance your user experience and analyze our traffic. <a href=\"https://linkedscholar.io/privacy\" target=\"_blank\">Cookie Policy.</a></p>",
+          acceptAllButtonText: "Accept all",
+          acceptAllButtonAccessibleLabel: "Accept all cookies",
+          rejectNonEssentialButtonText: "Reject non-essential",
+          rejectNonEssentialButtonAccessibleLabel: "Reject non-essential",
+          preferencesButtonText: "Preferences",
+          preferencesButtonAccessibleLabel: "Toggle preferences"
+        },
+        preferences: {
+          title: "Customize your cookie preferences",
+          description: "<p>We respect your right to privacy. You can choose not to allow some types of cookies. Your cookie preferences will apply across our website.</p>",
+          creditLinkText: "Get this banner for free",
+          creditLinkAccessibleLabel: "Get this banner for free"
+        }
+      },
+      position: {
+        banner: "bottomCenter"
+      }
+    });
+
   </script>
 
   <meta charset="utf-8" />
   <link rel="icon" href="%PUBLIC_URL%/favicon/favicon.ico" />
 
+  <!-- Multiple sizes for different devices -->
   <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon/favicon-16x16.png">
@@ -102,24 +97,29 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+  <!-- Primary Meta Tags -->
   <meta name="description" content="LinkedScholar - Explore and analyze researcher networks with interactive visualizations and advanced analytics." />
   <meta name="keywords" content="research, academic network, researcher connections, academic visualization, research analysis" />
   <meta name="author" content="LinkedScholar Team" />
 
+  <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://linkedscholar.io/" />
   <meta property="og:title" content="LinkedScholar - Research Network Analysis" />
   <meta property="og:description" content="Explore and analyze researcher networks with interactive visualizations and advanced analytics." />
   <meta property="og:image" content="%PUBLIC_URL%/favicon/og-image.jpg" />
 
+  <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:url" content="https://linkedscholar.io/" />
   <meta property="twitter:title" content="LinkedScholar - Research Network Analysis" />
   <meta property="twitter:description" content="Explore and analyze researcher networks with interactive visualizations and advanced analytics." />
   <meta property="twitter:image" content="%PUBLIC_URL%/favicon/og-image.jpg" />
 
+  <!-- Manifests -->
   <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
