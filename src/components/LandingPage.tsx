@@ -90,7 +90,7 @@ const LandingPage: React.FC = () => {
             <div className="intro-content">
               <h2 className="h2-heading">Transform Research Into <span className="highlight-secondary">Results</span></h2>
               <p className="intro-description">
-                LinkedScholar bridges the gap between research and real-world innovation, helping <span className="highlight-secondary">companies, startups, and institutions</span>
+                LinkedScholar bridges the gap between research and real-world innovation, helping <span className="highlight-secondary">companies, startups and research institutions</span> to
                 navigate the global research ecosystem with clarity and purpose. <br></br> Our platform empowers you to <span className="highlight-secondary">discover relevant insights,
               connect with top research institutions, and accelerate your R&D</span> for competitive advantage in an intelligence-driven economy.
               </p>
