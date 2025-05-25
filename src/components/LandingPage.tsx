@@ -189,10 +189,10 @@ const LandingPage: React.FC = () => {
               </p>
 
               <div className="cta-buttons">
-                <a href="/partnership" className="cta-button primary">
+                <a href="/sponsor" className="cta-button primary">
                   Become a Partner
                 </a>
-                <a href="/enterprise" className="cta-button secondary">
+                <a href="/contact" className="cta-button secondary">
                   Enterprise Solutions
                 </a>
               </div>
