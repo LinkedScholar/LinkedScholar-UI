@@ -155,7 +155,7 @@ const Searcher: React.FC<SearcherProps> = ({ clientId }) => {
                 </button>
                 <button
                     type="button"
-                    className="search-button-secondary"
+                    className=" search-button search-button-secondary"
                     onClick={() => setSearchTerm("")}
                     disabled={loading || isRateLimited}
                 >
