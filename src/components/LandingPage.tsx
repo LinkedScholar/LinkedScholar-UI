@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import '../styles/components/Landing/landingPage.scss';
 import KeyFigures from "./Landing/KeyFigures";
-
+import PlatformCapabilities from './Landing/PlatformCapabilities';
 const timelineData = [
   {
     date: { month: 'April', year: '2025' },
@@ -34,6 +34,11 @@ const LandingPage: React.FC = () => {
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
   const landingRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const data = [
+    { value: 85, label: 'Performance', color: 'bg-blue-500' },
+    { value: 92, label: 'Quality', color: 'bg-green-500' },
+    { value: 78, label: 'Efficiency', color: 'bg-purple-500' }
+  ];
 
   useEffect(() => {
     const handleScroll = () => {

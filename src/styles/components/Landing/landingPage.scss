@@ -4,9 +4,9 @@
 // Base container
 .page-container {
   position: relative;
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 0 20px;
+  width: 100%;
 }
 
 // Common heading styles
@@ -118,7 +118,6 @@
 
 // Introduction content
 .intro-content {
-  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -135,7 +134,6 @@
 // Features section with cleaner layout
 .features-list {
   margin: 50px auto;
-  max-width: 800px;
 
   h3 {
     font-size: 20px;
