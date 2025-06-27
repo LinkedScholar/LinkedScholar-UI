@@ -1,5 +1,3 @@
-// src/components/Landing/KeyFigures.tsx
-
 import React, { useEffect, useState, useRef } from 'react';
 // We no longer import icons here
 import '../../styles/components/Landing/KeyFigures.scss';
@@ -8,12 +6,13 @@ import StatCard from './StatCard';
 import InfoCard from './InfoCard';
 
 // --- MOCK API & TYPES ---
+// Updated statistics to align with the pitch deck
 const getStatistics = async () => {
     await new Promise(resolve => setTimeout(resolve, 500));
     return {
-        institutions: 50000,
-        articles: 7000000,
-        authors: 3000000,
+        institutions: 39000, // from pitch
+        articles: 6000000,  // from pitch
+        authors: 10000000,  // from pitch
         topics: 150000,
         companies: 125000,
         fundings: 850000,
@@ -23,10 +22,11 @@ type NodeId = 'institutions' | 'articles' | 'authors' | 'topics' | 'companies' |
 type Statistics = Record<NodeId, number>;
 
 // --- FIX: The 'icon' property is now a simple string identifier ---
+// Updated titles to align with pitch deck terminology
 const STAT_CONFIG: { id: NodeId; title: string; icon: string }[] = [
     { id: 'institutions', title: 'Institutions', icon: 'home' },
-    { id: 'authors', title: 'Researchers', icon: 'users' },
-    { id: 'articles', title: 'Publications', icon: 'file-text' },
+    { id: 'authors', title: 'Authors', icon: 'users' },
+    { id: 'articles', title: 'Articles', icon: 'file-text' },
     { id: 'topics', title: 'Topics', icon: 'tag' },
     { id: 'companies', title: 'Companies', icon: 'briefcase' },
     { id: 'fundings', title: 'Projects', icon: 'briefcase' },
@@ -70,21 +70,20 @@ const KeyFigures = () => {
                 <div className="key-figures-content">
                     <div className="key-figures-header">
                         <h2>
-                            <span className="key-figures-header__accent">The EU's</span>
+                            <span className="key-figures-header__primary">Europe's First</span>
                             {' '}
-                            <span className="key-figures-header__primary">Open Research</span>
+                            <span className="key-figures-header__gradient">Open-Source</span>
                             {' '}
-                            <span className="key-figures-header__gradient">Intelligence Platform</span>
+                            <span className="key-figures-header__accent">Research Intelligence Platform</span>
                         </h2>
                         <p>
-                            We help{' '}
-                            <span className="text-highlight">companies</span>,{' '}
-                            <span className="text-highlight">research institutions</span>, and{' '}
-                            <span className="text-highlight">researchers</span>{' '}
-                            to connect and navigate the global research ecosystem, accelerating{' '}
-                            <span className="text-emphasis">R&D</span>,{' '}
-                            <span className="text-emphasis">funding discovery</span>, and maximizing{' '}
-                            <span className="text-emphasis">innovation</span>.
+                            We empower{' '}
+                            <span className="text-highlight">universities</span>,{' '}
+                            <span className="text-highlight">researchers</span>, and{' '}
+                            <span className="text-highlight">private companies</span>{' '}
+                            to visualize the complex research landscape, identify{' '}
+                            <span className="text-emphasis">collaboration opportunities</span>, and make smarter{' '}
+                            <span className="text-emphasis">funding decisions</span> to accelerate innovation.
                         </p>
                     </div>
                     <div className={`key-figures-grid ${isVisible ? 'is-visible' : ''}`} ref={gridRef}>

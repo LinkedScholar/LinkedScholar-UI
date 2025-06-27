@@ -1,0 +1,75 @@
+// src/styles/components/Landing/PlatformCapabilities.scss
+
+.platform-capabilities {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.platform-capabilities__header {
+  text-align: center;
+  margin-bottom: 5rem;
+
+  .platform-capabilities__title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+    .title-accent {
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .title-primary {
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+    }
+  }
+
+  .platform-capabilities__subtitle {
+    font-size: 1.25rem;
+    color: #64748b;
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+}
+
+.platform-capabilities__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+// Import individual component styles
+@import 'TeamMatching.scss';
+@import 'NetworkVisualization.scss';
+@import 'ReportGenerator.scss';
+
+// Responsive design for header
+@media (max-width: 768px) {
+  .platform-capabilities {
+    padding: 0 1rem;
+  }
+
+  .platform-capabilities__header {
+    margin-bottom: 3rem;
+
+    .platform-capabilities__title {
+      font-size: 2rem;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .platform-capabilities__subtitle {
+      font-size: 1.125rem;
+    }
+  }
+}

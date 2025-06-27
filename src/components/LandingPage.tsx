@@ -2,32 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import '../styles/components/Landing/landingPage.scss';
 import KeyFigures from "./Landing/KeyFigures";
 import PlatformCapabilities from './Landing/PlatformCapabilities';
-const timelineData = [
-  {
-    date: { month: 'April', year: '2025' },
-    version: 'α Alpha Release',
-    description: 'Initial alpha release',
-    features: 'Database consisting of 3M Authors & 7M Papers.\nShortest Path between researchers and affiliations.',
-    position: 'right',
-    isFuture: false,
-  },
-  {
-    date: { month: 'July', year: '2025' },
-    version: 'β Beta Release',
-    description: 'Beta release',
-    features: 'Expanding the Database to 10M Authors & 200M Papers.\n Knowledge graph data ingestion accleration.\n Diverse dataset origins. \nResearch synergy and recommendation.',
-    position: 'right',
-    isFuture: true,
-  },
-  {
-    date: { month: 'Q2-3', year: '2026' },
-    version: 'Stable Release',
-    description: 'Complete implementation of base use cases',
-    features: 'TBD',
-    position: 'right',
-    isFuture: true,
-  },
-];
+
 
 const LandingPage: React.FC = () => {
   const [showScrollUp, setShowScrollUp] = useState(false);
@@ -91,14 +66,11 @@ const LandingPage: React.FC = () => {
           <KeyFigures />
         </section>
 
-        <section className="section-box">
           <div className="intro-content">
             <div className="features-list">
-              <h2 className='h2-heading'>Key Features</h2>
               <PlatformCapabilities />
             </div>
           </div>
-        </section>
 
         <section className="support-section section-box">
           <div className="support-content">

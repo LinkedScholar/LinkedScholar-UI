@@ -28,11 +28,32 @@
 
 .info-card__header {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   margin-bottom: 1.5rem;
+  text-align: center;
 }
 
+.info-card__title-primary,
+.info-card__title-accent {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  width: 100%;
+  display: block;
+}
+
+.info-card__title-primary {
+  color: #1e293b;
+}
+
+.info-card__title-accent {
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 .info-card__icon-wrapper {
   position: relative;
 }
