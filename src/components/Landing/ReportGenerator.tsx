@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../styles/components/Landing/ReportGenerator.scss';
 
-const ReportGenerator = () => {
+const ReportGenerator: React.FC = () => {
     return (
         <section className="report-generator">
             <div className="report-generator__container">
@@ -85,7 +85,7 @@ const ReportGenerator = () => {
                                 allowFullScreen
                                 width="100%"
                                 height="100%"
-                                src="https://embed.figma.com/slides/a0Yu6t5WRO5sdk8MOdGkGF/Report-q2-2025?node-id=1-107&embed-host=share"
+                                src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/proto/a0Yu6t5WRO5sdk8MOdGkGF/?node-id=1-107&scaling=contain"
                                 title="Report Generator Demo"
                             ></iframe>
                         </div>
