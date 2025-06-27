@@ -28,7 +28,7 @@ const TeamMatching = () => {
                         Assemble the perfect project team with our AI-powered generator. Our system not only identifies ideal experts to fill collaboration gaps but also automatically recommends relevant EU funding opportunities. Invite applicants to your project and let our AI rank them by compatibility, ensuring you build the strongest possible consortium.
                     </p>
 
-                    <div className="capability-features">
+                    <div className="capability-features-grid">
                         <div className="feature-item">
                             <div className="feature-icon">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -38,7 +38,10 @@ const TeamMatching = () => {
                                     <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                                 </svg>
                             </div>
-                            <span>AI-driven generator builds balanced or innovation-focused teams.</span>
+                            <div className="feature-content">
+                                <h4>AI Team Generator</h4>
+                                <p>AI-driven generator builds balanced or innovation-focused teams.</p>
+                            </div>
                         </div>
                         <div className="feature-item">
                             <div className="feature-icon">
@@ -48,7 +51,36 @@ const TeamMatching = () => {
                                     <path d="M1 12h6m6 0h6"/>
                                 </svg>
                             </div>
-                            <span>Automated detection of relevant Horizon Europe funding calls.</span>
+                            <div className="feature-content">
+                                <h4>Funding Detection</h4>
+                                <p>Automated detection of relevant Horizon Europe funding calls.</p>
+                            </div>
+                        </div>
+                        <div className="feature-item">
+                            <div className="feature-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <path d="M12 18v-6"/>
+                                    <path d="M9 15h6"/>
+                                </svg>
+                            </div>
+                            <div className="feature-content">
+                                <h4>Gap Analysis</h4>
+                                <p>Identify and fill expertise gaps in your team with targeted expert suggestions.</p>
+                            </div>
+                        </div>
+                        <div className="feature-item">
+                            <div className="feature-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M9 12l2 2 4-4"/>
+                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                                </svg>
+                            </div>
+                            <div className="feature-content">
+                                <h4>Smart Ranking</h4>
+                                <p>Invite and automatically rank project applicants with an AI-powered compatibility score.</p>
+                            </div>
                         </div>
                     </div>
 

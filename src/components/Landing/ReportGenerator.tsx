@@ -15,7 +15,7 @@ const ReportGenerator = () => {
                         Stop wrestling with fragmented data and costly market research. Our platform condenses hundreds of academic papers into clear, actionable reports. Uncover emerging trends, track key players, and make data-driven decisions with affordable, automated insights at your fingertips.
                     </p>
 
-                    <div className="capability-features">
+                    <div className="capability-features-grid">
                         <div className="feature-item">
                             <div className="feature-icon">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -25,7 +25,10 @@ const ReportGenerator = () => {
                                     <line x1="16" y1="17" x2="8" y2="17"/>
                                 </svg>
                             </div>
-                            <span>Condense hundreds of papers into a single, clear report.</span>
+                            <div className="feature-content">
+                                <h4>Data Condensation</h4>
+                                <p>Condense hundreds of papers into a single, clear report.</p>
+                            </div>
                         </div>
                         <div className="feature-item">
                             <div className="feature-icon">
@@ -35,7 +38,33 @@ const ReportGenerator = () => {
                                     <rect x="6" y="14" width="12" height="8"/>
                                 </svg>
                             </div>
-                            <span>Customize reports for market analysis, technical deep-dives, or institutional research.</span>
+                            <div className="feature-content">
+                                <h4>Custom Reports</h4>
+                                <p>Customize reports for market analysis, technical deep-dives, or institutional research.</p>
+                            </div>
+                        </div>
+                        <div className="feature-item">
+                            <div className="feature-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                    <polyline points="17 6 23 6 23 12"></polyline>
+                                </svg>
+                            </div>
+                            <div className="feature-content">
+                                <h4>Research Tracking</h4>
+                                <p>Track research trajectories and identify key players and institutions in any field.</p>
+                            </div>
+                        </div>
+                        <div className="feature-item">
+                            <div className="feature-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M4 10h12M4 14h12M18.5 6a5.5 5.5 0 0 0-8.6 4.5A5.5 5.5 0 0 0 18.5 18"></path>
+                                </svg>
+                            </div>
+                            <div className="feature-content">
+                                <h4>Affordable Insights</h4>
+                                <p>Get affordable, automated insights without the high cost of traditional reports.</p>
+                            </div>
                         </div>
                     </div>
 
