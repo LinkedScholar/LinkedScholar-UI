@@ -9,8 +9,8 @@ const PlatformCapabilities = () => {
         <div className="platform-capabilities">
             <div className="platform-capabilities__header">
                 <h2 className="platform-capabilities__title">
-                    <span className="title-accent">Unlock Insight,</span>
-                    <span className="title-primary">Accelerate Innovation</span>
+                    <span className="title-linked">Unlock Insight,</span>
+                    <span className="title-scholar">Accelerate Innovation</span>
                 </h2>
                 <p className="platform-capabilities__subtitle">
                     An integrated suite of tools designed to help you visualize research networks, build winning teams, and generate strategic insights instantly.
