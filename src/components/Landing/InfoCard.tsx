@@ -4,16 +4,14 @@ import '../../styles/components/Landing/InfoCard.scss';
 const InfoCard = () => {
     return (
         <div className="info-card">
+            {/* Single line title */}
             <div className="info-card__header">
-                    <span className="info-card__title-primary">Transform Research</span>
-                <div></div>
-                    <span className="info-card__title-accent">Into Results</span>
+                <span className="info-card__title-primary">Transform Research</span>
+                <span className="info-card__title-accent">Into Results</span>
             </div>
 
             <p className="info-card__description">
                 LinkedScholar is{' '}
-                <span className="text-highlight">Europe's first</span>{' '}
-                <span className="text-gradient">open-source intelligence platform</span>,{' '}
                 built to accelerate{' '}
                 <span className="text-emphasis">innovation</span>{' '}
                 and{' '}
@@ -33,13 +31,10 @@ const InfoCard = () => {
                     </div>
                     <div className="info-card__feature-content">
                         <span className="info-card__feature-title">
-                            <span className="feature-accent">Interactive</span> Visualizations
+                            Interactive Visualizations
                         </span>
-                        <div></div>
                         <span className="info-card__feature-text">
-                            Visually map hidden{' '}
-                            <span className="feature-highlight">connections between researchers</span>,{' '}
-                            topics, and institutions.
+                            Visually map hidden connections between researchers, topics, and institutions.
                         </span>
                     </div>
                 </li>
@@ -53,13 +48,10 @@ const InfoCard = () => {
                     </div>
                     <div className="info-card__feature-content">
                         <span className="info-card__feature-title">
-                            <span className="feature-accent">Instant</span> Trend Reports
+                            Instant Trend Reports
                         </span>
-                        <div></div>
                         <span className="info-card__feature-text">
-                            Condense{' '}
-                            <span className="feature-highlight">hundreds of academic papers</span> into{' '}
-                            <span className="feature-highlight">actionable insights</span> in minutes.
+                            Condense hundreds of academic papers into actionable insights in minutes.
                         </span>
                     </div>
                 </li>
@@ -74,13 +66,10 @@ const InfoCard = () => {
                     </div>
                     <div className="info-card__feature-content">
                         <span className="info-card__feature-title">
-                            <span className="feature-accent">Smart</span> Collaboration
+                            Smart Collaboration
                         </span>
-                        <div></div>
                         <span className="info-card__feature-text">
-                            Use our AI to{' '}
-                            <span className="feature-highlight">find ideal partners</span> and match with{' '}
-                            <span className="feature-highlight">EU funding calls</span>.
+                            Use our AI to find ideal partners and match with EU funding calls.
                         </span>
                     </div>
                 </li>
