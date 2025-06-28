@@ -1,28 +1,25 @@
 import React, { useEffect, useState, useRef } from 'react';
-// We no longer import icons here
 import '../../styles/components/Landing/KeyFigures.scss';
 import NetworkBackground from './NetworkBackground';
 import StatCard from './StatCard';
 import InfoCard from './InfoCard';
 
-// --- MOCK API & TYPES ---
-// Updated statistics to align with the pitch deck
+// Mock API and types (same as before)
 const getStatistics = async () => {
     await new Promise(resolve => setTimeout(resolve, 500));
     return {
-        institutions: 39000, // from pitch
-        articles: 6000000,  // from pitch
-        authors: 10000000,  // from pitch
+        institutions: 39000,
+        articles: 6000000,
+        authors: 10000000,
         topics: 150000,
         companies: 125000,
         fundings: 850000,
     };
 };
+
 type NodeId = 'institutions' | 'articles' | 'authors' | 'topics' | 'companies' | 'fundings';
 type Statistics = Record<NodeId, number>;
 
-// --- FIX: The 'icon' property is now a simple string identifier ---
-// Updated titles to align with pitch deck terminology
 const STAT_CONFIG: { id: NodeId; title: string; icon: string }[] = [
     { id: 'institutions', title: 'Institutions', icon: 'home' },
     { id: 'authors', title: 'Authors', icon: 'users' },
@@ -32,7 +29,6 @@ const STAT_CONFIG: { id: NodeId; title: string; icon: string }[] = [
     { id: 'fundings', title: 'Projects', icon: 'briefcase' },
 ];
 
-// useOnScreen hook for animations
 const useOnScreen = (ref: React.RefObject<HTMLDivElement | null>, threshold = 0.2) => {
     const [isIntersecting, setIntersecting] = useState(false);
     useEffect(() => {
@@ -65,17 +61,23 @@ const KeyFigures = () => {
     return (
         <div className="key-figures-container">
             <NetworkBackground />
-            <div className="key-figures-layout">
-                {/* Left Column */}
-                <div className="key-figures-content">
-                    <div className="key-figures-header">
-                        <h2>
-                            <span className="key-figures-header__primary">Europe's First</span>
+            
+            {/* NEW STRUCTURE: Center-aligned hero section */}
+            <div className="key-figures-hero">
+                <div className="key-figures-hero-content">
+                    {/* Main headline - center aligned */}
+                    <div className="hero-headline">
+                        <h1>
+                            <span className="hero-headline__primary">Europe's First</span>
                             {' '}
-                            <span className="key-figures-header__gradient">Open-Source</span>
+                            <span className="hero-headline__gradient">Open-Source</span><br />
                             {' '}
-                            <span className="key-figures-header__accent">Research Intelligence Platform</span>
-                        </h2>
+                            <span className="hero-headline__primary">Research Intelligence Platform</span>
+                        </h1>
+                    </div>
+
+                    {/* Body text - center aligned */}
+                    <div className="hero-description">
                         <p>
                             We empower{' '}
                             <span className="text-highlight">universities</span>,{' '}
@@ -86,11 +88,13 @@ const KeyFigures = () => {
                             <span className="text-emphasis">funding decisions</span> to accelerate innovation.
                         </p>
                     </div>
-                    <div className={`key-figures-grid ${isVisible ? 'is-visible' : ''}`} ref={gridRef}>
+
+                    {/* Key stats - center aligned */}
+                    <div className={`hero-stats-grid ${isVisible ? 'is-visible' : ''}`} ref={gridRef}>
                         {STAT_CONFIG.map((stat, index) => (
                             <StatCard
                                 key={stat.id}
-                                icon={stat.icon} // Now passing a string like "home"
+                                icon={stat.icon}
                                 title={stat.title}
                                 value={stats ? stats[stat.id] : null}
                                 isVisible={isVisible}
@@ -99,7 +103,11 @@ const KeyFigures = () => {
                         ))}
                     </div>
                 </div>
-                <div className="key-figures-info-panel">
+            </div>
+
+            {/* NEW: Secondary section with InfoCard */}
+            <div className="key-figures-secondary">
+                <div className="key-figures-secondary-content">
                     <InfoCard />
                 </div>
             </div>

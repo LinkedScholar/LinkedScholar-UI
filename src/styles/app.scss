@@ -1,7 +1,32 @@
 /* Define Primary & Secondary Colors */
 $primary-color: #003366;
+$primary-blue: #003366;
 $secondary-color: #0066cc;
-$background-grey: #ffffff;  // Matching greyish background
+$secondary-blue: #00a8ff;
+$background-grey: #ffffff;
+
+/* TYPOGRAPHY SCALE (UX Best Practices) */
+$text-xs: 0.75rem;     // 12px - captions, labels
+$text-sm: 0.875rem;    // 14px - small text, metadata
+$text-base: 1rem;      // 16px - body text (default)
+$text-lg: 1.125rem;    // 18px - large body text, emphasis
+$text-xl: 1.25rem;     // 20px - large text, sub-headings
+$text-2xl: 1.5rem;     // 24px - section headings
+$text-3xl: 1.875rem;   // 30px - page headings
+$text-4xl: 2.25rem;    // 36px - hero headings
+$text-5xl: 3rem;       // 48px - main hero/landing titles
+$text-6xl: 3.75rem;    // 60px - extra large displays
+
+/* SPACING SCALE */
+$spacing-xs: 0.25rem;   // 4px
+$spacing-sm: 0.5rem;    // 8px
+$spacing-base: 1rem;    // 16px
+$spacing-lg: 1.5rem;    // 24px
+$spacing-xl: 2rem;      // 32px
+$spacing-2xl: 3rem;     // 48px
+$spacing-3xl: 4rem;     // 64px
+$spacing-4xl: 5rem;     // 80px
+
 $shadow-light: rgba(0, 0, 0, 0.15);
 html, body {
   margin: 0;
