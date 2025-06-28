@@ -18,9 +18,25 @@ const PlatformCapabilities = () => {
             </div>
 
             <div className="platform-capabilities__content">
-                <NetworkVisualization />
-                <TeamMatching />
-                <ReportGenerator />
+                <div className="capability-section">
+                    <NetworkVisualization />
+                </div>
+
+                <div className="section-separator">
+                    <div className="separator-line"></div>
+                </div>
+
+                <div className="capability-section">
+                    <TeamMatching />
+                </div>
+
+                <div className="section-separator">
+                    <div className="separator-line"></div>
+                </div>
+
+                <div className="capability-section">
+                    <ReportGenerator />
+                </div>
             </div>
         </div>
     );
