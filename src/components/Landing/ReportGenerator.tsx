@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const ReportGenerator: React.FC = () => {
     const [activeFeature, setActiveFeature] = useState(0);
@@ -83,6 +84,7 @@ const ReportGenerator: React.FC = () => {
                     </div>
 
                     <div className="capability-action">
+                        <Link to="/contact">
                         <button className="action-button">
                             <span>Generate Your First Report</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -90,6 +92,7 @@ const ReportGenerator: React.FC = () => {
                                 <path d="M12 5l7 7-7 7"/>
                             </svg>
                         </button>
+                        </Link>
                     </div>
                 </div>
 

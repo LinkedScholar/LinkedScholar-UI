@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const TeamMatching = () => {
     const [activeFeature, setActiveFeature] = useState(0);
@@ -156,6 +157,7 @@ const TeamMatching = () => {
                     </div>
 
                     <div className="capability-action">
+                    <Link to="/contact">  
                         <button className="action-button">
                             <span>Build Your Team</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -163,6 +165,7 @@ const TeamMatching = () => {
                                 <path d="M12 5l7 7-7 7"/>
                             </svg>
                         </button>
+                    </Link>
                     </div>
                 </div>
             </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import '../../styles/components/Landing/InfoCard.scss';
+import { Link } from 'react-router-dom';
 
 const InfoCard = () => {
     return (
@@ -76,6 +77,7 @@ const InfoCard = () => {
             </ul>
 
             <div className="info-card__cta-wrapper">
+                <Link to="/contact">  
                 <button className="info-card__cta">
                     <span className="info-card__cta-text">Start Discovering</span>
                     <div className="info-card__cta-icon">
@@ -85,6 +87,7 @@ const InfoCard = () => {
                         </svg>
                     </div>
                 </button>
+                </Link>
                 <div className="info-card__cta-shine"></div>
             </div>
         </div>
