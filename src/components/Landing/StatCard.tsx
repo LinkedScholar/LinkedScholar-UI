@@ -71,7 +71,7 @@ const StatCard: React.FC<StatCardProps> = ({ icon, title, value, isVisible, dela
                 <span className="stat-card__title">{title}</span>
             </div>
             <div className="stat-card__value">
-                {value !== null && isVisible && <CountUp end={value} />}
+                {value !== null && isVisible && <CountUp end={value} duration={5} />}
             </div>
         </div>
     );

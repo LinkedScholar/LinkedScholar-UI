@@ -15,7 +15,7 @@ const NetworkVisualization = () => {
                     <circle cx="12" cy="12" r="1"/>
                 </svg>
             ),
-            image: "/images/network_mapping.png"
+            image: "/images/whole_network.png"
         },
         {
             title: "Snowballing Techniques",
@@ -45,7 +45,7 @@ const NetworkVisualization = () => {
                     <circle cx="12" cy="10" r="3"/>
                 </svg>
             ),
-            image: "/images/collections.png"
+            image: "/images/researcher_page .png"
         },
         {
             title: "Rapid SOTA Understanding",
@@ -122,7 +122,7 @@ const NetworkVisualization = () => {
                                         <path d="m12 1-3 6h6l-3-6Z"/>
                                         <path d="m12 23 3-6H9l3 6Z"/>
                                     </svg>
-                                    linkedscholar.io
+                                    linkedscholar.io/network
                                 </div>
                             </div>
                         </div>

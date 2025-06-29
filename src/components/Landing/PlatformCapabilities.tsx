@@ -8,7 +8,7 @@ const PlatformCapabilities = () => {
     return (
         <div className="platform-capabilities">
             <div className="platform-capabilities__header">
-                <h2 className="platform-capabilities__title">
+                <h2 className="platform-capabilities__title" id="platform-capabilities">
                     <span className="title-linked">Unlock Insight,</span>
                     <span className="title-scholar">Accelerate Innovation</span>
                 </h2>
@@ -18,9 +18,9 @@ const PlatformCapabilities = () => {
             </div>
 
             <div className="platform-capabilities__content">
-                <div className="capability-section">
+                <section className="capability-section" id="network-visualization">
                     <NetworkVisualization />
-                </div>
+                </section>
 
                 <div className="capability-section">
                     <TeamMatching />

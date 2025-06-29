@@ -19,7 +19,7 @@ const TeamMatching = () => {
             image: "/images/team_generator.png"
         },
         {
-            title: "Funding Detection",
+            title: "Funding Opportunities",
             description: "Automated detection of relevant Horizon Europe funding calls.",
             icon: (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -28,7 +28,7 @@ const TeamMatching = () => {
                     <path d="M1 12h6m6 0h6"/>
                 </svg>
             ),
-            image: "/images/funding_detection.png"
+            image: "/images/funding_opportunities.png"
         },
         {
             title: "Gap Analysis",
@@ -41,7 +41,7 @@ const TeamMatching = () => {
                     <path d="M9 15h6"/>
                 </svg>
             ),
-            image: "/images/gap_analysis.png"
+            image: "/images/gaps.png"
         },
         {
             title: "Smart Ranking",
@@ -76,7 +76,7 @@ const TeamMatching = () => {
                                         <path d="m12 1-3 6h6l-3-6Z"/>
                                         <path d="m12 23 3-6H9l3 6Z"/>
                                     </svg>
-                                    team-builder.com
+                                    linkedscholar.io/team-builder
                                 </div>
                             </div>
                         </div>

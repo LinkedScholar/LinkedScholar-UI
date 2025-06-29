@@ -42,23 +42,6 @@ const InfoCard = () => {
                 <li className="info-card__feature">
                     <div className="info-card__feature-icon">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <circle cx="12" cy="12" r="6"></circle>
-                            <circle cx="12" cy="12" r="2"></circle>
-                        </svg>
-                    </div>
-                    <div className="info-card__feature-content">
-                        <span className="info-card__feature-title">
-                            Instant Trend Reports
-                        </span>
-                        <span className="info-card__feature-text">
-                            Condense hundreds of academic papers into actionable insights in minutes.
-                        </span>
-                    </div>
-                </li>
-                <li className="info-card__feature">
-                    <div className="info-card__feature-icon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                             <circle cx="9" cy="7" r="4"></circle>
                             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -71,6 +54,23 @@ const InfoCard = () => {
                         </span>
                         <span className="info-card__feature-text">
                             Use our AI to find ideal partners and match with EU funding calls.
+                        </span>
+                    </div>
+                </li>
+                <li className="info-card__feature">
+                    <div className="info-card__feature-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="12" r="6"></circle>
+                            <circle cx="12" cy="12" r="2"></circle>
+                        </svg>
+                    </div>
+                    <div className="info-card__feature-content">
+                        <span className="info-card__feature-title">
+                            Instant Trend Reports
+                        </span>
+                        <span className="info-card__feature-text">
+                            Condense hundreds of academic papers into actionable insights in minutes.
                         </span>
                     </div>
                 </li>
