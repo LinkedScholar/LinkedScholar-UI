@@ -22,16 +22,8 @@ const PlatformCapabilities = () => {
                     <NetworkVisualization />
                 </div>
 
-                <div className="section-separator">
-                    <div className="separator-line"></div>
-                </div>
-
                 <div className="capability-section">
                     <TeamMatching />
-                </div>
-
-                <div className="section-separator">
-                    <div className="separator-line"></div>
                 </div>
 
                 <div className="capability-section">

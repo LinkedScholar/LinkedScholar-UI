@@ -1,8 +1,12 @@
+// src/styles/components/Landing/ReportGenerator.scss
+@import "../../app.scss";
+
 .report-generator {
   display: flex;
   align-items: flex-start;
   gap: 3rem;
-  margin-bottom: 8rem;
+  margin-bottom: 4rem; // Reduced from 8rem
+  margin-top: 2rem;    // Reduced from 4rem
   max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
@@ -17,8 +21,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.03) 0%, transparent 50%);
+    background: radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.03) 0%, transparent 50%);
     pointer-events: none;
     z-index: -1;
   }
@@ -26,40 +30,210 @@
   .report-generator__container {
     display: flex;
     align-items: center;
-    gap: 5rem;
+    gap: 3rem; // Reduced from 5rem
     flex: 1;
-    // Content first, then visual (left-right layout)
   }
 
   .report-generator__content {
     flex: 1;
     max-width: 600px;
-    // Content is now on the left
+    text-align: left; // LEFT ALIGNED text content
+  }
+
+  .content-header {
+    margin-bottom: 2rem;
+    text-align: left; // LEFT ALIGNED
+  }
+
+  // UPDATED TYPOGRAPHY HIERARCHY - Using your scale
+  .capability-title {
+    font-size: $text-3xl; // 30px - Proper section title size
+    font-weight: 700;
+    color: $primary-color; // Use your brand color
+    margin-bottom: 0.75rem; // Reduced from 1rem
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    text-align: left; // LEFT ALIGNED
+  }
+
+  .capability-subtitle {
+    font-size: $text-lg; // 18px - Subtitle level
+    color: $primary-color; // Use your brand color
+    opacity: 0.8;
+    font-weight: 500;
+    margin: 0;
+    text-align: left; // LEFT ALIGNED
+  }
+
+  .capability-description {
+    font-size: $text-base; // 16px - Body text level
+    line-height: 1.7;
+    color: $primary-color; // Use your brand color
+    opacity: 0.7;
+    margin-bottom: 2rem; // Reduced from 2.5rem
+    text-align: left; // LEFT ALIGNED
+  }
+
+  // NEW: Vertical stacking instead of grid
+  .capability-features-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; // Reduced from 1.5rem
+    margin-bottom: 2rem; // Reduced from 3rem
+
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.25rem; // Reduced from 1.5rem
+      border-radius: 1rem;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+      background: rgba($background-grey, 0.8);
+      text-align: left; // LEFT ALIGNED
+      cursor: pointer;
+
+      &:hover,
+      &--active {
+        background: rgba($secondary-color, 0.02);
+        border-color: rgba($secondary-color, 0.1);
+        transform: translateX(5px);
+        box-shadow: 0 8px 20px rgba($secondary-color, 0.1);
+      }
+
+      .feature-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, $primary-color, $secondary-color);
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 8px 20px rgba($primary-color, 0.2);
+
+        svg {
+          color: white;
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      .feature-content {
+        flex: 1;
+
+        h4 {
+          font-size: $text-lg; // 18px - Feature title size
+          font-weight: 600;
+          color: $primary-color;
+          margin-bottom: 0.5rem;
+          line-height: 1.3;
+          text-align: left; // LEFT ALIGNED
+        }
+
+        p {
+          font-size: $text-sm; // 14px - Feature description size
+          color: $primary-color;
+          opacity: 0.7;
+          line-height: 1.5;
+          margin: 0;
+          text-align: left; // LEFT ALIGNED
+        }
+      }
+    }
+  }
+
+  .capability-action {
+    margin-top: 1.5rem; // Reduced from 2rem
+  }
+
+  .action-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, $primary-color, $secondary-color);
+    color: white;
+    border: none;
+    padding: 1rem 2rem; // Reduced from 1.25rem 2.5rem
+    border-radius: 2rem;
+    font-size: $text-lg; // 18px - Button text size
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba($primary-color, 0.3);
+    min-width: 200px;
+    justify-content: center;
+
+    // Shine effect
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.6s ease;
+    }
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba($primary-color, 0.5);
+      background: linear-gradient(135deg, darken($primary-color, 10%), darken($secondary-color, 10%));
+
+      &::before {
+        left: 100%;
+      }
+
+      svg {
+        transform: translateX(3px);
+      }
+
+      span {
+        transform: translateX(-2px);
+      }
+    }
+
+    &:active {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 25px rgba($primary-color, 0.4);
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 4px 15px rgba($primary-color, 0.3), 0 0 0 3px rgba($primary-color, 0.2);
+    }
+
+    span {
+      transition: transform 0.3s ease;
+      font-weight: 600;
+      letter-spacing: 0.025em;
+    }
+
+    svg {
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+    }
   }
 
   .report-generator__visual {
-    flex: 0 0 550px;
-    height: 500px;
+    flex: 0 0 550px; // Reduced from 650px
+    height: 450px;   // Reduced from 500px
     position: relative;
-    // Visual is now on the right
-  }
-
-  .visual-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
   }
 
   .visual-card {
     border-radius: 1.5rem;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 10px 30px rgba($primary-color, 0.1);
     transition: all 0.3s ease;
-    border: 1px solid rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba($primary-color, 0.1);
 
     &:hover {
       transform: translateY(-8px);
-      box-shadow: 0 20px 50px rgba(59, 130, 246, 0.2);
+      box-shadow: 0 20px 50px rgba($primary-color, 0.2);
     }
 
     &--report {
@@ -75,26 +249,14 @@
     position: relative;
     width: 100%;
     height: 100%;
+
+    iframe {
+      border: none;
+      border-radius: inherit;
+    }
   }
 
-  .visual-overlay {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    z-index: 3;
-  }
-
-  .overlay-badge {
-    background: rgba(139, 92, 246, 0.9);
-    backdrop-filter: blur(10px);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 1rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
-  }
-
+  // Keep the decorative elements but update colors to match your brand
   .visual-decoration {
     position: absolute;
     top: 0;
@@ -109,7 +271,7 @@
     position: absolute;
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba($primary-color, 0.1);
     border-radius: 0.5rem;
     padding: 0.5rem;
 
@@ -124,7 +286,7 @@
       animation: slideInLeft 0.8s ease-out 0.5s both;
 
       .chart-bar {
-        background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+        background: linear-gradient(135deg, $primary-color, $secondary-color);
         border-radius: 2px;
         animation: growUp 0.6s ease-out both;
 
@@ -160,7 +322,7 @@
       .chart-line {
         width: 100%;
         height: 2px;
-        background: linear-gradient(90deg, #8b5cf6, #3b82f6);
+        background: linear-gradient(90deg, $primary-color, $secondary-color);
         border-radius: 1px;
         position: relative;
         animation: drawLine 1s ease-out 1.4s both;
@@ -172,7 +334,7 @@
           right: 0;
           width: 8px;
           height: 8px;
-          background: #3b82f6;
+          background: $secondary-color;
           border-radius: 50%;
           animation: fadeIn 0.3s ease-out 2.2s both;
         }
@@ -184,7 +346,7 @@
     position: absolute;
     width: 8px;
     height: 8px;
-    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+    background: linear-gradient(135deg, $primary-color, $secondary-color);
     border-radius: 50%;
     opacity: 0.7;
 
@@ -198,417 +360,6 @@
       bottom: 25%;
       right: 15%;
       animation: float 3s ease-in-out infinite 1.5s;
-    }
-  }
-
-  .content-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
-    border: 1px solid rgba(139, 92, 246, 0.2);
-    border-radius: 2rem;
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #8b5cf6;
-    margin-bottom: 2rem;
-
-    svg {
-      width: 16px;
-      height: 16px;
-    }
-  }
-
-  .content-header {
-    margin-bottom: 2rem;
-  }
-
-  .capability-title {
-    font-size: 2.75rem;
-    font-weight: 800;
-    color: #003366;
-    margin-bottom: 1rem;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-
-    .title-highlight {
-      background: linear-gradient(135deg, #8b5cf6, #3b82f6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      position: relative;
-
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: -2px;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(135deg, #8b5cf6, #3b82f6);
-        border-radius: 2px;
-        opacity: 0.3;
-      }
-    }
-  }
-
-  .capability-subtitle {
-    font-size: 1.25rem;
-    color: #64748b;
-    font-weight: 500;
-    margin: 0;
-  }
-
-  .capability-description {
-    font-size: 1.125rem;
-    line-height: 1.7;
-    color: #64748b;
-    margin-bottom: 2.5rem;
-  }
-
-  .capability-stats {
-    display: flex;
-    gap: 2rem;
-    margin-bottom: 2.5rem;
-    padding: 1.5rem 0;
-    border-top: 1px solid rgba(139, 92, 246, 0.1);
-    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
-
-    .stat-item {
-      text-align: center;
-
-      .stat-number {
-        font-size: 2rem;
-        font-weight: 700;
-        background: linear-gradient(135deg, #8b5cf6, #3b82f6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        line-height: 1;
-        margin-bottom: 0.25rem;
-      }
-
-      .stat-label {
-        font-size: 0.875rem;
-        color: #64748b;
-        font-weight: 500;
-      }
-    }
-  }
-
-  .capability-features {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-  }
-
-  .feature-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1rem;
-    border-radius: 1rem;
-    transition: all 0.3s ease;
-    border: 1px solid transparent;
-
-    &:hover {
-      background: rgba(139, 92, 246, 0.02);
-      border-color: rgba(139, 92, 246, 0.1);
-      transform: translateX(5px);
-    }
-
-    .feature-icon {
-      width: 48px;
-      height: 48px;
-      background: linear-gradient(135deg, #8b5cf6, #3b82f6);
-      border-radius: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2);
-
-      svg {
-        color: white;
-        width: 20px;
-        height: 20px;
-      }
-    }
-
-    .feature-content {
-      flex: 1;
-
-      h4 {
-        font-size: 1.125rem;
-        font-weight: 600;
-        color: #1e293b;
-        margin-bottom: 0.5rem;
-        line-height: 1.3;
-      }
-
-      p {
-        font-size: 0.95rem;
-        color: #64748b;
-        line-height: 1.5;
-        margin: 0;
-      }
-    }
-  }
-
-  .capability-actions {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-  }
-
-  // FIXED: Moved attractive button styles to main scope
-  .capability-action {
-    margin-top: 2rem;
-  }
-
-  .action-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
-    color: white;
-    border: none;
-    padding: 1.25rem 2.5rem;
-    border-radius: 2rem;
-    font-size: 1.125rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-    min-width: 200px;
-    justify-content: center;
-
-    // Shine effect
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-      transition: left 0.6s ease;
-    }
-
-    // Hover state
-    &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 35px rgba(139, 92, 246, 0.5);
-      background: linear-gradient(135deg, #7c3aed, #1d4ed8);
-
-      &::before {
-        left: 100%;
-      }
-
-      svg {
-        transform: translateX(3px);
-      }
-
-      span {
-        transform: translateX(-2px);
-      }
-    }
-
-    // Active state
-    &:active {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
-    }
-
-    // Focus state for accessibility
-    &:focus {
-      outline: none;
-      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3), 0 0 0 3px rgba(139, 92, 246, 0.2);
-    }
-
-    span {
-      transition: transform 0.3s ease;
-      font-weight: 600;
-      letter-spacing: 0.025em;
-    }
-
-    svg {
-      transition: transform 0.3s ease;
-      flex-shrink: 0;
-    }
-
-    &--primary {
-      // Primary styles already applied above
-    }
-
-    &--secondary {
-      background: rgba(139, 92, 246, 0.1);
-      color: #8b5cf6;
-      border: 1px solid rgba(139, 92, 246, 0.2);
-      padding: 0.875rem 1.5rem;
-      box-shadow: none;
-
-      &:hover {
-        background: rgba(139, 92, 246, 0.15);
-        border-color: rgba(139, 92, 246, 0.3);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
-      }
-    }
-
-    // Alternative attractive button variant
-    &--premium {
-      background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 50%, #ec4899 100%);
-      background-size: 200% 200%;
-      animation: gradientShift 3s ease infinite;
-
-      &:hover {
-        background-size: 200% 200%;
-        animation-duration: 1s;
-      }
-    }
-
-    // Pulse animation variant
-    &--pulse {
-      animation: pulse 2s infinite;
-
-      &:hover {
-        animation: none;
-      }
-    }
-  }
-
-  .report-generator__sidebar {
-    flex: 0 0 350px;
-    position: sticky;
-    top: 2rem;
-  }
-
-  .sidebar-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(139, 92, 246, 0.1);
-    border-radius: 2rem;
-    padding: 2.5rem;
-    box-shadow: 0 10px 40px rgba(139, 92, 246, 0.08);
-    transition: all 0.3s ease;
-
-    &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 60px rgba(139, 92, 246, 0.12);
-    }
-
-    .sidebar-icon {
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, #8b5cf6, #3b82f6);
-      border-radius: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 1.5rem;
-      box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
-
-      svg {
-        color: white;
-        width: 24px;
-        height: 24px;
-      }
-    }
-
-    h4 {
-      font-size: 1.375rem;
-      font-weight: 700;
-      color: #1e293b;
-      margin-bottom: 1rem;
-      line-height: 1.3;
-      text-align: center;
-    }
-
-    p {
-      font-size: 1rem;
-      line-height: 1.6;
-      color: #64748b;
-      margin-bottom: 2rem;
-      text-align: center;
-    }
-
-    .sidebar-features {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      margin-bottom: 2rem;
-    }
-
-    .sidebar-feature {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.9rem;
-      color: #374151;
-
-      svg {
-        color: #10b981;
-        flex-shrink: 0;
-      }
-    }
-
-    .sidebar-cta {
-      background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(59, 130, 246, 0.05));
-      border-radius: 1rem;
-      padding: 1.5rem;
-      text-align: center;
-
-      .cta-text {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-        margin-bottom: 1rem;
-
-        strong {
-          font-size: 1rem;
-          color: #1e293b;
-        }
-
-        span {
-          font-size: 0.875rem;
-          color: #64748b;
-        }
-      }
-    }
-
-    .sidebar-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: linear-gradient(135deg, #8b5cf6, #3b82f6);
-      color: white;
-      border: none;
-      padding: 1rem 2rem;
-      border-radius: 2rem;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      width: 100%;
-      justify-content: center;
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4);
-
-        svg {
-          transform: translateX(2px);
-        }
-      }
-
-      svg {
-        transition: transform 0.3s ease;
-      }
     }
   }
 
@@ -675,63 +426,51 @@
     }
   }
 
-  @keyframes gradientShift {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-
-  @keyframes pulse {
-    0% {
-      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-    }
-    50% {
-      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.6), 0 0 20px rgba(139, 92, 246, 0.3);
-    }
-    100% {
-      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-    }
-  }
-
-  // Responsive Design
+  // RESPONSIVE DESIGN WITH PROPER TYPOGRAPHY SCALING
   @media (max-width: 1200px) {
     .report-generator__visual {
-      flex: 0 0 450px;
+      flex: 0 0 550px;
       height: 400px;
-    }
-
-    .report-generator__sidebar {
-      flex: 0 0 300px;
     }
   }
 
   @media (max-width: 1024px) {
     flex-direction: column;
-    gap: 4rem;
+    gap: 2rem; // Reduced from 4rem
 
     .report-generator__container {
       flex-direction: column;
-      gap: 3rem;
+      gap: 2rem; // Reduced from 3rem
     }
 
     .report-generator__content {
-      text-align: center;
+      text-align: left; // Keep LEFT ALIGNED on tablets too
       max-width: 100%;
     }
 
-    .capability-features {
-      align-items: center;
+    // RESPONSIVE TYPOGRAPHY
+    .capability-title {
+      font-size: $text-2xl; // 24px on tablets
+    }
+    
+    .capability-subtitle {
+      font-size: $text-base; // 16px on tablets
+    }
+    
+    .capability-description {
+      font-size: $text-sm; // 14px on tablets
     }
 
-    .feature-item {
-      &:hover {
-        transform: translateY(-3px);
+    .capability-features-vertical {
+      align-items: center;
+
+      .feature-item {
+        max-width: 500px;
+        
+        &:hover,
+        &--active {
+          transform: translateY(-3px);
+        }
       }
     }
 
@@ -741,49 +480,55 @@
       max-width: 600px;
       margin: 0 auto;
     }
-
-    .report-generator__sidebar {
-      flex: none;
-      width: 100%;
-      max-width: 500px;
-      margin: 0 auto;
-      position: static;
-    }
   }
 
   @media (max-width: 768px) {
     padding: 0 1rem;
-    margin-bottom: 6rem;
+    margin-bottom: 4rem; // Reduced from 6rem
+    margin-top: 2rem;    // Reduced from 3rem
 
+    .report-generator__content {
+      text-align: left; // Keep LEFT ALIGNED on mobile
+    }
+
+    // RESPONSIVE TYPOGRAPHY
     .capability-title {
-      font-size: 2.25rem;
+      font-size: $text-xl; // 20px on mobile
+    }
+    
+    .capability-subtitle {
+      font-size: $text-base; // 16px on mobile
+    }
+    
+    .capability-description {
+      font-size: $text-sm; // 14px on mobile
     }
 
-    .capability-stats {
-      flex-direction: column;
+    .capability-features-vertical {
       gap: 1rem;
-      text-align: center;
+
+      .feature-item {
+        padding: 1.25rem;
+
+        .feature-content {
+          h4 {
+            font-size: $text-base; // 16px on mobile
+          }
+
+          p {
+            font-size: $text-xs; // 12px on mobile
+          }
+        }
+      }
     }
 
-    .capability-actions {
-      flex-direction: column;
-      align-items: stretch;
-
-      .action-button {
-        justify-content: center;
-      }
+    .action-button {
+      font-size: $text-base; // 16px on mobile
+      padding: 1rem 2rem;
     }
 
     .report-generator__visual {
       height: 300px;
-    }
-
-    .sidebar-card {
-      padding: 2rem;
-
-      .sidebar-cta {
-        padding: 1rem;
-      }
     }
 
     .decoration-chart {
@@ -800,78 +545,20 @@
       }
     }
   }
+
+  @media (max-width: 480px) {
+    // RESPONSIVE TYPOGRAPHY
+    .capability-title {
+      font-size: $text-lg; // 18px on small mobile
+    }
+    
+    .capability-subtitle {
+      font-size: $text-sm; // 14px on small mobile
+    }
+  }
 }
 
-// Add this to your existing ReportGenerator.scss file after the .capability-features section
-
+// Remove/Hide the old grid styles
 .capability-features-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
-  margin-bottom: 3rem;
-
-  .feature-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1.5rem;
-    border-radius: 1rem;
-    transition: all 0.3s ease;
-    border: 1px solid transparent;
-    background: rgba(255, 255, 255, 0.8);
-
-    &:hover {
-      background: rgba(139, 92, 246, 0.02);
-      border-color: rgba(139, 92, 246, 0.1);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.1);
-    }
-
-    .feature-icon {
-      width: 48px;
-      height: 48px;
-      background: linear-gradient(135deg, #8b5cf6, #3b82f6);
-      border-radius: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2);
-
-      svg {
-        color: white;
-        width: 20px;
-        height: 20px;
-      }
-    }
-
-    .feature-content {
-      flex: 1;
-
-      h4 {
-        font-size: 1.125rem;
-        font-weight: 600;
-        color: #1e293b;
-        margin-bottom: 0.5rem;
-        line-height: 1.3;
-      }
-
-      p {
-        font-size: 0.95rem;
-        color: #64748b;
-        line-height: 1.5;
-        margin: 0;
-      }
-    }
-  }
-
-  // Responsive adjustments
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-
-    .feature-item {
-      padding: 1.25rem;
-    }
-  }
+  display: none; // Hide the old grid version
 }

@@ -56,9 +56,10 @@ const TeamMatching = () => {
     ];
 
     return (
-        <section className="team-matching">
+        <section className="team-matching" id='matchmaking'>
             <div className="team-matching__container">
-                <div className="team-matching__visual" style={{flex: '0 0 55%', height: '600px'}}>
+                {/* Visual on the left - keeping original layout */}
+                <div className="team-matching__visual">
                     <div className="visual-mockup">
                         {/* Browser-like header */}
                         <div className="mockup-header">
@@ -123,7 +124,8 @@ const TeamMatching = () => {
                     </div>
                 </div>
 
-                <div className="team-matching__content" style={{flex: '0 0 45%'}}>
+                {/* Content on the right - but LEFT ALIGNED text */}
+                <div className="team-matching__content">
                     <div className="content-header">
                         <h3 className="capability-title">Intelligent Team & Funding Matchmaking</h3>
                         <p className="capability-subtitle">From Team Gaps to EU Grants, Automatically.</p>
@@ -133,13 +135,14 @@ const TeamMatching = () => {
                         Assemble the perfect project team with our AI-powered generator. Our system not only identifies ideal experts to fill collaboration gaps but also automatically recommends relevant EU funding opportunities. Invite applicants to your project and let our AI rank them by compatibility, ensuring you build the strongest possible consortium.
                     </p>
 
-                    <div className="capability-features-grid">
+                    {/* Changed from grid to vertical stacking */}
+                    <div className="capability-features-vertical">
                         {features.map((feature, index) => (
                             <div
                                 key={index}
                                 className={`feature-item ${activeFeature === index ? 'feature-item--active' : ''}`}
                                 onClick={() => setActiveFeature(index)}
-                                style={{ cursor: 'pointer' }}
+                                onMouseEnter={() => setActiveFeature(index)}
                             >
                                 <div className="feature-icon">
                                     {feature.icon}
