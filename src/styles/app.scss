@@ -38,6 +38,10 @@ html, body {
   height: 100%;
 }
 
+html {
+  scroll-padding-top: 10px; /* Adjust this value based on your navbar height + desired spacing */
+}
+
 /* Global Styles */
 body {
   background-color: $background-grey;

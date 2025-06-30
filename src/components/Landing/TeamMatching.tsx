@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const TeamMatching = () => {
     const [activeFeature, setActiveFeature] = useState(0);
@@ -18,7 +19,7 @@ const TeamMatching = () => {
             image: "/images/team_generator.png"
         },
         {
-            title: "Funding Detection",
+            title: "Funding Opportunities",
             description: "Automated detection of relevant Horizon Europe funding calls.",
             icon: (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -27,7 +28,7 @@ const TeamMatching = () => {
                     <path d="M1 12h6m6 0h6"/>
                 </svg>
             ),
-            image: "/images/funding_detection.png"
+            image: "/images/funding_opportunities.png"
         },
         {
             title: "Gap Analysis",
@@ -40,7 +41,7 @@ const TeamMatching = () => {
                     <path d="M9 15h6"/>
                 </svg>
             ),
-            image: "/images/gap_analysis.png"
+            image: "/images/gaps.png"
         },
         {
             title: "Smart Ranking",
@@ -56,9 +57,10 @@ const TeamMatching = () => {
     ];
 
     return (
-        <section className="team-matching">
+        <section className="team-matching" id='matchmaking'>
             <div className="team-matching__container">
-                <div className="team-matching__visual" style={{flex: '0 0 55%', height: '600px'}}>
+                {/* Visual on the left - keeping original layout */}
+                <div className="team-matching__visual">
                     <div className="visual-mockup">
                         {/* Browser-like header */}
                         <div className="mockup-header">
@@ -74,7 +76,7 @@ const TeamMatching = () => {
                                         <path d="m12 1-3 6h6l-3-6Z"/>
                                         <path d="m12 23 3-6H9l3 6Z"/>
                                     </svg>
-                                    team-builder.com
+                                    linkedscholar.io/team-builder
                                 </div>
                             </div>
                         </div>
@@ -123,7 +125,8 @@ const TeamMatching = () => {
                     </div>
                 </div>
 
-                <div className="team-matching__content" style={{flex: '0 0 45%'}}>
+                {/* Content on the right - but LEFT ALIGNED text */}
+                <div className="team-matching__content">
                     <div className="content-header">
                         <h3 className="capability-title">Intelligent Team & Funding Matchmaking</h3>
                         <p className="capability-subtitle">From Team Gaps to EU Grants, Automatically.</p>
@@ -133,13 +136,14 @@ const TeamMatching = () => {
                         Assemble the perfect project team with our AI-powered generator. Our system not only identifies ideal experts to fill collaboration gaps but also automatically recommends relevant EU funding opportunities. Invite applicants to your project and let our AI rank them by compatibility, ensuring you build the strongest possible consortium.
                     </p>
 
-                    <div className="capability-features-grid">
+                    {/* Changed from grid to vertical stacking */}
+                    <div className="capability-features-vertical">
                         {features.map((feature, index) => (
                             <div
                                 key={index}
                                 className={`feature-item ${activeFeature === index ? 'feature-item--active' : ''}`}
                                 onClick={() => setActiveFeature(index)}
-                                style={{ cursor: 'pointer' }}
+                                onMouseEnter={() => setActiveFeature(index)}
                             >
                                 <div className="feature-icon">
                                     {feature.icon}
@@ -153,6 +157,7 @@ const TeamMatching = () => {
                     </div>
 
                     <div className="capability-action">
+                    <Link to="/contact">  
                         <button className="action-button">
                             <span>Build Your Team</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -160,6 +165,7 @@ const TeamMatching = () => {
                                 <path d="M12 5l7 7-7 7"/>
                             </svg>
                         </button>
+                    </Link>
                     </div>
                 </div>
             </div>

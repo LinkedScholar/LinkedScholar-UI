@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const NetworkVisualization = () => {
     const [activeFeature, setActiveFeature] = useState(0);
@@ -14,7 +15,7 @@ const NetworkVisualization = () => {
                     <circle cx="12" cy="12" r="1"/>
                 </svg>
             ),
-            image: "/images/network_mapping.png"
+            image: "/images/whole_network.png"
         },
         {
             title: "Snowballing Techniques",
@@ -44,7 +45,7 @@ const NetworkVisualization = () => {
                     <circle cx="12" cy="10" r="3"/>
                 </svg>
             ),
-            image: "/images/collections.png"
+            image: "/images/researcher_page .png"
         },
         {
             title: "Rapid SOTA Understanding",
@@ -62,9 +63,9 @@ const NetworkVisualization = () => {
     ];
 
     return (
-        <section className="network-visualization">
+        <section className="network-visualization" id='data-visualization'>
             <div className="network-visualization__container">
-                <div className="network-visualization__content" style={{flex: '0 0 45%'}}>
+                <div className="network-visualization__content">
                     <div className="content-header">
                         <h3 className="capability-title">Map Your Research Ecosystem</h3>
                         <p className="capability-subtitle">Go Beyond Search. Visualize Connections.</p>
@@ -74,13 +75,14 @@ const NetworkVisualization = () => {
                         Stop guessing and start seeing. Our dynamic visualizations allow you to navigate the entire research landscape, revealing hidden patterns, key influencers, and strategic opportunities that simple data tables and search bars could never show you.
                     </p>
 
-                    <div className="capability-features-grid">
+                    {/* Changed from grid to vertical stacking */}
+                    <div className="capability-features-vertical">
                         {features.map((feature, index) => (
                             <div
                                 key={index}
                                 className={`feature-item ${activeFeature === index ? 'feature-item--active' : ''}`}
                                 onClick={() => setActiveFeature(index)}
-                                style={{ cursor: 'pointer' }}
+                                onMouseEnter={() => setActiveFeature(index)}
                             >
                                 <div className="feature-icon">
                                     {feature.icon}
@@ -94,17 +96,17 @@ const NetworkVisualization = () => {
                     </div>
 
                     <div className="capability-action">
-                        <button className="action-button">
+                        <Link to="/contact" className="action-button">
                             <span>Explore the Network</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path d="M5 12h14"/>
                                 <path d="M12 5l7 7-7 7"/>
                             </svg>
-                        </button>
+                        </Link>
                     </div>
                 </div>
 
-                <div className="network-visualization__visual" style={{flex: '0 0 55%', height: '600px'}}>
+                <div className="network-visualization__visual">
                     <div className="visual-mockup">
                         {/* Browser-like header */}
                         <div className="mockup-header">
@@ -120,7 +122,7 @@ const NetworkVisualization = () => {
                                         <path d="m12 1-3 6h6l-3-6Z"/>
                                         <path d="m12 23 3-6H9l3 6Z"/>
                                     </svg>
-                                    linkedscholar.io
+                                    linkedscholar.io/network
                                 </div>
                             </div>
                         </div>

@@ -107,8 +107,24 @@ const Navbar: React.FC<NavbarProps> = ({ clientId }) => {
                                             className="solution-item"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                // Handle navigation to solution pages
-                                                console.log(`Navigate to ${item.title}`);
+                                                setSolutionsDropdownOpen(false); // Close dropdown
+                                                
+                                                // Extract the ID from href (removes the #)
+                                                const targetId = item.href.substring(1);
+                                                const targetElement = document.getElementById(targetId);
+                                                
+                                                if (targetElement) {
+                                                    // Smooth scroll to the section
+                                                    targetElement.scrollIntoView({ 
+                                                        behavior: 'smooth',
+                                                        block: 'start' 
+                                                    });
+                                                } else {
+                                                    // If not on home page, navigate there first then scroll
+                                                    if (window.location.pathname !== '/') {
+                                                        navigate('/' + item.href);
+                                                    }
+                                                }
                                             }}
                                         >
                                             <div className="solution-icon">
