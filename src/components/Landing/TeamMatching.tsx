@@ -41,7 +41,7 @@ const TeamMatching = () => {
                     <path d="M9 15h6"/>
                 </svg>
             ),
-            image: "/images/gaps.png"
+            image: "/images/landing_features/7_Expertise.png"
         },
         {
             title: "Smart Ranking",

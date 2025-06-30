@@ -45,7 +45,7 @@ const NetworkVisualization = () => {
                     <circle cx="12" cy="10" r="3"/>
                 </svg>
             ),
-            image: "/images/researcher_page .png"
+            image: "/images/researcher_page.png"
         },
         {
             title: "Rapid SOTA Understanding",

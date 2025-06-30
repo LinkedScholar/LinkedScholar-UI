@@ -293,15 +293,22 @@
     position: relative;
     width: 100%;
     height: 100%;
+    display: flex;
+    align-items: center;
+
+    
   }
 
   .visual-image {
     width: 100%;
     height: 100%;
-    object-fit: cover;
     object-position: center;
+    object-fit: contain;
     transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     transform: scale(1);
+    padding : 1vw;
+    padding-bottom: 2vw;
+    border-radius: 2vw;
 
     &:hover {
       transform: scale(1.02);
