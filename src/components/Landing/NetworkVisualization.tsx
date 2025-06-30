@@ -58,7 +58,7 @@ const NetworkVisualization = () => {
                     <path d="M10 9h4"/>
                 </svg>
             ),
-            image: "/images/publications.png"
+            image: "/images/landing_features/4_Rapid_SOTA.png"
         }
     ];
 
