@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { FiHome, FiUsers, FiFileText, FiTag, FiBriefcase, FiDollarSign } from 'react-icons/fi';
+import { FiHome, FiUsers, FiFileText, FiTag, FiBriefcase, FiCreditCard } from 'react-icons/fi';
 
 const CountUp = ({ end, duration = 2.5 }: { end: number; duration?: number }) => {
     const [count, setCount] = useState(0);
@@ -34,14 +34,14 @@ const CountUp = ({ end, duration = 2.5 }: { end: number; duration?: number }) =>
     return <span>{formatNumber(count)}+</span>;
 };
 
-// Updated iconMap with the new icons
+// Updated iconMap with cleaner credit card icon
 const iconMap: { [key: string]: any } = {
     home: FiHome,
     users: FiUsers,
     'file-text': FiFileText,
     tag: FiTag,
     briefcase: FiBriefcase,
-    'dollar-sign': FiDollarSign,
+    'credit-card': FiCreditCard,
 };
 
 interface StatCardProps {

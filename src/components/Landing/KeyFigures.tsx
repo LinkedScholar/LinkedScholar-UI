@@ -13,7 +13,7 @@ const getStatistics = async () => {
         authors: 10000000,
         topics: 150000,
         companies: 125000,
-        fundings: 850000,
+        fundings: 20000,
     };
 };
 
@@ -26,10 +26,10 @@ const STAT_CONFIG: { id: NodeId; title: string; icon: string }[] = [
     { id: 'articles', title: 'Articles', icon: 'file-text' },
     { id: 'topics', title: 'Topics', icon: 'tag' },
     { id: 'companies', title: 'Companies', icon: 'briefcase' },
-    { id: 'fundings', title: 'Projects', icon: 'briefcase' },
+    { id: 'fundings', title: 'Funding & Tenders', icon: 'credit-card' },
 ];
 
-const useOnScreen = (ref: React.RefObject<HTMLDivElement | null>, threshold = 0.2) => {
+const useOnScreen = (ref: React.RefObject<HTMLDivElement | null>, threshold = 0.1) => {
     const [isIntersecting, setIntersecting] = useState(false);
     useEffect(() => {
         const observer = new IntersectionObserver(([entry]) => {
@@ -61,7 +61,7 @@ const KeyFigures = () => {
     return (
         <div className="key-figures-container">
             <NetworkBackground />
-            
+
             {/* NEW STRUCTURE: Center-aligned hero section */}
             <div className="key-figures-hero">
                 <div className="key-figures-hero-content">
