@@ -3,7 +3,6 @@ import '../styles/components/Landing/landingPage.scss';
 import KeyFigures from "./Landing/KeyFigures";
 import PlatformCapabilities from './Landing/PlatformCapabilities';
 
-
 const LandingPage: React.FC = () => {
   const [showScrollUp, setShowScrollUp] = useState(false);
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
@@ -44,20 +43,12 @@ const LandingPage: React.FC = () => {
   };
 
   return (
-    <div ref={landingRef} className="page-container">
-      <div className="scroll-indicator" onClick={scrollToContent}>
-        <div className="scroll-text">Scroll to Learn More</div>
-        <div className="scroll-arrow">
-          <i className="mdi mdi-chevron-down"></i>
-        </div>
-      </div>
-
-      {showScrollUp && (
-        <div className="scroll-up-indicator" onClick={scrollToTop}>
+      <div ref={landingRef} className="page-container">
+        <div className="scroll-indicator" onClick={scrollToContent}>
+          <div className="scroll-text">Scroll to Learn More</div>
           <div className="scroll-arrow">
-            <i className="mdi mdi-chevron-up"></i>
+            <i className="mdi mdi-chevron-down"></i>
           </div>
-          <div className="scroll-text">Back to Top</div>
         </div>
       )}
 
@@ -95,21 +86,22 @@ const LandingPage: React.FC = () => {
               <a href="/contribute" className="cta-button secondary">
                 Other Ways to Contribute
               </a>
-            </div>
+
+                  
           </div>
-          
-          <div className="sponsors-section">
-            <h3>Current Sponsors</h3>
-            <p>We're proud to be supported by organizations that believe in the future we are building.</p>
-            <div className="sponsor-logos">
-              <a href="https://eudita.es/" target="_blank" rel="noopener noreferrer">
-                <img src="/sponsors/eudita_logo.jpg" alt="Eudita" className="sponsor-logo" />
-              </a>
+
+            <div className="sponsors-section">
+              <h3>Trusted by Industry Leaders</h3>
+              <p>We're proud to work with the following organizations</p>
+              <div className="sponsor-logos">
+                <a href="https://eudita.es/" target="_blank" rel="noopener noreferrer">
+                  <img src="/sponsors/eudita_logo.jpg" alt="Eudita" className="sponsor-logo" />
+                </a>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
-    </div>
   );
 };
 
