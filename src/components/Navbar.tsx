@@ -23,6 +23,7 @@ const Navbar: React.FC<NavbarProps> = ({ clientId }) => {
 
     const dispatch: AppDispatch = useDispatch();
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [solutionsDropdownOpen, setSolutionsDropdownOpen] = useState(false);
     const location = useLocation();
 
     const isNetworkPage = location.pathname === "/network";
@@ -55,14 +56,90 @@ const Navbar: React.FC<NavbarProps> = ({ clientId }) => {
 
     const showSignIn = !authenticated && status !== "loading";
 
+    const solutionsItems = [
+        {
+            icon: "mdi-chart-line",
+            title: "Data Visualisation",
+            description: "Interactive network graphs and research analytics",
+            href: "#data-visualization"
+        },
+        {
+            icon: "mdi-account-group",
+            title: "Team & Funding Matchmaking",
+            description: "Connect researchers with funding opportunities",
+            href: "#matchmaking"
+        },
+        {
+            icon: "mdi-trending-up",
+            title: "Trend Report Generator",
+            description: "AI-powered insights on emerging research trends",
+            href: "#trend-reports"
+        }
+    ];
+
     return (
         <nav className="navbar navbar-expand-lg glass-navbar">
             <div className="container">
-                {/* Left: Brand Logo */}
-                <div className="navbar-brand-container">
+                {/* Left: Brand Logo + Solutions */}
+                <div className="navbar-left-section d-flex align-items-center">
                     <Link className="navbar-brand brand-title" to="/">
                         Linked <span>Scholar</span>
                     </Link>
+                    
+                    {/* Solutions Dropdown - positioned right after logo */}
+                    <div className="navbar-nav-links d-none d-lg-flex">
+                        <div 
+                            className="nav-item solutions-dropdown"
+                            onMouseEnter={() => setSolutionsDropdownOpen(true)}
+                            onMouseLeave={() => setSolutionsDropdownOpen(false)}
+                        >
+                            <button className="nav-link solutions-trigger">
+                                Solutions
+                                <i className={`mdi mdi-chevron-down solutions-chevron ${solutionsDropdownOpen ? 'open' : ''}`}></i>
+                            </button>
+                            
+                            <div className={`solutions-dropdown-menu ${solutionsDropdownOpen ? 'show' : ''}`}>
+                                <div className="solutions-dropdown-content">
+                                    {solutionsItems.map((item, index) => (
+                                        <a 
+                                            key={index}
+                                            href={item.href} 
+                                            className="solution-item"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setSolutionsDropdownOpen(false); // Close dropdown
+                                                
+                                                // Extract the ID from href (removes the #)
+                                                const targetId = item.href.substring(1);
+                                                const targetElement = document.getElementById(targetId);
+                                                
+                                                if (targetElement) {
+                                                    // Smooth scroll to the section
+                                                    targetElement.scrollIntoView({ 
+                                                        behavior: 'smooth',
+                                                        block: 'start' 
+                                                    });
+                                                } else {
+                                                    // If not on home page, navigate there first then scroll
+                                                    if (window.location.pathname !== '/') {
+                                                        navigate('/' + item.href);
+                                                    }
+                                                }
+                                            }}
+                                        >
+                                            <div className="solution-icon">
+                                                <i className={`mdi ${item.icon}`}></i>
+                                            </div>
+                                            <div className="solution-content">
+                                                <div className="solution-title">{item.title}</div>
+                                                <div className="solution-description">{item.description}</div>
+                                            </div>
+                                        </a>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Center: Search Bar - only on network page */}

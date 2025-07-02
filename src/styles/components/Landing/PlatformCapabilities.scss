@@ -1,0 +1,171 @@
+@import "../../app.scss";
+
+.platform-capabilities {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.platform-capabilities__header {
+  text-align: center;
+  margin-bottom: 5rem;
+
+  .platform-capabilities__title {
+    font-size: $text-5xl; // 48px - Largest for main header
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    line-height: 1.2;
+
+    .title-linked {
+      color: $primary-color; // Use your brand primary color
+      font-weight: 700;
+    }
+
+    .title-scholar {
+      background: linear-gradient(135deg, #3b82f6, #06b6d4); // Original gradient kept exactly
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+    }
+  }
+
+  .platform-capabilities__subtitle {
+    font-size: $text-lg; // 18px - optimal for subtitle/description text
+    color: $primary-color;
+    opacity: 0.8; // Slightly muted but still using brand color
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 0 auto;
+    font-weight: 400;
+  }
+}
+
+.platform-capabilities__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.capability-section {
+  padding: 2rem 0;
+}
+
+.section-separator {
+  margin: 3rem 0;
+  display: flex;
+  justify-content: center;
+
+  .separator-line {
+    width: 100%;
+    height: 2px;
+    max-width: 800px;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(59, 130, 246, 0.1) 15%,
+            rgba(59, 130, 246, 0.3) 30%,
+            rgba(59, 130, 246, 0.6) 45%,
+            rgba(59, 130, 246, 0.8) 50%,
+            rgba(59, 130, 246, 0.6) 55%,
+            rgba(59, 130, 246, 0.3) 70%,
+            rgba(59, 130, 246, 0.1) 85%,
+            transparent 100%
+    );
+    border-radius: 1px;
+  }
+}
+
+// Import individual component styles
+@import 'TeamMatching.scss';
+@import 'NetworkVisualization.scss';
+@import 'ReportGenerator.scss';
+
+// Responsive design for header
+@media (max-width: 1024px) {
+  .platform-capabilities {
+    padding: 0 1.5rem;
+  }
+
+  .platform-capabilities__header {
+    .platform-capabilities__title {
+      font-size: $text-4xl; // 36px on tablets
+    }
+
+    .platform-capabilities__subtitle {
+      font-size: $text-base; // 16px on tablets
+      max-width: 600px;
+    }
+  }
+
+  .capability-section {
+    padding: 1.5rem 0;
+  }
+
+  .section-separator {
+    margin: 2rem 0;
+
+    .separator-line {
+      max-width: 600px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .platform-capabilities {
+    padding: 0 1rem;
+  }
+
+  .platform-capabilities__header {
+    margin-bottom: 3rem;
+
+    .platform-capabilities__title {
+      font-size: $text-3xl; // 30px on mobile - proper scaling
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .platform-capabilities__subtitle {
+      font-size: $text-base; // 16px on mobile
+      max-width: 100%;
+    }
+  }
+
+  .capability-section {
+    padding: 1rem 0;
+  }
+
+  .section-separator {
+    margin: 1.5rem 0;
+
+    .separator-line {
+      max-width: 400px;
+      height: 1.5px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .platform-capabilities__header {
+    .platform-capabilities__title {
+      font-size: $text-xl; // 20px on small mobile
+    }
+
+    .platform-capabilities__subtitle {
+      font-size: $text-sm; // 14px on small mobile
+      line-height: 1.5;
+    }
+  }
+
+  .section-separator {
+    margin: 1rem 0;
+
+    .separator-line {
+      max-width: 300px;
+      height: 1px;
+    }
+  }
+}

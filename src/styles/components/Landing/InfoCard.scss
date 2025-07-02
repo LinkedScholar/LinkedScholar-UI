@@ -1,0 +1,307 @@
+@import "../../app.scss";
+
+.info-card {
+  background: rgba($background-grey, 0.9);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba($primary-color, 0.1);
+  border-radius: 24px;
+  padding: 2rem 3rem; // More horizontal padding
+  box-shadow: 0 8px 32px $shadow-light;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  // Make it significantly wider
+  max-width: 1000px; // Much wider than before
+  width: 100%;
+  margin: 0 auto;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, $secondary-color, transparent);
+    opacity: 0.5;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba($primary-color, 0.15);
+    border-color: rgba($secondary-color, 0.2);
+  }
+}
+
+.info-card__header {
+  display: flex;
+  flex-direction: row; // Changed to horizontal
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; // Small gap between words
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+// Single line title styling
+.info-card__title-primary,
+.info-card__title-accent {
+  font-size: 1.5rem; // Slightly larger since it's one line
+  font-weight: 700;
+  line-height: 1.2;
+  display: inline; // Make them inline for single line
+  white-space: nowrap; // Prevent wrapping
+}
+
+.info-card__title-primary {
+  color: $primary-color;
+}
+
+.info-card__title-accent {
+  background: linear-gradient(135deg, $secondary-color, $secondary-blue); 
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.info-card__description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: $primary-color;
+  margin-bottom: 2rem;
+  text-align: center;
+  max-width: 800px; // Limit width for readability
+  margin-left: auto;
+  margin-right: auto;
+
+  .text-highlight {
+    color: $secondary-color;
+    font-weight: 600;
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, $primary-color, $secondary-color);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 600;
+  }
+
+  .text-emphasis {
+    background: linear-gradient(135deg, $primary-color, $secondary-color);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 600;
+  }
+
+  .text-accent {
+    color: $secondary-color;
+    font-weight: 600;
+  }
+}
+
+.info-card__features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem; // Slightly reduced gap for more compact feel
+  max-width: 700px; // Constrain feature list width
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left; // Left align the entire features section
+}
+
+.info-card__feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: rgba($background-grey, 0.5);
+  border: 1px solid rgba($primary-color, 0.05);
+  text-align: left; // Ensure left alignment for each feature
+
+  &:hover {
+    background: rgba($secondary-color, 0.02);
+    transform: translateY(-1px);
+    border-color: rgba($secondary-color, 0.1);
+
+    .info-card__feature-icon {
+      background: linear-gradient(135deg, $primary-color, $secondary-color);
+      color: white;
+    }
+  }
+}
+
+.info-card__feature-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  border: 1px solid rgba($primary-color, 0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $secondary-color;
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+  transition: all 0.3s ease;
+}
+
+.info-card__feature-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: left; // Explicitly left align the content
+}
+
+.info-card__feature-title {
+  font-weight: 600;
+  color: $primary-color;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+  text-align: left; // Left align titles
+
+  .feature-accent {
+    color: $secondary-color;
+    font-weight: 700;
+  }
+}
+
+.info-card__feature-text {
+  color: $primary-color;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  opacity: 0.8;
+  text-align: left; // Left align descriptions
+
+  .feature-highlight {
+    color: $secondary-color;
+    font-weight: 600;
+    opacity: 1;
+  }
+}
+
+.info-card__cta-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.info-card__cta {
+  background: linear-gradient(135deg, $secondary-color, $secondary-blue);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba($secondary-color, 0.4);
+
+    .info-card__cta-icon {
+      transform: translateX(2px);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.info-card__cta-icon {
+  transition: transform 0.2s ease;
+}
+
+.info-card__cta-shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(white, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+// Responsive Design
+@media (max-width: 1024px) {
+  .info-card {
+    max-width: 800px;
+    padding: 1.75rem 2.5rem;
+  }
+  
+  .info-card__description {
+    max-width: 600px;
+  }
+  
+  .info-card__features {
+    max-width: 600px;
+  }
+}
+
+@media (max-width: 768px) {
+  .info-card {
+    max-width: 100%;
+    padding: 1.5rem 2rem;
+    margin: 0 1rem;
+  }
+  
+  .info-card__header {
+    flex-direction: column; 
+    gap: 0.25rem;
+  }
+  
+  .info-card__title-primary,
+  .info-card__title-accent {
+    font-size: 1.25rem;
+    white-space: normal; 
+  }
+  
+  .info-card__description {
+    max-width: 100%;
+    font-size: 0.95rem;
+  }
+  
+  .info-card__features {
+    max-width: 100%;
+  }
+  
+  .info-card__feature {
+    padding: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .info-card {
+    padding: 1.25rem 1.5rem;
+    margin: 0 0.5rem;
+  }
+  
+  .info-card__title-primary,
+  .info-card__title-accent {
+    font-size: 1.125rem;
+  }
+  
+  .info-card__cta {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.95rem;
+  }
+}
