@@ -96,17 +96,97 @@ const ReportGenerator: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Visual on the right - keeping original layout */}
+                {/* Visual on the right - PRESENTATION INTERFACE */}
                 <div className="report-generator__visual">
-                    <div className="visual-card visual-card--report">
-                        <div className="visual-content">
-                            <iframe
-                                allowFullScreen
-                                width="100%"
-                                height="100%"
-                                src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/proto/a0Yu6t5WRO5sdk8MOdGkGF/?node-id=1-107&scaling=contain"
-                                title="Report Generator Demo"
-                            ></iframe>
+                    <div className="presentation-viewer">
+                        {/* Presentation Header */}
+                        <div className="presentation-header">
+                            <div className="presentation-title">
+                                <div className="title-text">
+                                    <h4>Agentic AI · 2025 Trend Report</h4>
+                                    <span>Generated in 2 minutes · 24 pages</span>
+                                </div>
+                            </div>
+                            <div className="presentation-actions">
+                                <button className="action-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/>
+                                    </svg>
+                                </button>
+                                <button className="action-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <circle cx="18" cy="5" r="3"/>
+                                        <circle cx="6" cy="12" r="3"/>
+                                        <circle cx="18" cy="19" r="3"/>
+                                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Pages Overview Grid */}
+                        <div className="pages-overview">
+                        
+                            <div className="reports-grid">
+                                <div className="report-item">
+                                    <div className="page-number">01</div>
+                                    <img 
+                                        src="/images/report-demo-4.png" 
+                                        alt="Executive Summary"
+                                        className="report-preview"
+                                    />
+                                    <div className="page-title">Executive Summary</div>
+                                </div>
+                                <div className="report-item">
+                                    <div className="page-number">02</div>
+                                    <img 
+                                        src="/images/report-demo-3.png" 
+                                        alt="Market Overview"
+                                        className="report-preview"
+                                    />
+                                    <div className="page-title">Market Overview</div>
+                                </div>
+                                <div className="report-item">
+                                    <div className="page-number">03</div>
+                                    <img 
+                                        src="/images/report-demo-1.png" 
+                                        alt="Regional Analysis"
+                                        className="report-preview"
+                                    />
+                                    <div className="page-title">Regional Analysis</div>
+                                </div>
+                                <div className="report-item">
+                                    <div className="page-number">04</div>
+                                    <img 
+                                        src="/images/report-demo-2.png" 
+                                        alt="Strategic Roadmap"
+                                        className="report-preview"
+                                    />
+                                    <div className="page-title">Strategic Roadmap</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer Navigation */}
+                        <div className="presentation-footer">
+                            <div className="navigation-controls">
+                                <button className="nav-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <polyline points="15 18 9 12 15 6"/>
+                                    </svg>
+                                    Previous
+                                </button>
+                                <div className="page-indicator">
+                                    <span>Page 1-4</span>
+                                </div>
+                                <button className="nav-btn">
+                                    Next
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <polyline points="9 18 15 12 9 6"/>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
