@@ -15,7 +15,7 @@ const NetworkVisualization = () => {
                     <circle cx="12" cy="12" r="1"/>
                 </svg>
             ),
-            image: "/images/whole_network.png"
+            image: "/images/landing_features/1_Network.png"
         },
         {
             title: "Snowballing Techniques",
