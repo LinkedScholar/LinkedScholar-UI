@@ -91,11 +91,19 @@ const LandingPage: React.FC = () => {
               <div className="sponsors-section">
                 <h3>Trusted by Industry Leaders</h3>
                 <p>We're proud to work with the following organizations</p>
-                <div className="sponsor-logos">
-                  <a href="https://eudita.es/" target="_blank" rel="noopener noreferrer">
-                    <img src="/sponsors/eudita_logo.jpg" alt="Eudita" className="sponsor-logo" />
-                  </a>
+                <div className='sponsor-logos-container'>
+                  <div className="sponsor-logos">
+                    <a href="https://eudita.es/" target="_blank" rel="noopener noreferrer">
+                      <img src="/sponsors/eudita_logo.jpg" alt="Eudita" className="sponsor-logo" />
+                    </a>
+                  </div>
+                  <div className="sponsor-logos">
+                    <a href="https://i2c.tuwien.ac.at/" target="_blank" rel="noopener noreferrer">
+                      <img src="/sponsors/tuw_i2c.png" alt="TU Wien I²C" className="sponsor-logo" />
+                    </a>
+                  </div>
                 </div>
+                
               </div>
             </div>
           </section>

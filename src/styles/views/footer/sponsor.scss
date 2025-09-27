@@ -142,3 +142,11 @@
     }
   }
 }
+
+.sponsor-logos-container {
+  display: flex;         /* This turns the container into a flexbox */
+  flex-wrap: wrap;       /* This is the key! It allows items to wrap to the next line */
+  gap: 16px;             /* Optional: Adds space between the logos */
+  justify-content: center; /* Optional: Centers the logos horizontally */
+  align-items: center; 
+}
