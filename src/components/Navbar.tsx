@@ -149,39 +149,6 @@ const Navbar: React.FC<NavbarProps> = ({ clientId }) => {
                     </div>
                 )}
 
-                {/* Right: Authentication */}
-                <div className="navbar-nav-container">
-                    {status === "loading" && attempts < 2 ? (
-                        <p className="loading-text">Loading...</p>
-                    ) : authenticated ? (
-                        <div className="dropdown">
-                            <button
-                                className="btn profile-btn dropdown-toggle d-flex align-items-center"
-                                onClick={() => setDropdownOpen(!dropdownOpen)}
-                            >
-                                {firstName && lastName ? `${firstName} ${lastName}` : "Profile"}
-                            </button>
-
-                            {dropdownOpen && (
-                                <ul className="dropdown-menu show">
-                                    <li className="dropdown-item text-muted">{email}</li>
-                                    <li>
-                                        <button className="dropdown-item text-danger" onClick={handleLogout}>
-                                            Logout
-                                        </button>
-                                    </li>
-                                </ul>
-                            )}
-                        </div>
-                    ) : (
-                        showSignIn && (
-                            <button className="btn login-btn" onClick={handleLogin}>
-                                Sign In
-                            </button>
-                        )
-                    )}
-                </div>
-
                 {/* Mobile Search Bar */}
                 {isNetworkPage && (
                     <div className="navbar-search-mobile d-md-none w-100 mt-2">
