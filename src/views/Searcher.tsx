@@ -103,11 +103,10 @@ const Searcher: React.FC<SearcherProps> = ({ clientId }) => {
                         </h1>
                         <span className="version-text">α</span>
                     </div>
-                    <p className="search-info">Find and analyze researcher networks with ease.</p>
+                    <p className="search-info">Living Networks of Knowledge</p>
                 </header>
             </div>
         
-            
 
             <LandingPage />
         </div>

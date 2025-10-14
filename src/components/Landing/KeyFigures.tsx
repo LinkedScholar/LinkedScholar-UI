@@ -65,28 +65,35 @@ const KeyFigures = () => {
             {/* NEW STRUCTURE: Center-aligned hero section */}
             <div className="key-figures-hero">
                 <div className="key-figures-hero-content">
-                    {/* Main headline - center aligned */}
-                    <div className="hero-headline">
-                        <h1>
-                            <span className="hero-headline__primary">Europe's First</span>
-                            {' '}
-                            <span className="hero-headline__gradient">Open-Source</span><br />
-                            {' '}
-                            <span className="hero-headline__primary">Research Intelligence Platform</span>
-                        </h1>
-                    </div>
 
-                    {/* Body text - center aligned */}
-                    <div className="hero-description">
-                        <p>
-                            We empower{' '}
-                            <span className="text-highlight">universities</span>,{' '}
-                            <span className="text-highlight">researchers</span>, and{' '}
-                            <span className="text-highlight">private companies</span>{' '}
-                            to visualize the complex research landscape, identify{' '}
-                            <span className="text-emphasis">collaboration opportunities</span>, and make smarter{' '}
-                            <span className="text-emphasis">funding decisions</span> to accelerate innovation.
-                        </p>
+                    <div className="hero-content-card">
+                        
+                        <div className="hero-tagline">
+                            <span className="hero-tagline__chip">
+                                Living Networks of Knowledge
+                            </span>
+                        </div>
+
+                        <div className="hero-headline">
+                            <h1>
+                                <span className="hero-headline__primary">The</span>
+                                {' '}
+                                <span className="hero-headline__gradient">Research Intelligence Platform</span><br />
+                                {' '}
+                                <span className="hero-headline__primary">for Institutional Decision-Making</span>
+                            </h1>
+                        </div>
+
+                        <div className="hero-description">
+                            LinkedScholar connects{' '}
+                            <span className="text-highlight">research</span>,{' '}
+                            <span className="text-highlight">innovation</span>, and{' '}
+                            <span className="text-highlight">the market,</span>{' '}
+                            by unifying institutional and external data sources into {' '}
+                            <span className="text-emphasis">living networks of knowledge</span> {' '}
+                            - AI-prepared, FAIR-compliant, and human-centered - while ensuring  {' '}
+                            <span className="text-emphasis">data sovereignty remains within the institutions.</span>
+                        </div>
                     </div>
 
                     {/* Key stats - center aligned */}
@@ -105,12 +112,13 @@ const KeyFigures = () => {
                 </div>
             </div>
 
-            {/* NEW: Secondary section with InfoCard */}
+            {/* NEW: Secondary section with InfoCard
             <div className="key-figures-secondary">
                 <div className="key-figures-secondary-content">
                     <InfoCard />
                 </div>
             </div>
+             */}
         </div>
     );
 };

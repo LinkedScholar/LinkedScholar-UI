@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import '../styles/components/Landing/landingPage.scss';
 import KeyFigures from "./Landing/KeyFigures";
 import PlatformCapabilities from './Landing/PlatformCapabilities';
+import SolutionOverview from './Landing/SolutionsOverview';
 
 const LandingPage: React.FC = () => {
   const [showScrollUp, setShowScrollUp] = useState(false);
@@ -55,6 +56,8 @@ const LandingPage: React.FC = () => {
           <section className="key-figures-section section-box">
             <KeyFigures />
           </section>
+
+          <SolutionOverview></SolutionOverview>
 
           <div className="intro-content">
             <div className="features-list">
