@@ -12,6 +12,7 @@ import Sponsor from "./views/footer/Sponsor";
 import Contact from "./views/footer/Contact";
 import LoginPage from "./views/LoginPage";
 import GraphView from "./views/GraphView";
+import LandingPage from "./components/LandingPage";
 import { Toaster } from 'sonner';
 import { registerErrorHandlers } from "./utils/errorHandler";
 import RegistrationModal from "./components/modals/RegistrationModal";
@@ -59,7 +60,8 @@ const App: React.FC = () => {
 
                 <main className="main-content flex-grow-1 d-flex justify-content-center align-items-center">
                     <Routes>
-                        <Route path="/" element={<Searcher clientId={clientId} />} />
+                        {/*<Route path="/" element={<Searcher clientId={clientId} />} />/*/}
+                        <Route path="/" element={<LandingPage />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/profile" element={<HelloUser />} />
                         <Route path="/privacy" element={<PrivacyPolicy />} />
