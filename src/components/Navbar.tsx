@@ -184,87 +184,25 @@ const Navbar: React.FC<NavbarProps> = ({ clientId }) => {
         },
     ];
 
+    // --- Simplified Solutions section (3 verticals only) ---
     const solutionsByMarket = [
         {
             segment: "Research Institutions",
             icon: "mdi-school",
-            description: "Unified knowledge infrastructure for research excellence",
-            items: [
-                {
-                    title: "Data Integration",
-                    href: "#data-integration",
-                    description: "Transform data silos into unified knowledge graphs"
-                },
-                {
-                    title: "Data Exploration",
-                    href: "#data-exploration",
-                    description: "Visualize insights with dashboards and AI agents"
-                },
-                {
-                    title: "Data Exploitation",
-                    href: "#data-exploitation",
-                    description: "Grant detection, patent tracking & innovation assessment"
-                },
-                {
-                    title: "Automated Reporting",
-                    href: "#automated-reporting",
-                    description: "EU-compliant reports for agencies and funders"
-                },
-            ],
+            description:
+                "Unified knowledge infrastructure for research excellence across universities and centers.",
         },
         {
             segment: "Industry",
             icon: "mdi-factory",
-            description: "Research intelligence for innovation leaders",
-            items: [
-                {
-                    title: "Scientific Literature Analysis",
-                    href: "#literature-analysis",
-                    description: "Track breakthrough research in your field"
-                },
-                {
-                    title: "Technology Scouting",
-                    href: "#tech-scouting",
-                    description: "Discover emerging technologies early"
-                },
-                {
-                    title: "Competitive Intelligence",
-                    href: "#competitive-intel",
-                    description: "Monitor competitor R&D activities"
-                },
-                {
-                    title: "Innovation Opportunities",
-                    href: "#innovation-opportunities",
-                    description: "Identify collaboration and licensing opportunities"
-                },
-            ],
+            description:
+                "Research intelligence and trend discovery for innovation leaders.",
         },
         {
             segment: "Pre-Seed Investors",
             icon: "mdi-chart-line-variant",
-            description: "Project flow visibility for early-stage investment",
-            items: [
-                {
-                    title: "Research Project Flow",
-                    href: "#project-flow",
-                    description: "Track promising research before it becomes a startup"
-                },
-                {
-                    title: "Early-Stage Detection",
-                    href: "#early-detection",
-                    description: "Identify investable research lines early"
-                },
-                {
-                    title: "Impact Assessment",
-                    href: "#impact-assessment",
-                    description: "Evaluate research commercialization potential"
-                },
-                {
-                    title: "Portfolio Intelligence",
-                    href: "#portfolio-intelligence",
-                    description: "Monitor research trends in your investment thesis"
-                },
-            ],
+            description:
+                "Early visibility into promising research projects before they become startups.",
         },
     ];
 
@@ -335,7 +273,7 @@ const Navbar: React.FC<NavbarProps> = ({ clientId }) => {
                 {/* Desktop Nav Links */}
                 <div className={`navbar-collapse ${mobileOpen ? "show" : ""}`}>
                     <div className="navbar-nav-links">
-                        {/* Solutions Dropdown - FIRST like Stripe */}
+                        {/* Solutions Dropdown - Simplified */}
                         <div
                             className="nav-item solutions-dropdown"
                             onMouseEnter={() => window.innerWidth > 991 && setSolutionsDropdownOpen(true)}
@@ -360,31 +298,21 @@ const Navbar: React.FC<NavbarProps> = ({ clientId }) => {
                                 }`}
                             >
                                 {solutionsByMarket.map((group, idx) => (
-                                    <div key={idx} className="dropdown-section">
-                                        <div className="dropdown-section-header">
-                                            <i className={`mdi ${group.icon}`}></i>
-                                            <div>
-                                                <div className="dropdown-section-title">{group.segment}</div>
-                                                <div className="dropdown-section-description">{group.description}</div>
-                                            </div>
+                                    <a
+                                        key={idx}
+                                        href="#"
+                                        className="dropdown-item-custom"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setSolutionsDropdownOpen(false);
+                                        }}
+                                    >
+                                        <i className={`mdi ${group.icon} item-icon`}></i>
+                                        <div className="item-content">
+                                            <div className="item-title">{group.segment}</div>
+                                            <div className="item-description">{group.description}</div>
                                         </div>
-                                        {group.items.map((item, subIdx) => (
-                                            <a
-                                                key={subIdx}
-                                                href={item.href}
-                                                className="dropdown-item-custom"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    handleNavigation(item.href, () => setSolutionsDropdownOpen(false));
-                                                }}
-                                            >
-                                                <div className="item-content">
-                                                    <div className="item-title">{item.title}</div>
-                                                    <div className="item-description">{item.description}</div>
-                                                </div>
-                                            </a>
-                                        ))}
-                                    </div>
+                                    </a>
                                 ))}
                             </div>
                         </div>
@@ -488,7 +416,7 @@ const Navbar: React.FC<NavbarProps> = ({ clientId }) => {
                         </a>
                     </div>
 
-                    {/* Auth Controls - Desktop (After all nav items) */}
+                    {/* Auth Controls - Desktop */}
                     <div className="navbar-auth-section d-none d-lg-flex ms-auto">
                         {authenticated ? (
                             <button
@@ -511,7 +439,7 @@ const Navbar: React.FC<NavbarProps> = ({ clientId }) => {
                         )}
                     </div>
 
-                    {/* Mobile sections... */}
+                    {/* Mobile Auth */}
                     <div className="navbar-auth-section mobile-auth d-lg-none">
                         {authenticated ? (
                             <button

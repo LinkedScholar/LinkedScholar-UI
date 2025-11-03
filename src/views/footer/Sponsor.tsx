@@ -72,7 +72,7 @@ const Sponsor: React.FC = () => {
                         Our Current Partners:
                     </h2>
                     <a href="https://eudita.es/" target="_blank" rel="noopener noreferrer">
-                        <img src="/sponsors/eudita_logo.jpg" alt="Eudita" className="sponsor-logo" />
+                        <img src="/sponsors/eudita_logo.png" alt="Eudita" className="sponsor-logo" />
                     </a>
                 </div>
 
