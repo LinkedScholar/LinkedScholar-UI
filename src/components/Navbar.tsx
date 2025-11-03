@@ -12,21 +12,36 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ clientId }) => {
-    const {
-        authenticated,
-        firstName,
-        lastName,
-        email,
-        status,
-        attempts
-    } = useSelector((state: RootState) => state.auth);
+    const { authenticated, status, attempts } = useSelector(
+        (state: RootState) => state.auth
+    );
 
     const dispatch: AppDispatch = useDispatch();
-    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [productsDropdownOpen, setProductsDropdownOpen] = useState(false);
     const [solutionsDropdownOpen, setSolutionsDropdownOpen] = useState(false);
+    const [resourcesDropdownOpen, setResourcesDropdownOpen] = useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
     const location = useLocation();
-
     const isNetworkPage = location.pathname === "/network";
+    const navigate = useNavigate();
+
+    // Handle scroll effect for navbar
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 20);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    // Close mobile menu on route change
+    useEffect(() => {
+        setMobileOpen(false);
+        setProductsDropdownOpen(false);
+        setSolutionsDropdownOpen(false);
+        setResourcesDropdownOpen(false);
+    }, [location.pathname]);
 
     useEffect(() => {
         if (status === "idle" && attempts === 0) {
@@ -34,11 +49,29 @@ const Navbar: React.FC<NavbarProps> = ({ clientId }) => {
         }
     }, [dispatch, status, attempts]);
 
-    const handleLogin = () => {
-        window.location.href = "/login";
-    };
+    // Close mobile menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as HTMLElement;
+            if (mobileOpen && !target.closest('.navbar')) {
+                setMobileOpen(false);
+            }
+        };
 
-    const navigate = useNavigate();
+        if (mobileOpen) {
+            document.addEventListener('click', handleClickOutside);
+            // Lock body scroll on mobile
+            document.body.classList.add('menu-open');
+        } else {
+            // Unlock body scroll
+            document.body.classList.remove('menu-open');
+        }
+
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+            document.body.classList.remove('menu-open');
+        };
+    }, [mobileOpen]);
 
     const handleLogout = async () => {
         const baseUrl = process.env.REACT_APP_BASE_URL || "http://localhost:8080";
@@ -48,114 +81,470 @@ const Navbar: React.FC<NavbarProps> = ({ clientId }) => {
                 credentials: "include",
             });
             dispatch(logout());
-            navigate('/');
+            navigate("/");
         } catch (error) {
             console.error("Logout failed:", error);
         }
     };
 
+    const handleNavigation = (href: string, closeDropdown: () => void) => {
+        const targetId = href.substring(1);
+        const el = document.getElementById(targetId);
+
+        if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else if (window.location.pathname !== "/") {
+            navigate("/" + href);
+        }
+
+        closeDropdown();
+        setMobileOpen(false);
+    };
+
+    const toggleProductsDropdown = () => {
+        setProductsDropdownOpen(!productsDropdownOpen);
+        setSolutionsDropdownOpen(false);
+        setResourcesDropdownOpen(false);
+    };
+
+    const toggleSolutionsDropdown = () => {
+        setSolutionsDropdownOpen(!solutionsDropdownOpen);
+        setProductsDropdownOpen(false);
+        setResourcesDropdownOpen(false);
+    };
+
+    const toggleResourcesDropdown = () => {
+        setResourcesDropdownOpen(!resourcesDropdownOpen);
+        setProductsDropdownOpen(false);
+        setSolutionsDropdownOpen(false);
+    };
+
     const showSignIn = !authenticated && status !== "loading";
 
-    const solutionsItems = [
+    const productsItems = [
         {
-            icon: "mdi-chart-line",
-            title: "Data Visualisation",
-            description: "Interactive network graphs and research analytics",
-            href: "#data-visualization"
+            title: "Data Fusion Suite",
+            href: "#data-fusion",
+            icon: "mdi-pipe",
+            description: "Seamless integration pipelines for research data"
         },
         {
-            icon: "mdi-account-group",
-            title: "Team & Funding Matchmaking",
-            description: "Connect researchers with funding opportunities",
-            href: "#matchmaking"
+            title: "Visual Intelligence",
+            href: "#visual-intelligence",
+            icon: "mdi-chart-box",
+            description: "Interactive dashboards for deep insights"
         },
         {
-            icon: "mdi-trending-up",
-            title: "Trend Report Generator",
-            description: "AI-powered insights on emerging research trends",
-            href: "#trend-reports"
-        }
+            title: "Institutional Agents",
+            href: "#institutional-agents",
+            icon: "mdi-account-network",
+            description: "AI-powered research assistants"
+        },
+        {
+            title: "Research Pulse",
+            href: "#research-pulse",
+            icon: "mdi-book-search",
+            description: "Track breakthrough scientific literature in real-time"
+        },
+        {
+            title: "Tech Radar",
+            href: "#tech-radar",
+            icon: "mdi-radar",
+            description: "Discover emerging technologies and trends early"
+        },
+        {
+            title: "Funding Detector",
+            href: "#funding-detector",
+            icon: "mdi-cash-multiple",
+            description: "Discover funding opportunities automatically"
+        },
+        {
+            title: "Patent Intelligence",
+            href: "#patent-intelligence",
+            icon: "mdi-file-certificate",
+            description: "Track and analyze patent landscapes"
+        },
+        {
+            title: "Innovation Assessment",
+            href: "#innovation-assessment",
+            icon: "mdi-lightbulb-on",
+            description: "Measure and benchmark innovation impact"
+        },
+        {
+            title: "Project Flow Tracker",
+            href: "#project-flow-tracker",
+            icon: "mdi-timeline-text",
+            description: "Monitor research projects before they become startups"
+        },
+        {
+            title: "Compliance Reporter",
+            href: "#compliance-reporter",
+            icon: "mdi-file-chart",
+            description: "Automated EU-compliant reports for agencies and funders"
+        },
+    ];
+
+    const solutionsByMarket = [
+        {
+            segment: "Research Institutions",
+            icon: "mdi-school",
+            description: "Unified knowledge infrastructure for research excellence",
+            items: [
+                {
+                    title: "Data Integration",
+                    href: "#data-integration",
+                    description: "Transform data silos into unified knowledge graphs"
+                },
+                {
+                    title: "Data Exploration",
+                    href: "#data-exploration",
+                    description: "Visualize insights with dashboards and AI agents"
+                },
+                {
+                    title: "Data Exploitation",
+                    href: "#data-exploitation",
+                    description: "Grant detection, patent tracking & innovation assessment"
+                },
+                {
+                    title: "Automated Reporting",
+                    href: "#automated-reporting",
+                    description: "EU-compliant reports for agencies and funders"
+                },
+            ],
+        },
+        {
+            segment: "Industry",
+            icon: "mdi-factory",
+            description: "Research intelligence for innovation leaders",
+            items: [
+                {
+                    title: "Scientific Literature Analysis",
+                    href: "#literature-analysis",
+                    description: "Track breakthrough research in your field"
+                },
+                {
+                    title: "Technology Scouting",
+                    href: "#tech-scouting",
+                    description: "Discover emerging technologies early"
+                },
+                {
+                    title: "Competitive Intelligence",
+                    href: "#competitive-intel",
+                    description: "Monitor competitor R&D activities"
+                },
+                {
+                    title: "Innovation Opportunities",
+                    href: "#innovation-opportunities",
+                    description: "Identify collaboration and licensing opportunities"
+                },
+            ],
+        },
+        {
+            segment: "Pre-Seed Investors",
+            icon: "mdi-chart-line-variant",
+            description: "Project flow visibility for early-stage investment",
+            items: [
+                {
+                    title: "Research Project Flow",
+                    href: "#project-flow",
+                    description: "Track promising research before it becomes a startup"
+                },
+                {
+                    title: "Early-Stage Detection",
+                    href: "#early-detection",
+                    description: "Identify investable research lines early"
+                },
+                {
+                    title: "Impact Assessment",
+                    href: "#impact-assessment",
+                    description: "Evaluate research commercialization potential"
+                },
+                {
+                    title: "Portfolio Intelligence",
+                    href: "#portfolio-intelligence",
+                    description: "Monitor research trends in your investment thesis"
+                },
+            ],
+        },
+    ];
+
+    const resourcesItems = [
+        {
+            title: "Documentation",
+            href: "#documentation",
+            icon: "mdi-book-open-page-variant",
+            description: "Guides and API references"
+        },
+        {
+            title: "Case Studies",
+            href: "#case-studies",
+            icon: "mdi-file-document",
+            description: "Success stories from our clients"
+        },
+        {
+            title: "Blog",
+            href: "#blog",
+            icon: "mdi-post",
+            description: "Latest insights and updates"
+        },
+        {
+            title: "Webinars",
+            href: "#webinars",
+            icon: "mdi-video",
+            description: "Live and recorded sessions"
+        },
     ];
 
     return (
-        <nav className="navbar navbar-expand-lg glass-navbar">
-            <div className="container">
-                {/* Left: Brand Logo + Solutions */}
-                <div className="navbar-left-section d-flex align-items-center">
-                    <Link className="navbar-brand brand-title" to="/">
-                        Linked <span>Scholar</span>
-                    </Link>
-                    
-                    {/* Solutions Dropdown - positioned right after logo */}
-                    <div className="navbar-nav-links d-none d-lg-flex">
-                        <div 
-                            className="nav-item solutions-dropdown"
-                            onMouseEnter={() => setSolutionsDropdownOpen(true)}
-                            onMouseLeave={() => setSolutionsDropdownOpen(false)}
-                        >
-                            <button className="nav-link solutions-trigger">
-                                Solutions
-                                <i className={`mdi mdi-chevron-down solutions-chevron ${solutionsDropdownOpen ? 'open' : ''}`}></i>
-                            </button>
-                            
-                            <div className={`solutions-dropdown-menu ${solutionsDropdownOpen ? 'show' : ''}`}>
-                                <div className="solutions-dropdown-content">
-                                    {solutionsItems.map((item, index) => (
-                                        <a 
-                                            key={index}
-                                            href={item.href} 
-                                            className="solution-item"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                setSolutionsDropdownOpen(false); // Close dropdown
-                                                
-                                                // Extract the ID from href (removes the #)
-                                                const targetId = item.href.substring(1);
-                                                const targetElement = document.getElementById(targetId);
-                                                
-                                                if (targetElement) {
-                                                    // Smooth scroll to the section
-                                                    targetElement.scrollIntoView({ 
-                                                        behavior: 'smooth',
-                                                        block: 'start' 
-                                                    });
-                                                } else {
-                                                    // If not on home page, navigate there first then scroll
-                                                    if (window.location.pathname !== '/') {
-                                                        navigate('/' + item.href);
-                                                    }
-                                                }
-                                            }}
-                                        >
-                                            <div className="solution-icon">
-                                                <i className={`mdi ${item.icon}`}></i>
-                                            </div>
-                                            <div className="solution-content">
-                                                <div className="solution-title">{item.title}</div>
-                                                <div className="solution-description">{item.description}</div>
-                                            </div>
-                                        </a>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
+        <nav className={`navbar navbar-expand-lg glass-navbar ${scrolled ? "scrolled" : ""}`}>
+            <div className="container-fluid">
+                {/* Brand */}
+                <Link className="navbar-brand brand-title" to="/">
+                    <img
+                        src="/logos/logo.png"
+                        alt="Linked Scholar Logo"
+                        className="brand-logo"
+                    />
+                </Link>
+
+                {/* Search (Desktop - moved next to brand) */}
+                {isNetworkPage && (
+                    <div className="navbar-search-wrapper d-none d-lg-flex">
+                        <MiniSearcher clientId={clientId} />
                     </div>
+                )}
+
+                {/* Right side container */}
+                <div className="navbar-right-container">
+                    {/* Hamburger Button */}
+                    <button
+                        className={`navbar-toggler ${mobileOpen ? "open" : ""}`}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setMobileOpen(!mobileOpen);
+                        }}
+                        aria-label="Toggle navigation"
+                        aria-expanded={mobileOpen}
+                    >
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
                 </div>
 
-                {/* Center: Search Bar - only on network page */}
-                {isNetworkPage && (
-                    <div className="navbar-search-wrapper d-none d-md-flex">
-                        <MiniSearcher clientId={clientId} />
-                    </div>
-                )}
+                {/* Desktop Nav Links */}
+                <div className={`navbar-collapse ${mobileOpen ? "show" : ""}`}>
+                    <div className="navbar-nav-links">
+                        {/* Solutions Dropdown - FIRST like Stripe */}
+                        <div
+                            className="nav-item solutions-dropdown"
+                            onMouseEnter={() => window.innerWidth > 991 && setSolutionsDropdownOpen(true)}
+                            onMouseLeave={() => window.innerWidth > 991 && setSolutionsDropdownOpen(false)}
+                        >
+                            <button
+                                className="nav-link dropdown-trigger"
+                                onClick={toggleSolutionsDropdown}
+                                aria-expanded={solutionsDropdownOpen}
+                            >
+                                <span className="SiteHeaderNavItem__linkText">Solutions</span>
+                                <i
+                                    className={`mdi mdi-chevron-down dropdown-chevron ${
+                                        solutionsDropdownOpen ? "open" : ""
+                                    }`}
+                                ></i>
+                            </button>
 
-                {/* Mobile Search Bar */}
-                {isNetworkPage && (
-                    <div className="navbar-search-mobile d-md-none w-100 mt-2">
-                        <MiniSearcher clientId={clientId} />
+                            <div
+                                className={`dropdown-menu-custom solutions-wide ${
+                                    solutionsDropdownOpen ? "show" : ""
+                                }`}
+                            >
+                                {solutionsByMarket.map((group, idx) => (
+                                    <div key={idx} className="dropdown-section">
+                                        <div className="dropdown-section-header">
+                                            <i className={`mdi ${group.icon}`}></i>
+                                            <div>
+                                                <div className="dropdown-section-title">{group.segment}</div>
+                                                <div className="dropdown-section-description">{group.description}</div>
+                                            </div>
+                                        </div>
+                                        {group.items.map((item, subIdx) => (
+                                            <a
+                                                key={subIdx}
+                                                href={item.href}
+                                                className="dropdown-item-custom"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    handleNavigation(item.href, () => setSolutionsDropdownOpen(false));
+                                                }}
+                                            >
+                                                <div className="item-content">
+                                                    <div className="item-title">{item.title}</div>
+                                                    <div className="item-description">{item.description}</div>
+                                                </div>
+                                            </a>
+                                        ))}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Products Dropdown - SECOND */}
+                        <div
+                            className="nav-item products-dropdown"
+                            onMouseEnter={() => window.innerWidth > 991 && setProductsDropdownOpen(true)}
+                            onMouseLeave={() => window.innerWidth > 991 && setProductsDropdownOpen(false)}
+                        >
+                            <button
+                                className="nav-link dropdown-trigger"
+                                onClick={toggleProductsDropdown}
+                                aria-expanded={productsDropdownOpen}
+                            >
+                                <span className="SiteHeaderNavItem__linkText">Products</span>
+                                <i
+                                    className={`mdi mdi-chevron-down dropdown-chevron ${
+                                        productsDropdownOpen ? "open" : ""
+                                    }`}
+                                ></i>
+                            </button>
+                            <div
+                                className={`dropdown-menu-custom products-wide ${
+                                    productsDropdownOpen ? "show" : ""
+                                }`}
+                            >
+                                {productsItems.map((item, index) => (
+                                    <a
+                                        key={index}
+                                        href={item.href}
+                                        className="dropdown-item-custom"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            handleNavigation(item.href, () => setProductsDropdownOpen(false));
+                                        }}
+                                    >
+                                        <i className={`mdi ${item.icon} item-icon`}></i>
+                                        <div className="item-content">
+                                            <div className="item-title">{item.title}</div>
+                                            <div className="item-description">{item.description}</div>
+                                        </div>
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Resources Dropdown - THIRD */}
+                        <div
+                            className="nav-item resources-dropdown"
+                            onMouseEnter={() => window.innerWidth > 991 && setResourcesDropdownOpen(true)}
+                            onMouseLeave={() => window.innerWidth > 991 && setResourcesDropdownOpen(false)}
+                        >
+                            <button
+                                className="nav-link dropdown-trigger"
+                                onClick={toggleResourcesDropdown}
+                                aria-expanded={resourcesDropdownOpen}
+                            >
+                                <span className="SiteHeaderNavItem__linkText">Resources</span>
+                                <i
+                                    className={`mdi mdi-chevron-down dropdown-chevron ${
+                                        resourcesDropdownOpen ? "open" : ""
+                                    }`}
+                                ></i>
+                            </button>
+                            <div
+                                className={`dropdown-menu-custom resources-menu ${
+                                    resourcesDropdownOpen ? "show" : ""
+                                }`}
+                            >
+                                {resourcesItems.map((item, index) => (
+                                    <a
+                                        key={index}
+                                        href={item.href}
+                                        className="dropdown-item-custom"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            handleNavigation(item.href, () => setResourcesDropdownOpen(false));
+                                        }}
+                                    >
+                                        <i className={`mdi ${item.icon} item-icon`}></i>
+                                        <div className="item-content">
+                                            <div className="item-title">{item.title}</div>
+                                            <div className="item-description">{item.description}</div>
+                                        </div>
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Pricing - Direct Link like Stripe */}
+                        <a
+                            href="#pricing"
+                            className="nav-link nav-link-direct"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleNavigation("#pricing", () => {});
+                            }}
+                        >
+                            <span className="SiteHeaderNavItem__linkText">Pricing</span>
+                        </a>
                     </div>
-                )}
+
+                    {/* Auth Controls - Desktop (After all nav items) */}
+                    <div className="navbar-auth-section d-none d-lg-flex ms-auto">
+                        {authenticated ? (
+                            <button
+                                className="btn btn-outline-secondary btn-sm logout-btn"
+                                onClick={handleLogout}
+                            >
+                                <i className="mdi mdi-logout me-1"></i>
+                                Logout
+                            </button>
+                        ) : (
+                            showSignIn && (
+                                <button
+                                    className="btn btn-primary btn-sm login-btn"
+                                    onClick={() => (window.location.href = "/login")}
+                                >
+                                    <i className="mdi mdi-calendar-check me-1"></i>
+                                    Book a Demo
+                                </button>
+                            )
+                        )}
+                    </div>
+
+                    {/* Mobile sections... */}
+                    <div className="navbar-auth-section mobile-auth d-lg-none">
+                        {authenticated ? (
+                            <button
+                                className="btn btn-outline-secondary btn-sm logout-btn w-100"
+                                onClick={handleLogout}
+                            >
+                                <i className="mdi mdi-logout me-1"></i>
+                                Logout
+                            </button>
+                        ) : (
+                            showSignIn && (
+                                <button
+                                    className="btn btn-primary btn-sm login-btn w-100"
+                                    onClick={() => (window.location.href = "/login")}
+                                >
+                                    <i className="mdi mdi-calendar-check me-1"></i>
+                                    Book a Demo
+                                </button>
+                            )
+                        )}
+                    </div>
+
+                    {/* Search - Mobile */}
+                    {isNetworkPage && (
+                        <div className="navbar-search-wrapper mobile-search d-lg-none">
+                            <MiniSearcher clientId={clientId} />
+                        </div>
+                    )}
+                </div>
             </div>
+
+            {/* Overlay for mobile menu */}
+            {mobileOpen && <div className="navbar-overlay" onClick={() => setMobileOpen(false)}></div>}
         </nav>
     );
 };
